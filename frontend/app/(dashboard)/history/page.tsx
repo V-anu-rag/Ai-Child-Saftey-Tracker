@@ -104,7 +104,7 @@ export default function HistoryPage() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="rounded-2xl bg-white border border-app-green/40 shadow-sm overflow-hidden"
+        className="rounded-2xl px-2 py-2 bg-white border border-app-green/40 shadow-sm overflow-hidden"
       >
         <div className="overflow-x-auto">
           <table className="w-full">

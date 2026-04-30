@@ -28,6 +28,7 @@
         "FOREGROUND_SERVICE",
         "FOREGROUND_SERVICE_LOCATION",
         "RECEIVE_BOOT_COMPLETED",
+        "WAKE_LOCK",
         "VIBRATE",
         "POST_NOTIFICATIONS"
       ]
@@ -37,8 +38,14 @@
       [
         "expo-location",
         {
+          "locationAlwaysAndWhenInUsePermission": "Allow SafeTrack to use your location to keep your parent informed.",
           "isAndroidBackgroundLocationEnabled": true,
-          "isAndroidForegroundServiceEnabled": true
+          "isAndroidForegroundServiceEnabled": true,
+          "foregroundService": {
+            "notificationTitle": "SafeTrack Active",
+            "notificationBody": "Location tracking is running to keep you safe.",
+            "notificationColor": "#D64550"
+          }
         }
       ],
       "expo-build-properties",

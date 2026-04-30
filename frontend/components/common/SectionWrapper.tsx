@@ -29,7 +29,7 @@ export function SectionWrapper({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       className={cn(
-        "rounded-2xl bg-white border border-app-green/40 shadow-sm",
+        "rounded-2xl bg-white border p-2 border-app-green/40 shadow-sm",
         !noPadding && "p-6",
         className
       )}
