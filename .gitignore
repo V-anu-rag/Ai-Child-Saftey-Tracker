@@ -1,42 +1,47 @@
-# --- Node.js ---
+# Dependencies
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+.pnp
+.pnp.js
 
-# --- Next.js ---
+# Testing
+coverage/
+
+# Next.js (Frontend)
 frontend/.next/
 frontend/out/
 frontend/build/
 
-# --- Expo / React Native ---
+# Expo (Mobile)
 mobile/.expo/
-mobile/android/build/
-mobile/ios/build/
+mobile/android/
+mobile/ios/
 mobile/dist/
+mobile/*.jks
+mobile/*.p8
+mobile/*.p12
+mobile/*.key
+mobile/*.mobileprovision
 
-# --- Environment Variables (CRITICAL) ---
+# Production Environment Variables (CRITICAL)
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.production
+.env.development
 backend/.env
 frontend/.env.local
 mobile/.env
 
-# --- OS / IDE ---
+# OS Files
 .DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs
 .vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# --- Project Specific ---
-backend/npm-debug.log
-frontend/npm-debug.log
-mobile/npm-debug.log
+*.swp
+*.swo
