@@ -116,7 +116,7 @@ export default function DashboardPage() {
       )}
 
       {/* Stats — pass real data */}
-      <StatsCards children={children} unreadAlerts={unreadCount} />
+      <StatsCards childrenData={children} unreadAlerts={unreadCount} />
 
       {/* Main grid */}
       <div className="grid lg:grid-cols-3 gap-6">

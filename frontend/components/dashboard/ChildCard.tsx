@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Battery, Wifi, WifiOff, MapPin, ChevronRight, Trash2, RefreshCw, Copy, Check } from "lucide-react";
 import { Child } from "@/types";
@@ -95,9 +96,11 @@ export function ChildCard({ child, delay = 0 }: ChildCardProps) {
             <div className="relative">
               <div className="w-12 h-12 rounded-2xl bg-app-bg overflow-hidden border-2 border-app-green/40 flex items-center justify-center">
                 {child.avatar ? (
-                  <img
+                  <Image
                     src={child.avatar}
                     alt={child.name}
+                    width={48}
+                    height={48}
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />

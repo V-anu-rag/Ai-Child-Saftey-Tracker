@@ -49,7 +49,7 @@ export default function HistoryPage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedChild, children]);
+  }, [selectedChild]);
 
   useEffect(() => {
     fetchHistory();

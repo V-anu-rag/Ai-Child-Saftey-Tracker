@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Smartphone, Check, Copy, UserPlus, QrCode as QrIcon, Hash } from "lucide-react";
 import { Button } from "@/components/common/Button";
+import Image from "next/image";
 import { childrenAPI } from "@/lib/api";
 
 interface PairingModalProps {
@@ -128,9 +129,11 @@ export function PairingModal({ isOpen, onClose }: PairingModalProps) {
                       className="bg-white p-4 rounded-2xl shadow-inner border border-app-green/10"
                     >
                       {/* Using Google QR API - No Library Needed */}
-                      <img 
+                      <Image 
                         src={`https://chart.googleapis.com/chart?cht=qr&chl=${pairingCode}&chs=200x200&chld=M|0`} 
                         alt="Pairing QR Code"
+                        width={180}
+                        height={180}
                         className="w-[180px] h-[180px]"
                       />
                     </motion.div>

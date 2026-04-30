@@ -5,18 +5,18 @@ import { StatCard } from "@/components/common/StatCard";
 import type { Child } from "@/types";
 
 interface StatsCardsProps {
-  children?: Child[];
+  childrenData?: Child[];
   unreadAlerts?: number;
 }
 
-export function StatsCards({ children = [], unreadAlerts = 0 }: StatsCardsProps) {
-  const activeCount = children.filter((c) => c.isOnline).length;
-  const safeCount = children.filter((c) => c.safeStatus === "safe").length;
+export function StatsCards({ childrenData = [], unreadAlerts = 0 }: StatsCardsProps) {
+  const activeCount = childrenData.filter((c) => c.isOnline).length;
+  const safeCount = childrenData.filter((c) => c.safeStatus === "safe").length;
 
   const stats = [
     {
       title: "Children Monitored",
-      value: children.length,
+      value: childrenData.length,
       icon: <Users className="w-6 h-6 text-app-jet" />,
       description: `${activeCount} currently active`,
       colorClass: "bg-app-green/70",
@@ -32,7 +32,7 @@ export function StatsCards({ children = [], unreadAlerts = 0 }: StatsCardsProps)
     },
     {
       title: "Safe Status",
-      value: children.length > 0 ? `${safeCount}/${children.length}` : "—",
+      value: childrenData.length > 0 ? `${safeCount}/${childrenData.length}` : "—",
       icon: <MapPin className="w-6 h-6 text-green-700" />,
       description: "Children in safe zones",
       colorClass: "bg-white",

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Battery, Wifi, WifiOff, School, Phone, MapPin, Calendar } from "lucide-react";
 import { Child } from "@/types";
 import { formatRelativeTime, cn } from "@/lib/utils";
@@ -29,9 +30,11 @@ export function ChildProfile({ child }: ChildProfileProps) {
         <div className="relative flex-shrink-0">
           <div className="w-20 h-20 rounded-2xl bg-app-bg overflow-hidden border-2 border-app-green/40 flex items-center justify-center">
             {child.avatar ? (
-              <img
+              <Image
                 src={child.avatar}
                 alt={child.name}
+                width={80}
+                height={80}
                 className="w-full h-full object-cover"
               />
             ) : (
