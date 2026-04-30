@@ -77,7 +77,7 @@ export const mockAlerts: Alert[] = [
     description: "Lucas has left the school geofence boundary.",
     timestamp: new Date(Date.now() - 8 * 60000).toISOString(),
     isRead: false,
-    location: "Washington Middle School",
+    location: { lat: 40.7282, lng: -73.9942, address: "Washington Middle School" },
   },
   {
     id: "alert-2",
@@ -100,7 +100,7 @@ export const mockAlerts: Alert[] = [
     description: "Emma has arrived at Lincoln Elementary School.",
     timestamp: new Date(Date.now() - 45 * 60000).toISOString(),
     isRead: true,
-    location: "Lincoln Elementary School",
+    location: { lat: 40.7128, lng: -74.006, address: "Lincoln Elementary School" },
   },
   {
     id: "alert-4",
@@ -134,7 +134,7 @@ export const mockAlerts: Alert[] = [
     description: "Lucas pressed the SOS button. Immediate attention required.",
     timestamp: new Date(Date.now() - 24 * 3600000).toISOString(),
     isRead: true,
-    location: "42nd Street, New York, NY",
+    location: { lat: 40.7580, lng: -73.9855, address: "42nd Street, New York, NY" },
   },
 ];
 
