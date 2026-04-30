@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "SafeTrack",
+    "slug": "safetrack",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/logo.png",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.safetrack.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "SafeTrack needs your location to keep your parent informed.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "SafeTrack tracks your location in background.",
+        "NSLocationAlwaysUsageDescription": "SafeTrack uses background location."
+      }
+    },
+    "android": {
+      "package": "com.safetrack.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#1C2826"
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "plugins": [
+      "expo-task-manager",
+      [
+        "expo-location",
+        {
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ],
+      "expo-build-properties",
+      "expo-secure-store",
+      "expo-font",
+      "expo-video"
+    ],
+    "extra": {
+      "apiUrl": "http://192.168.1.22:5000/api",
+      "socketUrl": "http://192.168.1.22:5000",
+      "eas": {
+        "projectId": "d1e61b8b-d67c-483a-b3ff-2f51e2efbfd1"
+      }
+    }
+  }
+}
