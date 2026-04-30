@@ -19,6 +19,7 @@ export type ActivityType =
 
 export interface Child {
   id: string;
+  _id?: string;
   name: string;
   age: number;
   avatar: string;
@@ -60,6 +61,7 @@ export interface Alert {
 
 export interface ActivityItem {
   id: string;
+  _id?: string;
   childId: string;
   type: ActivityType;
   title: string;
@@ -71,6 +73,7 @@ export interface ActivityItem {
 
 export interface GeofenceZone {
   id: string;
+  _id?: string;
   name: string;
   type: "home" | "school" | "custom";
   radius: number;
