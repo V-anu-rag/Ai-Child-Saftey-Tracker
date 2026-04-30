@@ -269,7 +269,7 @@ export default function SettingsPage() {
                     <div className="h-px bg-app-green/5 mx-2" />
                     <ToggleItem 
                       title="Weekly Activity Reports" 
-                      description="A detailed summary of your children's movements and safety status delivered every Monday." 
+                      description="A detailed summary of your children&apos;s movements and safety status delivered every Monday." 
                     />
                   </div>
                 </SectionWrapper>
@@ -288,7 +288,7 @@ export default function SettingsPage() {
                     <div className="bg-app-bg p-5 rounded-2xl border border-app-green/10">
                       <h4 className="text-sm font-bold text-app-jet mb-2">Location Data Storage</h4>
                       <p className="text-xs leading-relaxed">
-                        Your child's location data is encrypted and stored for a maximum of 30 days. After this period, it is automatically purged from our servers.
+                        Your child&apos;s location data is encrypted and stored for a maximum of 30 days. After this period, it is automatically purged from our servers.
                       </p>
                     </div>
                     

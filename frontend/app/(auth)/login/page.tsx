@@ -12,7 +12,7 @@ export default function LoginPage() {
   return (
     <AuthCard
       title="Welcome Back"
-      subtitle="Sign in to monitor your children's safety"
+      subtitle="Sign in to monitor your children&apos;s safety"
     >
       <LoginForm />
     </AuthCard>

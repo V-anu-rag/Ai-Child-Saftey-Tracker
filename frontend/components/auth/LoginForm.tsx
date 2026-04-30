@@ -112,7 +112,7 @@ export function LoginForm() {
       </div>
 
       <p className="text-center text-sm text-white/40 pt-2">
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link href="/signup" className="text-app-salmon hover:underline">Sign up for free</Link>
       </p>
     </form>
