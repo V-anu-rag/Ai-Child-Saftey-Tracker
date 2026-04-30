@@ -81,7 +81,7 @@ export function PairingModal({ isOpen, onClose }: PairingModalProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-app-jet/60 ml-1">Child's Name</label>
+                  <label className="text-sm font-bold text-app-jet/60 ml-1">Child&apos;s Name</label>
                   <input
                     required
                     className="w-full bg-app-bg border border-app-green/30 rounded-xl px-4 py-3 text-app-jet focus:ring-2 focus:ring-app-red/20 outline-none"
@@ -160,11 +160,11 @@ export function PairingModal({ isOpen, onClose }: PairingModalProps) {
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <div className="w-5 h-5 rounded-full bg-app-green/20 flex items-center justify-center text-[10px] font-bold text-app-jet mt-0.5">1</div>
-                    <p className="text-xs text-app-jet/70">Open the app on the child's device.</p>
+                    <p className="text-xs text-app-jet/70">Open the app on the child&apos;s device.</p>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-5 h-5 rounded-full bg-app-green/20 flex items-center justify-center text-[10px] font-bold text-app-jet mt-0.5">2</div>
-                    <p className="text-xs text-app-jet/70">Select "Child" and scan the QR or enter the code.</p>
+                    <p className="text-xs text-app-jet/70">Select &quot;Child&quot; and scan the QR or enter the code.</p>
                   </div>
                 </div>
 
