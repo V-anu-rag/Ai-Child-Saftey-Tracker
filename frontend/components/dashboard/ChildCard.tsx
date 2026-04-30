@@ -39,7 +39,7 @@ export function ChildCard({ child, delay = 0 }: ChildCardProps) {
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const hasLocation = !!child.lastLocation?.address;
+  const hasLocation = !!child.location?.address;
   const isWaitingForPairing = !!((child as any).pairingCode || !(child as any).userId);
 
   const handleDelete = async (e: React.MouseEvent) => {
@@ -150,7 +150,7 @@ export function ChildCard({ child, delay = 0 }: ChildCardProps) {
           <div className="flex-1">
             {hasLocation ? (
               <p className="text-xs text-app-jet/70 leading-snug">
-                {child.lastLocation!.address}
+                {child.location!.address}
               </p>
             ) : isWaitingForPairing ? (
               <p className="text-xs text-app-jet/70 leading-snug">
