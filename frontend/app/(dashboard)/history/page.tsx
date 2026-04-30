@@ -97,7 +97,7 @@ export default function HistoryPage() {
           className="bg-white border border-app-green/40 rounded-xl px-4 py-2 text-sm font-medium outline-none"
         >
           <option value="all">All Children</option>
-          {children.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+          {children.map(c => <option key={c._id || c.id} value={c._id || c.id}>{c.name}</option>)}
         </select>
       </div>
 

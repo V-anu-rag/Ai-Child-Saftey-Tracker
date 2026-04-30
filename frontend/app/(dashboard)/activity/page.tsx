@@ -134,11 +134,11 @@ export default function ActivityPage() {
         </button>
         {children.map((child) => (
           <button
-            key={child._id}
-            onClick={() => setSelectedChild(child._id)}
+            key={child._id || child.id}
+            onClick={() => setSelectedChild((child._id || child.id)!)}
             className={cn(
               "px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2",
-              selectedChild === child._id
+              selectedChild === (child._id || child.id)
                 ? "bg-app-jet text-white"
                 : "bg-white text-app-jet/60 border border-app-green/40 hover:bg-app-green/20"
             )}

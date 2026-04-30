@@ -74,7 +74,7 @@ export default function GeofencingPage() {
   const handleToggle = async (id: string) => {
     try {
       await geofencesAPI.toggle(id);
-      setGeofences(prev => prev.map(z => z._id === id ? { ...z, isActive: !z.isActive } : z));
+      setGeofences(prev => prev.map(z => (z._id || z.id) === id ? { ...z, isActive: !z.isActive } : z));
     } catch (err) {
       console.error("Failed to toggle zone:", err);
     }
@@ -84,7 +84,7 @@ export default function GeofencingPage() {
     if (!confirm("Are you sure you want to delete this zone?")) return;
     try {
       await geofencesAPI.remove(id);
-      setGeofences(prev => prev.filter(z => z._id !== id));
+      setGeofences(prev => prev.filter(z => (z._id || z.id) !== id));
     } catch (err) {
       console.error("Failed to delete zone:", err);
     }
@@ -169,7 +169,7 @@ export default function GeofencingPage() {
                       className="w-full bg-app-bg border border-app-green/20 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-app-salmon"
                     >
                       <option value="">Select a child...</option>
-                      {children.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                      {children.map(c => <option key={c._id || c.id} value={c._id || c.id}>{c.name}</option>)}
                     </select>
                   </div>
                   <div className="space-y-1.5">
@@ -276,10 +276,10 @@ export default function GeofencingPage() {
               <AnimatePresence>
                 {geofences.map((zone, i) => {
                   const Icon = typeIcons[zone.type as keyof typeof typeIcons] || Compass;
-                  const child = children.find(c => c._id === zone.childId);
+                  const child = children.find(c => (c._id || c.id) === zone.childId);
                   return (
                     <motion.div
-                      key={zone._id}
+                      key={zone._id || zone.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -20 }}
@@ -308,7 +308,7 @@ export default function GeofencingPage() {
                             </div>
                             <div className="flex items-center gap-1.5">
                               <button
-                                onClick={() => handleToggle(zone._id)}
+                                onClick={() => handleToggle((zone._id || zone.id)!)}
                                 className="text-app-jet/40 hover:text-app-jet transition-colors"
                               >
                                 {zone.isActive ? (
@@ -318,7 +318,7 @@ export default function GeofencingPage() {
                                 )}
                               </button>
                               <button
-                                onClick={() => handleDelete(zone._id)}
+                                onClick={() => handleDelete((zone._id || zone.id)!)}
                                 className="text-app-jet/40 hover:text-app-red p-1.5 hover:bg-app-red/10 rounded-xl transition-colors opacity-0 group-hover:opacity-100"
                               >
                                 <Trash2 className="w-4 h-4" />
