@@ -9,6 +9,7 @@ interface SectionWrapperProps {
   className?: string;
   title?: string;
   description?: string;
+  icon?: any;
   action?: React.ReactNode;
   noPadding?: boolean;
 }
@@ -18,6 +19,7 @@ export function SectionWrapper({
   className,
   title,
   description,
+  icon: Icon,
   action,
   noPadding = false,
 }: SectionWrapperProps) {
@@ -33,14 +35,17 @@ export function SectionWrapper({
       )}
     >
       {(title || action) && (
-        <div className="flex items-center justify-between mb-5 px-6 pt-6">
-          <div>
-            {title && (
-              <h2 className="text-lg font-bold text-app-jet">{title}</h2>
-            )}
-            {description && (
-              <p className="text-sm text-app-jet/50 mt-0.5">{description}</p>
-            )}
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-start gap-3">
+            {Icon && <div className="w-10 h-10 rounded-xl bg-app-bg flex items-center justify-center flex-shrink-0 mt-0.5"><Icon className="w-5 h-5 text-app-jet/40" /></div>}
+            <div>
+              {title && (
+                <h2 className="text-lg font-bold text-app-jet">{title}</h2>
+              )}
+              {description && (
+                <p className="text-sm text-app-jet/50 mt-0.5">{description}</p>
+              )}
+            </div>
           </div>
           {action && <div>{action}</div>}
         </div>
