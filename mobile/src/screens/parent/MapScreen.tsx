@@ -24,17 +24,28 @@ export default function MapScreen() {
   // Keep screen awake while on map
   useEffect(() => {
     let active = true;
-    const activate = async () => {
+    
+    // Safety delay to ensure activity is ready
+    const timer = setTimeout(async () => {
       try {
-        if (active) await activateKeepAwakeAsync();
+        if (active) {
+          await activateKeepAwakeAsync();
+          console.log("🔦 Screen stay-awake active");
+        }
       } catch (e) {
-        console.warn("KeepAwake could not be activated:", e);
+        // Silently handle if activity is not ready
+        console.log("KeepAwake ignored: activity not ready");
       }
-    };
-    activate();
+    }, 1000);
+
     return () => {
       active = false;
-      deactivateKeepAwake();
+      clearTimeout(timer);
+      try {
+        deactivateKeepAwake();
+      } catch (e) {
+        // Ignore errors on cleanup
+      }
     };
   }, []);
   const { on, off } = useSocket();
