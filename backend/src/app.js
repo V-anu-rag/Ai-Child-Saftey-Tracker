@@ -25,6 +25,8 @@ app.use(compression());
 const allowedOrigins = [
   process.env.CLIENT_URL,
   "http://localhost:3000",
+  "http://localhost:3001",
+  /\.vercel\.app$/,        // Allow all Vercel deployments
   /^http:\/\/192\.168\./,  // Allow local network for mobile dev
   /^exp:\/\//,             // Expo dev client
 ].filter(Boolean);
