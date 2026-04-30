@@ -10,7 +10,7 @@ export const getSocket = (token?: string): Socket => {
   
   // If we have an existing socket but the token has changed, disconnect and recreate
   if (socket) {
-    const currentToken = socket.io.opts.auth?.token;
+    const currentToken = (socket.io.opts as any).auth?.token;
     if (finalToken && currentToken !== finalToken) {
       console.log("🔄 Token changed, reconnecting socket...");
       socket.disconnect();
