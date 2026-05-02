@@ -82,6 +82,21 @@ export default function ChildDetailsScreen({ route, navigation }: any) {
     );
   };
 
+  const handleRegenerateCode = async () => {
+    try {
+      setRefreshing(true);
+      const res = await childrenAPI.regenerateCode(childId) as any;
+      if (res.success) {
+        setChild({ ...child, pairingCode: res.pairingCode });
+        Alert.alert("Success", "Pairing code regenerated successfully.");
+      }
+    } catch (err) {
+      Alert.alert("Error", "Failed to regenerate pairing code.");
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   const initialRegion = useMemo(() => {
     return {
       latitude: child?.lastLocation?.lat || 28.6139,
@@ -149,6 +164,24 @@ export default function ChildDetailsScreen({ route, navigation }: any) {
           </View>
         </View>
 
+        <View style={styles.pairingCard}>
+          <View style={styles.pairingInfo}>
+            <View style={styles.keyIcon}><Ionicons name="key" size={20} color={COLORS.salmon} /></View>
+            <View>
+              <Text style={styles.pairingLabel}>Pairing Code</Text>
+              <Text style={styles.pairingCode}>{child?.pairingCode || "--- ---"}</Text>
+            </View>
+          </View>
+          <TouchableOpacity 
+            style={styles.regenBtn} 
+            onPress={handleRegenerateCode}
+            disabled={refreshing}
+          >
+            <Ionicons name="refresh" size={18} color="#fff" />
+            <Text style={styles.regenText}>Regenerate</Text>
+          </TouchableOpacity>
+        </View>
+
         <Text style={styles.sectionTitle}>Activity Timeline</Text>
         {activities.map((item) => (
           <View key={item.id} style={styles.activityItem}>
@@ -192,4 +225,11 @@ const styles = StyleSheet.create({
   activityTitle: { fontSize: 14, fontWeight: "700", color: COLORS.jet },
   activityMsg: { fontSize: 12, color: `${COLORS.jet}60` },
   activityTime: { fontSize: 10, color: `${COLORS.jet}40`, marginTop: 4 },
+  pairingCard: { backgroundColor: "#fff", borderRadius: 20, padding: 16, marginHorizontal: 20, marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderWidth: 1, borderColor: `${COLORS.salmon}30` },
+  pairingInfo: { flexDirection: "row", alignItems: "center", gap: 12 },
+  keyIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: `${COLORS.salmon}15`, alignItems: "center", justifyContent: "center" },
+  pairingLabel: { fontSize: 10, fontWeight: "800", color: `${COLORS.jet}50`, uppercase: true },
+  pairingCode: { fontSize: 18, fontWeight: "900", color: COLORS.jet, letterSpacing: 2 },
+  regenBtn: { backgroundColor: COLORS.salmon, flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12 },
+  regenText: { color: "#fff", fontSize: 12, fontWeight: "700" },
 });
