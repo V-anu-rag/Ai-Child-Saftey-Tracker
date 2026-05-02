@@ -17,6 +17,7 @@
     },
     "android": {
       "package": "com.safetrack.app",
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#1C2826"
