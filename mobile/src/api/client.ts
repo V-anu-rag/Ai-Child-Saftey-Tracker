@@ -70,6 +70,7 @@ export const childrenAPI = {
   pair: (pairingCode: string, deviceName: string) =>
     api.post("/children/pair", { pairingCode, deviceName }),
   unpairSelf: () => api.post("/children/unpair-self"),
+  regenerateCode: (id: string) => api.post(`/children/${id}/regenerate-code`),
 };
 
 // ─── Location ─────────────────────────────────────────────────────────────────
