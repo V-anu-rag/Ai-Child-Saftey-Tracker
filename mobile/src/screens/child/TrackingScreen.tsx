@@ -144,10 +144,22 @@ export default function TrackingScreen() {
           </Pressable>
         </Modal>
 
-        {/* Connection status */}
         <View style={[styles.statusBar, isConnected ? styles.statusOnline : styles.statusOffline]}>
-          <View style={[styles.dot, { backgroundColor: isConnected ? "#16a34a" : "#ef4444" }]} />
-          <Text style={styles.statusText}>{isConnected ? "Connected to server" : "Offline — reconnecting..."}</Text>
+          <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <View style={[styles.dot, { backgroundColor: isConnected ? "#16a34a" : "#ef4444" }]} />
+            <Text style={styles.statusText}>{isConnected ? "Connected to server" : "Offline — reconnecting..."}</Text>
+          </View>
+          {!isConnected && (
+            <TouchableOpacity 
+              onPress={() => Alert.alert("Re-pair Device", "This will disconnect you from your parent. You will need a new pairing code to continue. Proceed?", [
+                { text: "Cancel", style: "cancel" },
+                { text: "Re-pair", style: "destructive", onPress: logout }
+              ])}
+              style={styles.repairButton}
+            >
+              <Text style={styles.repairButtonText}>Re-pair</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Main tracking card */}
@@ -226,4 +238,6 @@ const styles = StyleSheet.create({
   sosText: { fontSize: 32, fontWeight: "900", color: "#fff", letterSpacing: 4 },
   sosCaption: { fontSize: 12, color: "rgba(255,255,255,0.7)" },
   safetyNote: { textAlign: "center", fontSize: 12, color: `${COLORS.jet}60`, lineHeight: 18, marginTop: 10 },
+  repairButton: { backgroundColor: "#fff", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: COLORS.red },
+  repairButtonText: { color: COLORS.red, fontSize: 11, fontWeight: "700" },
 });
