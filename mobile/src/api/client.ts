@@ -7,7 +7,7 @@ import Constants from "expo-constants";
 const debuggerHost = Constants.expoConfig?.hostUri?.split(":")[0];
 const DEV_API_URL = debuggerHost ? `http://${debuggerHost}:5000/api` : "http://localhost:5000/api";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || DEV_API_URL;
+const BASE_URL = Constants.expoConfig?.extra?.apiUrl || DEV_API_URL;
 
 console.log("📡 API Base URL:", BASE_URL);
 

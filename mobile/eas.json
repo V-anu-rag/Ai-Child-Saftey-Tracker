@@ -22,8 +22,8 @@
         "buildType": "apk"
       },
       "env": {
-        "API_URL": "https://safetrack-api.onrender.com/api",
-        "SOCKET_URL": "https://safetrack-api.onrender.com",
+        "EXPO_PUBLIC_API_URL": "https://safetrack-api.onrender.com/api",
+        "EXPO_PUBLIC_SOCKET_URL": "https://safetrack-api.onrender.com",
         "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
         "EAS_BUILD_NPM_COMMAND": "npm install --legacy-peer-deps"
       }
