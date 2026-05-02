@@ -5,12 +5,10 @@
   },
   "build": {
     "development": {
-      "node": "20",
       "developmentClient": true,
       "distribution": "internal"
     },
     "preview": {
-      "node": "20",
       "distribution": "internal",
       "env": {
         "API_URL": "https://safetrack-api-preview.onrender.com/api",
@@ -18,7 +16,6 @@
       }
     },
     "production": {
-      "node": "20",
       "autoIncrement": true,
       "distribution": "internal",
       "android": {
