@@ -5,6 +5,7 @@
   },
   "build": {
     "development": {
+      "node": "20",
       "developmentClient": true,
       "distribution": "internal",
       "android": {
@@ -12,6 +13,7 @@
       }
     },
     "preview": {
+      "node": "20",
       "distribution": "internal",
       "android": {
         "image": "ubuntu-22.04-jdk-17-ndk-r25b"
@@ -22,6 +24,7 @@
       }
     },
     "production": {
+      "node": "20",
       "autoIncrement": true,
       "distribution": "internal",
       "android": {
