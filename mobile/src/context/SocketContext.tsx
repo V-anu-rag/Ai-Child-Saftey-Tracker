@@ -14,9 +14,7 @@ import { SOSAlertModal } from "../components/SOSAlertModal";
 
 // Detect computer's IP for Socket.io
 const debuggerHost = Constants.expoConfig?.hostUri?.split(":")[0];
-const SOCKET_URL = debuggerHost
-  ? `http://${debuggerHost}:5000`
-  : "http://localhost:5000";
+const SOCKET_URL = Constants.expoConfig?.extra?.socketUrl || (debuggerHost ? `http://${debuggerHost}:5000` : "http://localhost:5000");
 
 interface SocketContextType {
   socket: Socket | null;
