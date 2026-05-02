@@ -7,17 +7,11 @@
     "development": {
       "node": "20",
       "developmentClient": true,
-      "distribution": "internal",
-      "android": {
-        "image": "ubuntu-22.04-jdk-17-ndk-r25b"
-      }
+      "distribution": "internal"
     },
     "preview": {
       "node": "20",
       "distribution": "internal",
-      "android": {
-        "image": "ubuntu-22.04-jdk-17-ndk-r25b"
-      },
       "env": {
         "API_URL": "https://safetrack-api-preview.onrender.com/api",
         "SOCKET_URL": "https://safetrack-api-preview.onrender.com"
@@ -28,7 +22,6 @@
       "autoIncrement": true,
       "distribution": "internal",
       "android": {
-        "image": "ubuntu-22.04-jdk-17-ndk-r25b",
         "buildType": "apk"
       },
       "env": {
