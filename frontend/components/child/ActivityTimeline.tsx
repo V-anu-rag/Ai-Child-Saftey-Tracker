@@ -104,6 +104,10 @@ function LocationAddress({ lat, lng }: { lat: number; lng: number }) {
   );
 }
 
+interface ActivityTimelineProps {
+  activities: ActivityItem[];
+}
+
 export function ActivityTimeline({ activities }: ActivityTimelineProps) {
   if (activities.length === 0) {
     return (
