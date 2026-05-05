@@ -85,7 +85,7 @@ export function PairingModal({ isOpen, onClose }: PairingModalProps) {
                   <label className="text-sm font-bold text-app-jet/60 ml-1">Child&apos;s Name</label>
                   <input
                     required
-                    className="w-full bg-app-bg border border-app-green/30 rounded-xl px-4 py-3 text-app-jet focus:ring-2 focus:ring-app-red/20 outline-none"
+                    className="w-full bg-app-bg border border-app-green rounded-xl px-4 py-3 text-app-jet focus:ring-2 focus:ring-app-red/20 outline-none"
                     placeholder="e.g. Leo"
                     value={childData.name}
                     onChange={(e) => setChildData({ ...childData, name: e.target.value })}
@@ -99,7 +99,7 @@ export function PairingModal({ isOpen, onClose }: PairingModalProps) {
                     type="number"
                     min="1"
                     max="18"
-                    className="w-full bg-app-bg border border-app-green/30 rounded-xl px-4 py-3 text-app-jet focus:ring-2 focus:ring-app-red/20 outline-none"
+                    className="w-full bg-app-bg border border-app-green rounded-xl px-4 py-3 text-app-jet focus:ring-2 focus:ring-app-red/20 outline-none"
                     placeholder="e.g. 10"
                     value={childData.age}
                     onChange={(e) => setChildData({ ...childData, age: e.target.value })}
@@ -121,12 +121,12 @@ export function PairingModal({ isOpen, onClose }: PairingModalProps) {
                   </p>
                 </div>
 
-                <div className="bg-app-bg border-2 border-dashed border-app-green/50 rounded-3xl p-8 flex flex-col items-center gap-6 min-h-[300px] justify-center">
+                <div className="bg-app-bg border-2 border-dashed border-app-green rounded-3xl p-8 flex flex-col items-center gap-6 min-h-[300px] justify-center">
                   {showQR ? (
                     <motion.div 
                       initial={{ scale: 0.8, opacity: 0 }} 
                       animate={{ scale: 1, opacity: 1 }}
-                      className="bg-white p-4 rounded-2xl shadow-inner border border-app-green/10"
+                      className="bg-white p-4 rounded-2xl shadow-inner border border-app-green"
                     >
                       {/* Using Google QR API - No Library Needed */}
                       <Image 
@@ -154,7 +154,7 @@ export function PairingModal({ isOpen, onClose }: PairingModalProps) {
 
                   <button
                     onClick={() => setShowQR(!showQR)}
-                    className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-app-green/20 text-xs font-bold text-app-jet/60 hover:bg-app-bg transition-all"
+                    className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-app-green text-xs font-bold text-app-jet/60 hover:bg-app-bg transition-all"
                   >
                     {showQR ? <><Hash className="w-3.5 h-3.5" /> Show Code</> : <><QrIcon className="w-3.5 h-3.5" /> Show QR Code</>}
                   </button>
@@ -162,11 +162,11 @@ export function PairingModal({ isOpen, onClose }: PairingModalProps) {
 
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-app-green/20 flex items-center justify-center text-[10px] font-bold text-app-jet mt-0.5">1</div>
+                    <div className="w-5 h-5 rounded-full bg-app-red/10 flex items-center justify-center text-[10px] font-bold text-app-jet mt-0.5">1</div>
                     <p className="text-xs text-app-jet/70">Open the app on the child&apos;s device.</p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-app-green/20 flex items-center justify-center text-[10px] font-bold text-app-jet mt-0.5">2</div>
+                    <div className="w-5 h-5 rounded-full bg-app-red/10 flex items-center justify-center text-[10px] font-bold text-app-jet mt-0.5">2</div>
                     <p className="text-xs text-app-jet/70">Select &quot;Child&quot; and scan the QR or enter the code.</p>
                   </div>
                 </div>

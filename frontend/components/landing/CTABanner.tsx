@@ -7,18 +7,18 @@ import { Button } from "@/components/common/Button";
 
 export function CTABanner() {
   return (
-    <section className="py-24 bg-app-bg">
-      <div className="max-w-5xl mx-auto px-6">
+    <section className="py-24 bg-app-jet">
+      <div className="max-w-5xl mx-auto px-8 md:px-16 lg:px-24">
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="relative rounded-3xl bg-app-jet overflow-hidden text-center px-8 py-16"
+          className="relative rounded-3xl bg-white/5 border border-white/10 overflow-hidden text-center px-8 py-16"
         >
           {/* Background accents */}
           <div className="absolute top-0 left-0 w-64 h-64 bg-app-red/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-64 h-64 bg-app-green/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-64 h-64 bg-app-salmon/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
 
           <div className="relative z-10">
             <div className="flex justify-center mb-6">

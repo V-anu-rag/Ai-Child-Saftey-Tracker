@@ -1,22 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, Search, ChevronDown, User, Settings, LogOut } from "lucide-react";
+import { Bell, Search, ChevronDown, User, Settings, LogOut, Menu, BellOff } from "lucide-react";
 import Link from "next/link";
-import { mockAlerts } from "@/lib/mock-data";
 import { formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface TopbarProps {
   title?: string;
+  onToggleSidebar?: () => void;
 }
-export function Topbar({ title = "Dashboard" }: TopbarProps) {
+export function Topbar({ title = "Dashboard", onToggleSidebar }: TopbarProps) {
   const { user, logout } = useAuth();
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const unreadCount = mockAlerts.filter((a) => !a.isRead).length;
+  const { alerts, unreadCount, loading, markAsRead } = useNotifications();
+  const [tick, setTick] = useState(0);
+
+  // Auto-update timestamps every minute
+  useEffect(() => {
+    const interval = setInterval(() => setTick(t => t + 1), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const getInitials = (name: string) => {
     return name
@@ -28,11 +36,19 @@ export function Topbar({ title = "Dashboard" }: TopbarProps) {
   };
 
   return (
-    <header className="h-16 bg-white border-b border-app-green/40 flex items-center justify-between px-6 flex-shrink-0 relative z-10">
+    <header className="h-16 bg-white border-b border-app-green flex items-center justify-between px-6 flex-shrink-0 relative z-10">
       {/* Left: Title + Search */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4 sm:gap-6">
+        {onToggleSidebar && (
+          <button
+            onClick={onToggleSidebar}
+            className="md:hidden p-2 -ml-2 rounded-xl hover:bg-app-bg text-app-jet transition-colors"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
         <h1 className="text-lg font-bold text-app-jet">{title}</h1>
-        <div className="hidden md:flex items-center gap-2 bg-app-bg rounded-xl px-3 py-2 border border-app-green/50 w-64">
+        <div className="hidden md:flex items-center gap-2 bg-app-bg rounded-xl px-3 py-2 border border-app-green w-64">
           <Search className="w-4 h-4 text-app-jet/40" />
           <input
             type="text"
@@ -51,7 +67,7 @@ export function Topbar({ title = "Dashboard" }: TopbarProps) {
               setNotifOpen(!notifOpen);
               setProfileOpen(false);
             }}
-            className="relative w-9 h-9 rounded-xl bg-app-bg border border-app-green/40 flex items-center justify-center hover:bg-app-green/40 transition-colors"
+            className="relative w-9 h-9 rounded-xl bg-app-bg border border-app-green flex items-center justify-center hover:border-app-red/30 transition-colors"
           >
             <Bell className="w-4 h-4 text-app-jet/70" />
             {unreadCount > 0 && (
@@ -68,39 +84,63 @@ export function Topbar({ title = "Dashboard" }: TopbarProps) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-app-green/40 overflow-hidden"
+                className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-app-green overflow-hidden"
               >
-                <div className="p-4 border-b border-app-green/30">
+                <div className="p-4 border-b border-app-green">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-app-jet">Notifications</h3>
                     <span className="text-xs text-app-red font-medium">{unreadCount} new</span>
                   </div>
                 </div>
                 <div className="max-h-72 overflow-y-auto">
-                  {mockAlerts.slice(0, 4).map((alert) => (
-                    <div
-                      key={alert.id}
-                      className={cn(
-                        "px-4 py-3 border-b border-app-bg/50 hover:bg-app-bg/50 transition-colors",
-                        !alert.isRead && "bg-app-green/20"
-                      )}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div
-                          className={cn(
-                            "w-2 h-2 rounded-full mt-1.5 flex-shrink-0",
-                            alert.severity === "critical" ? "bg-app-red" :
-                            alert.severity === "high" ? "bg-orange-500" :
-                            alert.severity === "medium" ? "bg-yellow-500" : "bg-green-500"
-                          )}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-app-jet truncate">{alert.title}</p>
-                          <p className="text-xs text-app-jet/50 mt-0.5">{alert.childName} · {formatRelativeTime(alert.timestamp)}</p>
+                  {loading && alerts.length === 0 ? (
+                    <div className="px-4 py-6 space-y-3">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="flex items-start gap-3 animate-pulse">
+                          <div className="w-2 h-2 rounded-full bg-app-jet/10 mt-1.5 flex-shrink-0" />
+                          <div className="flex-1 space-y-2">
+                            <div className="h-4 bg-app-jet/10 rounded w-3/4" />
+                            <div className="h-3 bg-app-jet/10 rounded w-1/2" />
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
+                  ) : alerts.length === 0 ? (
+                    <div className="px-4 py-8 flex flex-col items-center justify-center text-center">
+                      <div className="w-12 h-12 rounded-full bg-app-green/10 flex items-center justify-center mb-3">
+                        <BellOff className="w-6 h-6 text-app-green" />
+                      </div>
+                      <p className="text-sm font-medium text-app-jet">You're all caught up!</p>
+                      <p className="text-xs text-app-jet/50 mt-1">No unread notifications</p>
+                    </div>
+                  ) : (
+                    alerts.slice(0, 10).map((alert) => (
+                      <button
+                        key={alert.id || alert._id}
+                        onClick={() => markAsRead(alert.id || alert._id)}
+                        className={cn(
+                          "w-full text-left px-4 py-3 border-b border-app-bg/50 hover:bg-app-bg/50 transition-colors",
+                          !alert.isRead && "bg-app-red/5"
+                        )}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div
+                            className={cn(
+                              "w-2 h-2 rounded-full mt-1.5 flex-shrink-0",
+                              alert.severity === "critical" ? "bg-app-red" :
+                              alert.severity === "high" ? "bg-orange-500" :
+                              alert.severity === "medium" ? "bg-yellow-500" : "bg-green-500"
+                            )}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-app-jet truncate">{alert.title}</p>
+                            {/* We use `tick` implicitly in the component to trigger re-renders, formatRelativeTime recalculates */}
+                            <p className="text-xs text-app-jet/50 mt-0.5">{alert.childName} · {formatRelativeTime(alert.timestamp)}</p>
+                          </div>
+                        </div>
+                      </button>
+                    ))
+                  )}
                 </div>
                 <div className="p-3">
                   <Link
@@ -144,7 +184,7 @@ export function Topbar({ title = "Dashboard" }: TopbarProps) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-2xl border border-app-green/40 overflow-hidden py-1"
+                className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-2xl border border-app-green overflow-hidden py-1"
               >
                 <div className="py-1">
                   <Link

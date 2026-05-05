@@ -13,7 +13,6 @@ frontend/build/
 
 # Expo (Mobile)
 mobile/.expo/
-mobile/android/
 mobile/ios/
 mobile/dist/
 mobile/*.jks
@@ -45,3 +44,4 @@ yarn-error.log*
 .idea/
 *.swp
 *.swo
+backend/src/config/firebase-service-account.json

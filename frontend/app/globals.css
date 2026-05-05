@@ -1,31 +1,39 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+/* Fonts are loaded via next/font/google in layout.tsx (Outfit + Plus Jakarta Sans) */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: 100 33% 97%;
-  --foreground: 154 18% 13%;
+  /* Premium SaaS palette — Stripe Violet / Emerald Cyan / Deep Navy */
+  --background: 210 40% 98%;          /* #F8FAFC — Slate 50 */
+  --foreground: 224 71% 8%;           /* #0A0F1E — Deep Navy */
   --card: 0 0% 100%;
-  --card-foreground: 154 18% 13%;
+  --card-foreground: 224 71% 8%;
   --popover: 0 0% 100%;
-  --popover-foreground: 154 18% 13%;
-  --primary: 355 65% 52%;
+  --popover-foreground: 224 71% 8%;
+  --primary: 243 100% 67%;            /* #635BFF — Stripe Violet */
   --primary-foreground: 0 0% 100%;
-  --secondary: 94 50% 83%;
-  --secondary-foreground: 154 18% 13%;
-  --muted: 80 45% 93%;
-  --muted-foreground: 154 10% 40%;
-  --accent: 10 65% 73%;
-  --accent-foreground: 154 18% 13%;
-  --destructive: 355 65% 52%;
+  --secondary: 164 100% 42%;          /* #00D4AA — Emerald Cyan */
+  --secondary-foreground: 224 71% 8%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 164 100% 42%;             /* #00D4AA — Emerald Cyan */
+  --accent-foreground: 224 71% 8%;
+  --destructive: 0 84% 60%;           /* Red 500 — danger states */
   --destructive-foreground: 0 0% 100%;
-  --border: 80 30% 87%;
-  --input: 80 30% 87%;
-  --ring: 355 65% 52%;
+  --border: 214 32% 91%;              /* Slate 200 — #E2E8F0 */
+  --input: 214 32% 91%;
+  --ring: 243 100% 67%;               /* Stripe Violet */
   --radius: 0.75rem;
-  --font-inter: "Inter", system-ui, sans-serif;
+  --font-display: "Outfit", system-ui, sans-serif;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 * {
@@ -41,31 +49,31 @@ body {
 }
 
 body {
-  background-color: #eef4d4;
-  color: #1c2826;
-  font-family: var(--font-inter);
+  background-color: #F8FAFC;
+  color: #0A0F1E;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar — subtle and professional */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #daefb3;
+  background: #F1F5F9;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1c2826;
+  background: #CBD5E1;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #d64550;
+  background: #94A3B8;
 }
 
 /* Shimmer animation for loading skeletons */
@@ -81,20 +89,39 @@ body {
 .skeleton-shimmer {
   background: linear-gradient(
     90deg,
-    #daefb3 25%,
-    #eef4d4 50%,
-    #daefb3 75%
+    #E2E8F0 25%,
+    #F8FAFC 50%,
+    #E2E8F0 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
-/* Glass card effect */
+/* Glass card effect — neutral tones */
 .glass-card {
-  background: rgba(238, 244, 212, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(218, 239, 179, 0.6);
+  background: rgba(248, 250, 252, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Premium glow card on hover */
+.glow-card {
+  position: relative;
+}
+.glow-card::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(99,91,255,0.15), rgba(0,212,170,0.15));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(12px);
+}
+.glow-card:hover::after {
+  opacity: 1;
 }
 
 /* Smooth transition defaults */

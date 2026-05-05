@@ -2,21 +2,23 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Menu, X } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "How it Works", href: "#how-it-works" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "About", href: "#about" },
+  { label: "Features", href: "/#features" },
+  { label: "How it Works", href: "/#how-it-works" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
@@ -37,7 +39,7 @@ export function Navbar() {
             : "bg-transparent"
         )}
       >
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 rounded-xl bg-app-red flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -50,15 +52,29 @@ export function Navbar() {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium transition-colors hover:text-app-salmon text-white/80"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = !link.href.startsWith("/#") && pathname === link.href;
+              return link.href.startsWith("/#") ? (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm font-medium transition-colors hover:text-app-salmon text-white/80"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-app-salmon",
+                    isActive ? "text-white font-semibold" : "text-white/80"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
           {/* CTA */}
@@ -94,17 +110,32 @@ export function Navbar() {
             transition={{ duration: 0.2 }}
             className="fixed top-16 left-0 right-0 z-40 bg-app-jet/95 backdrop-blur-md border-t border-white/10 md:hidden"
           >
-            <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="text-white/80 font-medium py-2 hover:text-app-salmon transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
+            <div className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 py-4 flex flex-col gap-4">
+              {navLinks.map((link) => {
+                const isActive = !link.href.startsWith("/#") && pathname === link.href;
+                return link.href.startsWith("/#") ? (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="text-white/80 font-medium py-2 hover:text-app-salmon transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      "font-medium py-2 transition-colors hover:text-app-salmon",
+                      isActive ? "text-white" : "text-white/80"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
               <div className="flex gap-3 pt-2 border-t border-white/10">
                 <Link href="/login" className="flex-1">
                   <Button variant="outline" className="w-full border-white/20 text-white">Sign In</Button>

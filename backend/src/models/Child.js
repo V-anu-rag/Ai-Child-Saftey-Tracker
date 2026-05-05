@@ -63,6 +63,12 @@ const childSchema = new mongoose.Schema(
       unique: true,
       sparse: true,
     },
+    // Persistent state for geofence transitions (ZoneID -> IsInside)
+    geofenceState: {
+      type: Map,
+      of: Boolean,
+      default: {},
+    },
   },
   {
     timestamps: true,

@@ -39,20 +39,22 @@ const checkGeofences = async (childId, parentId, lat, lng) => {
 
   if (!geofences.length) return;
 
-  const child = await Child.findById(childId).select("name safeStatus");
+  const child = await Child.findById(childId).select("name safeStatus geofenceState");
   if (!child) return;
 
   const io = getIO();
-  const nowWindow = new Date(Date.now() - 5 * 60 * 1000); // 5 min debounce window
+  let stateChanged = false;
 
   for (const zone of geofences) {
     const distance = haversineDistance(lat, lng, zone.center.lat, zone.center.lng);
     const isInside = distance <= zone.radius;
-    const wasInside = child._geofenceState?.[zone._id.toString()] ?? null;
+    const wasInside = child.geofenceState.get(zone._id.toString());
 
-    // Track per-zone state (in-memory; good enough for MVP)
-    if (!child._geofenceState) child._geofenceState = {};
-    child._geofenceState[zone._id.toString()] = isInside;
+    // Update state if it changed or was unknown
+    if (wasInside !== isInside) {
+      child.geofenceState.set(zone._id.toString(), isInside);
+      stateChanged = true;
+    }
 
     let shouldAlert = false;
     let alertType = null;
@@ -60,6 +62,7 @@ const checkGeofences = async (childId, parentId, lat, lng) => {
     let title = "";
     let message = "";
 
+    // Transition Logic: Only alert on CROSSING the boundary
     if (wasInside === true && !isInside && zone.alertOnExit) {
       // Exited zone
       shouldAlert = true;
@@ -95,7 +98,7 @@ const checkGeofences = async (childId, parentId, lat, lng) => {
 
       // Update child safe status
       const newStatus = alertType === "geofence_exit" ? "warning" : "safe";
-      await Child.findByIdAndUpdate(childId, { safeStatus: newStatus });
+      child.safeStatus = newStatus;
 
       // Emit to parent's socket room
       if (io) {
@@ -106,9 +109,13 @@ const checkGeofences = async (childId, parentId, lat, lng) => {
         });
       }
     } catch (err) {
-      // Ignore duplicate key error (deduplication working as expected)
       if (err.code !== 11000) console.error("Geofence alert error:", err.message);
     }
+  }
+
+  // Save state changes once at the end
+  if (stateChanged) {
+    await child.save();
   }
 };
 

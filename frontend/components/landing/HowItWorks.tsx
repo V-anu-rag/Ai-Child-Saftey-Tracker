@@ -37,7 +37,7 @@ const steps = [
 export function HowItWorks() {
   return (
     <section id="how-it-works" className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -58,8 +58,6 @@ export function HowItWorks() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-          {/* Connector line */}
-          <div className="hidden lg:block absolute top-16 left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-app-green via-app-salmon to-app-red" />
 
           {steps.map((step, i) => (
             <motion.div

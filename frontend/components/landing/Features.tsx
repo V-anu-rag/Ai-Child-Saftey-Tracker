@@ -10,54 +10,54 @@ const features = [
     description:
       "Know exactly where your child is at any moment with precise, live GPS updates every 30 seconds.",
     color: "bg-app-red/10 text-app-red",
-    border: "border-app-red/20",
+    border: "border-app-green",
   },
   {
     icon: Bell,
     title: "Instant SOS Alerts",
     description:
       "Your child can send an emergency SOS with one tap. You'll be notified instantly with their location.",
-    color: "bg-app-salmon/20 text-app-salmon",
-    border: "border-app-salmon/30",
+    color: "bg-red-50 text-red-500",
+    border: "border-app-green",
   },
   {
     icon: Shield,
     title: "Smart Geofencing",
     description:
       "Set virtual safe zones around home, school, or any location. Get alerted when boundaries are crossed.",
-    color: "bg-app-green/40 text-green-700",
-    border: "border-app-green/50",
+    color: "bg-emerald-50 text-emerald-600",
+    border: "border-app-green",
   },
   {
     icon: Activity,
     title: "Activity Monitoring",
     description:
       "Review a full timeline of your child's movements and device activities throughout the day.",
-    color: "bg-purple-100 text-purple-600",
-    border: "border-purple-200",
+    color: "bg-amber-50 text-amber-600",
+    border: "border-app-green",
   },
   {
     icon: Smartphone,
     title: "Multi-Device Support",
     description:
       "Monitor multiple children across different devices — iOS, Android, and tablets all supported.",
-    color: "bg-blue-100 text-blue-600",
-    border: "border-blue-200",
+    color: "bg-sky-50 text-sky-600",
+    border: "border-app-green",
   },
   {
     icon: Lock,
     title: "Privacy First",
     description:
       "End-to-end encrypted data with full COPPA compliance. Your family's data stays private, always.",
-    color: "bg-app-jet/10 text-app-jet",
-    border: "border-app-jet/20",
+    color: "bg-app-jet/5 text-app-jet",
+    border: "border-app-green",
   },
 ];
 
 export function Features() {
   return (
     <section id="features" className="py-24 bg-app-bg">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -45,10 +45,76 @@ function LiveDot() {
   );
 }
 
+function LocationAddress({ lat, lng }: { lat: number; lng: number }) {
+  const [address, setAddress] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!lat || !lng) return;
+    const cacheKey = `geo_v2_${lat.toFixed(3)}_${lng.toFixed(3)}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      setAddress(cached);
+      return;
+    }
+
+    const controller = new AbortController();
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16`, { signal: controller.signal })
+      .then(res => res.json())
+      .then(data => {
+        if (data?.address) {
+          const addr = data.address;
+          const road = addr.road || addr.pedestrian || addr.street;
+          const neighborhood = addr.neighbourhood || addr.suburb || addr.city_district;
+          const city = addr.city || addr.town || addr.village || addr.county || addr.state_district || addr.municipality;
+          const state = addr.state || addr.country;
+
+          const parts = [];
+          if (road) parts.push(road);
+          
+          if (neighborhood && !parts.includes(neighborhood)) {
+            parts.push(neighborhood);
+          }
+          if (city && !parts.includes(city)) {
+            parts.push(city);
+          }
+          if (state && !parts.includes(state)) {
+            parts.push(state);
+          }
+
+          const locName = parts.length > 0 
+            ? `Near ${parts.join(", ")}` 
+            : data.display_name.split(",").slice(0, 3).join(", ");
+            
+          setAddress(locName);
+          sessionStorage.setItem(cacheKey, locName);
+        }
+      })
+      .catch(() => {});
+    return () => controller.abort();
+  }, [lat, lng]);
+
+  return (
+    <div className="flex flex-col gap-0.5 mt-1.5 bg-app-bg/50 p-2 rounded-lg border border-app-green/10">
+      {address && (
+        <span className="text-xs font-semibold text-app-jet/80">
+          📍 {address}
+        </span>
+      )}
+      <div className="flex items-center gap-1">
+        <MapPin className="w-3 h-3 text-app-jet/40" />
+        <span className="text-[10px] text-app-jet/50 font-mono">
+          {lat.toFixed(5)}, {lng.toFixed(5)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function ActivityPage() {
   const { children, isLoading: childrenLoading } = useChildren();
   const [selectedChild, setSelectedChild] = useState<string>("all");
   const [activities, setActivities] = useState<any[]>([]);
+  const [displayLimit, setDisplayLimit] = useState(6);
   const [loading, setLoading] = useState(true);
   const [geofences, setGeofences] = useState<any[]>([]);
   const [history, setHistory] = useState<any[]>([]);
@@ -59,6 +125,7 @@ export default function ActivityPage() {
       const childId = selectedChild === "all" ? "all" : selectedChild;
       const res = await activityAPI.get(childId) as any;
       setActivities(res.timeline || []);
+      setDisplayLimit(6);
     } catch (err) {
       console.error("Failed to fetch activities:", err);
     } finally {
@@ -155,6 +222,20 @@ export default function ActivityPage() {
       </div>
 
       <div className="grid lg:grid-cols-5 gap-6">
+        {/* Map View */}
+        <div className="lg:col-span-3">
+          <SectionWrapper title="Location" noPadding>
+            <div className="h-[400px] lg:h-[450px] w-full">
+              <LiveMap 
+                childrenData={children as any[]} 
+                selectedChildId={selectedChild} 
+                geofences={geofences}
+                history={history}
+              />
+            </div>
+          </SectionWrapper>
+        </div>
+
         {/* Activity Feed */}
         <div className="lg:col-span-2">
           <SectionWrapper title="Activity Feed" noPadding>
@@ -174,7 +255,7 @@ export default function ActivityPage() {
                   <div className="absolute left-6 top-3 bottom-3 w-0.5 bg-app-green/30" />
                   <div className="space-y-4">
                     <AnimatePresence mode="popLayout">
-                      {activities.map((item, i) => {
+                      {activities.slice(0, displayLimit).map((item, i) => {
                         const typeKey = item.type === "alert" ? item.alertType || "alert" : item.type;
                         const cfg = activityIcons[typeKey] || { icon: Activity, color: "bg-gray-100 text-gray-600" };
                         const Icon = cfg.icon;
@@ -201,13 +282,11 @@ export default function ActivityPage() {
                                 </span>
                               </div>
                               <p className="text-xs text-app-jet/60 mt-0.5">{item.message || item.description}</p>
-                              {item.coords && (
-                                <div className="flex items-center gap-1 mt-1">
-                                  <MapPin className="w-3 h-3 text-app-jet/30" />
-                                  <span className="text-xs text-app-jet/40">
-                                    {item.coords.lat.toFixed(4)}, {item.coords.lng.toFixed(4)}
-                                  </span>
-                                </div>
+                              {(item.coords || item.location) && (
+                                <LocationAddress 
+                                  lat={item.coords?.lat || item.location?.lat} 
+                                  lng={item.coords?.lng || item.location?.lng} 
+                                />
                               )}
                             </div>
                           </motion.div>
@@ -215,22 +294,20 @@ export default function ActivityPage() {
                       })}
                     </AnimatePresence>
                   </div>
+                  {displayLimit < activities.length && (
+                    <div className="mt-6 flex justify-center pb-2 relative z-20">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setDisplayLimit(prev => prev + 6)}
+                        className="bg-white hover:bg-app-bg"
+                      >
+                        Load More
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
-          </SectionWrapper>
-        </div>
-
-        {/* Map View */}
-        <div className="lg:col-span-3">
-          <SectionWrapper title="Live Tracking" noPadding>
-            <div className="h-[600px] w-full">
-              <LiveMap 
-                childrenData={children as any[]} 
-                selectedChildId={selectedChild} 
-                geofences={geofences}
-                history={history}
-              />
             </div>
           </SectionWrapper>
         </div>

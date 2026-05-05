@@ -39,7 +39,7 @@ export function AlertsPreview({ alerts, maxItems = 5 }: AlertsPreviewProps) {
 
   if (shown.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
+      <div className="flex flex-col items-center justify-center py-3 text-center">
         <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center mb-3">
           <AlertTriangle className="w-7 h-7 text-green-600" />
         </div>
@@ -61,7 +61,7 @@ export function AlertsPreview({ alerts, maxItems = 5 }: AlertsPreviewProps) {
             transition={{ delay: i * 0.06 }}
             className={cn(
               "flex items-center gap-4 p-3 rounded-xl border transition-colors hover:bg-app-bg/50 cursor-pointer",
-              !alert.isRead ? "bg-app-green/20 border-app-green/40" : "bg-transparent border-transparent hover:border-app-green/20"
+              !alert.isRead ? "bg-app-red/5 border-app-red/20" : "bg-transparent border-transparent hover:border-app-green"
             )}
           >
             <div className={cn("p-2 rounded-xl flex-shrink-0 border", severityStyles[alert.severity])}>

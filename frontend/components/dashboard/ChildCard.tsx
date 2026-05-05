@@ -87,14 +87,14 @@ export function ChildCard({ child, delay = 0 }: ChildCardProps) {
     >
       <Link
         href={`/children/${childId}`}
-        className="block rounded-2xl bg-white border border-app-green/40 p-5 shadow-sm hover:shadow-lg transition-shadow group relative"
+        className="block rounded-2xl bg-white border border-app-green p-5 shadow-sm hover:shadow-lg hover:border-app-red/30 transition-all group relative"
       >
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             {/* Avatar */}
             <div className="relative">
-              <div className="w-12 h-12 rounded-2xl bg-app-bg overflow-hidden border-2 border-app-green/40 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-app-bg overflow-hidden border-2 border-app-green flex items-center justify-center">
                 {child.avatar ? (
                   <Image
                     src={child.avatar}
@@ -170,40 +170,38 @@ export function ChildCard({ child, delay = 0 }: ChildCardProps) {
           </div>
         </div>
 
-        {/* Regenerate Pairing Code — shown when child is offline */}
-        {!child.isOnline && (
-          <AnimatePresence>
-            {newCode ? (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                onClick={(e) => e.preventDefault()}
-                className="mb-4 bg-amber-50 border border-amber-200 rounded-xl p-3"
-              >
-                <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-1">New Pairing Code</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-black text-app-jet tracking-[0.15em] font-mono">{newCode}</span>
-                  <button
-                    onClick={handleCopyCode}
-                    className="flex items-center gap-1 text-xs font-semibold text-amber-600 hover:text-amber-800 transition-colors"
-                  >
-                    {copied ? <><Check className="w-3.5 h-3.5" /> Copied</> : <><Copy className="w-3.5 h-3.5" /> Copy</>}
-                  </button>
-                </div>
-              </motion.div>
-            ) : (
-              <button
-                onClick={handleRegenerate}
-                disabled={isRegenerating}
-                className="flex items-center justify-center gap-2 w-full mb-4 py-2.5 px-4 rounded-xl bg-amber-50 border border-amber-200 text-xs font-bold text-amber-700 hover:bg-amber-100 transition-colors disabled:opacity-50"
-              >
-                <RefreshCw className={cn("w-3.5 h-3.5", isRegenerating && "animate-spin")} />
-                {isRegenerating ? "Generating..." : "Regenerate Pairing Code"}
-              </button>
-            )}
-          </AnimatePresence>
-        )}
+        {/* Regenerate Pairing Code — Always Visible */}
+        <AnimatePresence>
+          {newCode ? (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              onClick={(e) => e.preventDefault()}
+              className="mb-4 bg-amber-50 border border-amber-200 rounded-xl p-3"
+            >
+              <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-1">New Pairing Code</p>
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-black text-app-jet tracking-[0.15em] font-mono">{newCode}</span>
+                <button
+                  onClick={handleCopyCode}
+                  className="flex items-center gap-1 text-xs font-semibold text-amber-600 hover:text-amber-800 transition-colors"
+                >
+                  {copied ? <><Check className="w-3.5 h-3.5" /> Copied</> : <><Copy className="w-3.5 h-3.5" /> Copy</>}
+                </button>
+              </div>
+            </motion.div>
+          ) : (
+            <button
+              onClick={handleRegenerate}
+              disabled={isRegenerating}
+              className="flex items-center justify-center gap-2 w-full mb-4 py-2.5 px-4 rounded-xl bg-amber-50 border border-amber-200 text-xs font-bold text-amber-700 hover:bg-amber-100 transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={cn("w-3.5 h-3.5", isRegenerating && "animate-spin")} />
+              {isRegenerating ? "Generating..." : "Regenerate Pairing Code"}
+            </button>
+          )}
+        </AnimatePresence>
 
         {/* Footer */}
         <div className="flex items-center justify-between">

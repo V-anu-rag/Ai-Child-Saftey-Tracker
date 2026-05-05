@@ -29,13 +29,13 @@ export function SectionWrapper({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       className={cn(
-        "rounded-2xl bg-white border p-2 border-app-green/40 shadow-sm",
-        !noPadding && "p-6",
+        "rounded-2xl bg-white border border-app-green shadow-sm",
+        noPadding ? "p-0" : "p-6",
         className
       )}
     >
       {(title || action) && (
-        <div className="flex items-center justify-between mb-5">
+        <div className={cn("flex items-center justify-between p-2 sm:p-4")}>
           <div className="flex items-start gap-3">
             {Icon && <div className="w-10 h-10 rounded-xl bg-app-bg flex items-center justify-center flex-shrink-0 mt-0.5"><Icon className="w-5 h-5 text-app-jet/40" /></div>}
             <div>

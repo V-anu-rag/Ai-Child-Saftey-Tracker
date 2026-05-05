@@ -69,14 +69,14 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PairingModal isOpen={isPairingOpen} onClose={() => setIsPairingOpen(false)} />
       
       {/* Welcome */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="flex items-center justify-between flex-wrap gap-4 rounded-2xl bg-white border border-app-green p-5 shadow-sm">
         <div>
           <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-extrabold text-app-jet">
+            <h2 className="text-xl font-extrabold text-app-jet font-display">
               {greeting()}, {user?.name?.split(" ")[0] || "Parent"} 👋
             </h2>
             {/* Live indicator */}
@@ -119,7 +119,7 @@ export default function DashboardPage() {
       <StatsCards childrenData={children} unreadAlerts={unreadCount} />
 
       {/* Main grid */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-4">
         {/* Children */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
@@ -132,7 +132,7 @@ export default function DashboardPage() {
               {[1, 2].map((i) => <CardSkeleton key={i} />)}
             </div>
           ) : children.length === 0 ? (
-            <div className="rounded-2xl border-2 border-dashed border-app-green/40 p-12 text-center">
+            <div className="rounded-2xl border-2 border-dashed border-app-green p-12 text-center">
               <p className="font-semibold text-app-jet/60">No children added yet</p>
               <p className="text-sm text-app-jet/40 mt-1">Add your first child to start tracking</p>
             </div>
@@ -146,7 +146,7 @@ export default function DashboardPage() {
                 onClick={() => setIsPairingOpen(true)}
                 className="rounded-2xl border-2 border-dashed border-app-red/50 p-5 flex flex-col items-center justify-center gap-2 text-center hover:border-app-red/40 hover:bg-app-red/5 transition-all cursor-pointer min-h-[160px]"
               >
-                <div className="w-10 h-10 rounded-xl bg-app-red/40 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-app-red/10 flex items-center justify-center">
                   <Plus className="w-5 h-5 text-app-jet/60" />
                 </div>
                 <p className="text-sm font-semibold text-app-jet/60">Add Another Child</p>
@@ -157,7 +157,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Alerts */}
-        <div>
+        <div className="sm:mt-11">
           <SectionWrapper
             title="Recent Alerts"
             description={`${unreadCount} unread`}

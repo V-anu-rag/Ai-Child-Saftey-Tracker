@@ -19,6 +19,7 @@ interface AlertCardProps {
   delay?: number;
   onDismiss?: (id: string) => void;
   onResolve?: (id: string) => void;
+  onMarkRead?: (id: string) => void;
 }
 
 const iconMap = {
@@ -57,7 +58,7 @@ const severityConfig = {
   },
 };
 
-export function AlertCard({ alert, delay = 0, onDismiss, onResolve }: AlertCardProps) {
+export function AlertCard({ alert, delay = 0, onDismiss, onResolve, onMarkRead }: AlertCardProps) {
   const Icon = iconMap[alert.type] || Bell;
   const cfg = severityConfig[alert.severity];
   const isResolved = alert.status === "resolved";
@@ -70,14 +71,14 @@ export function AlertCard({ alert, delay = 0, onDismiss, onResolve }: AlertCardP
       transition={{ duration: 0.3, delay }}
       className={cn(
         "relative rounded-2xl bg-white border p-4 shadow-sm hover:shadow-md transition-shadow overflow-hidden group",
-        !alert.isRead ? "border-app-green/50" : "border-app-green/20",
+        !alert.isRead ? "border-app-red/30" : "border-app-green",
         isResolved && "opacity-60 bg-gray-50"
       )}
     >
       {/* Severity left bar */}
       <div className={cn("absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl", isResolved ? "bg-gray-300" : cfg.bar)} />
 
-      <div className="flex items-start gap-4 pl-2">
+      <div className="flex items-start gap-3 sm:gap-4 pl-1 sm:pl-2">
         {/* Icon */}
         <div className={cn("p-2.5 rounded-xl flex-shrink-0 border", cfg.icon)}>
           <Icon className="w-5 h-5" />
@@ -85,7 +86,7 @@ export function AlertCard({ alert, delay = 0, onDismiss, onResolve }: AlertCardP
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-sm font-bold text-app-jet">{alert.title}</h3>
@@ -101,7 +102,17 @@ export function AlertCard({ alert, delay = 0, onDismiss, onResolve }: AlertCardP
               <p className="text-sm text-app-jet/60 mt-0.5">{alert.message || alert.description}</p>
             </div>
 
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity mt-2 sm:mt-0">
+              {!alert.isRead && onMarkRead && (
+                <button
+                  onClick={() => onMarkRead(alert.id || alert._id || "")}
+                  className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors"
+                  title="Mark as Read"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Read
+                </button>
+              )}
               {alert.type === "sos" && !isResolved && onResolve && (
                 <button
                   onClick={() => onResolve(alert.id || alert._id || "")}
@@ -124,7 +135,7 @@ export function AlertCard({ alert, delay = 0, onDismiss, onResolve }: AlertCardP
           </div>
 
           {/* Meta */}
-          <div className="flex items-center gap-4 mt-2 text-xs text-app-jet/40">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-[11px] sm:text-xs text-app-jet/40">
             <span className="font-medium text-app-jet/60">{alert.childName}</span>
             {alert.location && (
               <span className="flex items-center gap-1">

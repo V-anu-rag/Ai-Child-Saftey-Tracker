@@ -3,17 +3,37 @@
 import Link from "next/link";
 import { Shield, Twitter, Github, Linkedin } from "lucide-react";
 
-const links = {
-  Product: ["Features", "Pricing", "Changelog", "Roadmap"],
-  Company: ["About", "Blog", "Careers", "Press"],
-  Legal: ["Privacy Policy", "Terms of Service", "Cookie Policy", "COPPA"],
-  Support: ["Help Center", "Contact Us", "Status", "Community"],
+const links: Record<string, { label: string; href: string }[]> = {
+  Product: [
+    { label: "Features", href: "/#features" },
+    { label: "Pricing", href: "#" },
+    { label: "Changelog", href: "#" },
+    { label: "Roadmap", href: "#" },
+  ],
+  Company: [
+    { label: "About", href: "/about" },
+    { label: "Blog", href: "#" },
+    { label: "Careers", href: "#" },
+    { label: "Press", href: "#" },
+  ],
+  Legal: [
+    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms of Service", href: "#" },
+    { label: "Cookie Policy", href: "#" },
+    { label: "COPPA", href: "#" },
+  ],
+  Support: [
+    { label: "Help Center", href: "#" },
+    { label: "Contact Us", href: "/contact" },
+    { label: "Status", href: "#" },
+    { label: "Community", href: "#" },
+  ],
 };
 
 export function Footer() {
   return (
-    <footer className="bg-app-jet text-white">
-      <div className="max-w-7xl mx-auto px-6 py-16">
+    <footer className="bg-[#050810] text-white border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-8 md:px-16 lg:px-24 py-16">
         <div className="grid grid-cols-2 lg:grid-cols-6 gap-10 pb-10 border-b border-white/10">
           {/* Brand */}
           <div className="col-span-2">
@@ -48,13 +68,22 @@ export function Footer() {
               <h4 className="text-sm font-semibold text-white mb-4">{category}</h4>
               <ul className="space-y-2">
                 {items.map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="text-sm text-white/50 hover:text-white transition-colors"
-                    >
-                      {item}
-                    </a>
+                  <li key={item.label}>
+                    {item.href.startsWith("/") ? (
+                      <Link
+                        href={item.href}
+                        className="text-sm text-white/50 hover:text-white transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <a
+                        href={item.href}
+                        className="text-sm text-white/50 hover:text-white transition-colors"
+                      >
+                        {item.label}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

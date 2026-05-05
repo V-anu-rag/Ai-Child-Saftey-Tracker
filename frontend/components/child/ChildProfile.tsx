@@ -2,16 +2,37 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Battery, Wifi, WifiOff, School, Phone, MapPin, Calendar } from "lucide-react";
+import { Battery, Wifi, WifiOff, School, Phone, MapPin, Calendar, RefreshCcw, Key } from "lucide-react";
 import { Child } from "@/types";
 import { formatRelativeTime, cn } from "@/lib/utils";
 import { Button } from "@/components/common/Button";
+import { childrenAPI } from "@/lib/api";
+import { toast } from "sonner";
+import { useState } from "react";
 
 interface ChildProfileProps {
   child: Child;
 }
 
-export function ChildProfile({ child }: ChildProfileProps) {
+export function ChildProfile({ child: initialChild }: ChildProfileProps) {
+  const [child, setChild] = useState(initialChild);
+  const [isRegenerating, setIsRegenerating] = useState(false);
+
+  const handleRegenerateCode = async () => {
+    try {
+      setIsRegenerating(true);
+      const res = await childrenAPI.regenerateCode(child.id) as any;
+      if (res.success) {
+        setChild({ ...child, pairingCode: res.pairingCode });
+        toast.success("Pairing code regenerated successfully");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to regenerate code");
+    } finally {
+      setIsRegenerating(false);
+    }
+  };
+
   const statusMap = {
     safe: "bg-green-100 text-green-700 border-green-200",
     warning: "bg-yellow-100 text-yellow-700 border-yellow-200",
@@ -130,6 +151,41 @@ export function ChildProfile({ child }: ChildProfileProps) {
             <p className="text-sm font-semibold text-app-jet">{formatRelativeTime(child.location.timestamp)}</p>
           </div>
         </div>
+      </div>
+
+      {/* Pairing Status / Code - Always Visible */}
+      <div className="mt-5 p-4 rounded-xl bg-app-salmon/5 border border-app-salmon/20">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-app-salmon/10 flex items-center justify-center">
+              <Key className="w-5 h-5 text-app-salmon" />
+            </div>
+            <div>
+              <p className="text-xs text-app-jet/50 font-bold uppercase tracking-wider">Pairing Code</p>
+              <p className="text-xl font-black text-app-jet tracking-widest">{child.pairingCode || "--- ---"}</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2"
+              onClick={handleRegenerateCode}
+              loading={isRegenerating}
+            >
+              <RefreshCcw className={cn("w-4 h-4", isRegenerating && "animate-spin")} />
+              Regenerate
+            </Button>
+            {child.isPaired && (
+              <span className="text-[10px] text-green-600 font-bold uppercase tracking-tighter italic">Currently Paired</span>
+            )}
+          </div>
+        </div>
+        <p className="text-xs text-app-jet/40 mt-2 italic">
+          {child.isPaired 
+            ? "Regenerating will allow you to pair a new device for this child profile." 
+            : "Enter this code on the child's device to start tracking."}
+        </p>
       </div>
 
       {/* Actions */}

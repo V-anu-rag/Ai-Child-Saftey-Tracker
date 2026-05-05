@@ -19,14 +19,14 @@ const base =
 
 const variants = {
   primary:
-    "bg-app-red text-white hover:bg-app-red/90 shadow-md hover:shadow-lg hover:shadow-app-red/20",
+    "bg-app-red text-white hover:bg-app-red/90 shadow-md hover:shadow-lg hover:shadow-app-red/25",
   secondary:
-    "bg-app-green text-app-jet hover:bg-app-green/80 shadow-sm hover:shadow-md",
-  ghost: "bg-transparent text-app-jet hover:bg-app-green/40",
+    "bg-app-red/10 text-app-red border border-app-red/20 hover:bg-app-red/15 hover:border-app-red/40 shadow-sm",
+  ghost: "bg-transparent text-app-jet hover:bg-app-jet/5 hover:text-app-red",
   danger:
-    "bg-app-red/10 text-app-red border border-app-red/30 hover:bg-app-red hover:text-white",
+    "bg-red-50 text-red-600 border border-red-200 hover:bg-red-500 hover:text-white hover:border-red-500",
   outline:
-    "bg-transparent text-app-jet border border-app-jet/20 hover:border-app-jet/50 hover:bg-app-jet/5",
+    "bg-transparent text-app-jet border border-app-green hover:border-app-red/40 hover:text-app-red hover:bg-app-red/5",
 };
 
 const sizes = {

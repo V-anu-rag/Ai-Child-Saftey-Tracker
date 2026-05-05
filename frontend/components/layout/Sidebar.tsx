@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,6 +28,14 @@ interface SidebarProps {
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const { unreadCount } = useSocket();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -44,11 +52,32 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   ];
 
   return (
-    <motion.aside
-      animate={{ width: collapsed ? 72 : 240 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="relative flex flex-col h-screen bg-app-jet text-white flex-shrink-0 overflow-hidden z-10"
-    >
+    <>
+      <AnimatePresence>
+        {isMobile && !collapsed && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onToggle}
+            className="fixed inset-0 bg-app-jet/40 backdrop-blur-sm z-40 md:hidden"
+          />
+        )}
+      </AnimatePresence>
+      <motion.aside
+        initial={false}
+        animate={
+          isMobile
+            ? { x: collapsed ? "-100%" : "0%", width: 260 }
+            : { x: "0%", width: collapsed ? 72 : 220 }
+        }
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className={cn(
+          "flex flex-col h-screen bg-app-jet text-white flex-shrink-0 overflow-hidden",
+          isMobile ? "fixed top-0 left-0 bottom-0 z-50 shadow-2xl" : "relative z-10"
+        )}
+      >
       {/* Logo */}
       <div className="h-16 flex items-center px-4 border-b border-white/10 flex-shrink-0">
         <Link href="/dashboard" className="flex items-center gap-3 min-w-0">
@@ -79,8 +108,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => {
+                if (isMobile) onToggle();
+              }}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative",
+                "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group relative",
                 active
                   ? "bg-app-red text-white shadow-md shadow-app-red/20"
                   : "text-white/60 hover:bg-white/10 hover:text-white"
@@ -123,7 +155,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <div className="border-t border-white/10 p-2">
         <Link
           href="/login"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 hover:bg-white/10 hover:text-white transition-all group relative"
+          className="flex items-center gap-3 px-3 py-2 rounded-xl text-white/60 hover:bg-white/10 hover:text-white transition-all group relative"
         >
           <LogOut className="w-5 h-5 flex-shrink-0" />
           <AnimatePresence>
@@ -149,7 +181,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Toggle button */}
       <button
         onClick={onToggle}
-        className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-6 bg-app-jet border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-app-red transition-colors z-20 shadow-md"
+        className={cn(
+          "absolute right-0 top-1/2 -translate-y-1/2 w-6 h-6 bg-app-jet border border-white/20 rounded-full items-center justify-center text-white hover:bg-app-red transition-colors z-20 shadow-md",
+          isMobile ? "hidden" : "flex"
+        )}
       >
         {collapsed ? (
           <ChevronRight className="w-3.5 h-3.5" />
@@ -158,5 +193,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         )}
       </button>
     </motion.aside>
+    </>
   );
 }

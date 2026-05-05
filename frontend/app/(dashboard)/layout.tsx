@@ -28,6 +28,13 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   useEffect(() => {
+    // Default to collapsed on mobile
+    if (window.innerWidth < 768) {
+      setCollapsed(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.replace("/login");
     }
@@ -50,8 +57,8 @@ export default function DashboardLayout({
       <SOSAlertModal />
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-        <Topbar title={title} />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <Topbar title={title} onToggleSidebar={() => setCollapsed(!collapsed)} />
+        <main className="flex-1 overflow-y-auto p-5">{children}</main>
       </div>
     </div>
   );

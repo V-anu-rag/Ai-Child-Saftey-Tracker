@@ -36,6 +36,8 @@ export interface Child {
   safeStatus: "safe" | "warning" | "alert";
   school: string;
   grade: string;
+  isPaired: boolean;
+  pairingCode?: string;
 }
 
 export interface Alert {
