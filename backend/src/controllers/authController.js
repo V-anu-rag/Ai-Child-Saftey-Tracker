@@ -17,14 +17,14 @@ exports.signup = async (req, res, next) => {
       });
     }
 
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, fcmToken } = req.body;
 
     const existing = await User.findOne({ email });
     if (existing) {
       return next(new AppError("An account with this email already exists.", 409));
     }
 
-    const user = await User.create({ name, email, password, role: role || "parent" });
+    const user = await User.create({ name, email, password, role: role || "parent", fcmTokens: fcmToken ? [fcmToken] : [] });
     const token = signToken(user._id);
 
     res.status(201).json({
@@ -51,7 +51,7 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    const { email, password } = req.body;
+    const { email, password, fcmToken } = req.body;
 
     // Explicitly select password since it's excluded by default
     const user = await User.findOne({ email }).select("+password");
@@ -68,8 +68,11 @@ exports.login = async (req, res, next) => {
       return next(new AppError("Your account has been deactivated.", 403));
     }
 
-    // Update lastSeen
+    // Update lastSeen and FCM token
     user.lastSeen = new Date();
+    if (fcmToken && !user.fcmTokens.includes(fcmToken)) {
+      user.fcmTokens.push(fcmToken);
+    }
     await user.save({ validateBeforeSave: false });
 
     const token = signToken(user._id);
@@ -122,6 +125,24 @@ exports.updateMe = async (req, res, next) => {
       message: "Profile updated successfully.",
       user: user.toSafeObject(),
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * PATCH /api/auth/fcm-token
+ */
+exports.registerFcmToken = async (req, res, next) => {
+  try {
+    const { fcmToken } = req.body;
+    if (!fcmToken) return next(new AppError("FCM Token is required", 400));
+
+    await User.findByIdAndUpdate(req.user._id, {
+      $addToSet: { fcmTokens: fcmToken }
+    });
+
+    res.json({ success: true, message: "FCM Token registered" });
   } catch (err) {
     next(err);
   }

@@ -52,10 +52,10 @@ api.interceptors.response.use(
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 export const authAPI = {
-  login: (email: string, password: string) =>
-    api.post("/auth/login", { email, password }),
-  signup: (name: string, email: string, password: string, role: string) =>
-    api.post("/auth/signup", { name, email, password, role }),
+  login: (email: string, password: string, fcmToken?: string) =>
+    api.post("/auth/login", { email, password, fcmToken }),
+  signup: (name: string, email: string, password: string, role: string, fcmToken?: string) =>
+    api.post("/auth/signup", { name, email, password, role, fcmToken }),
   getMe: () => api.get("/auth/me"),
   updateMe: (data: Record<string, string>) => api.patch("/auth/update-me", data),
 };

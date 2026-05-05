@@ -68,14 +68,25 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     const onConnect = () => setIsConnected(true);
     const onDisconnect = () => setIsConnected(false);
     const onAlert = (alert: any) => {
-      console.log("🚨 Global SOS Received:", alert);
+      console.log("🚨 Global Alert Received:", alert);
       setLatestAlert(alert);
       setUnreadCount((prev) => prev + 1);
+    };
+
+    const onResolve = (data: any) => {
+      console.log("✅ SOS Resolved remotely:", data);
+      setLatestAlert((prev: any) => {
+        if (prev && (prev._id === data.alertId || prev.id === data.alertId)) {
+          return null;
+        }
+        return prev;
+      });
     };
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("alert-received", onAlert);
+    socket.on("alert-resolved", onResolve);
 
     if (socket.connected) setIsConnected(true);
 
@@ -83,6 +94,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("alert-received", onAlert);
+      socket.off("alert-resolved", onResolve);
     };
   }, [isAuthenticated, token]);
 

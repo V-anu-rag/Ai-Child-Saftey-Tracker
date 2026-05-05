@@ -41,6 +41,7 @@ export default function LoginScreen({ navigation }: any) {
 
     try {
       setLoading(true);
+      // In a real app, you'd get the token via Notifications.getDevicePushTokenAsync()
       await login(email.trim().toLowerCase(), password);
     } catch (err: any) {
       Alert.alert("Login Failed", err.message || "Invalid credentials.");

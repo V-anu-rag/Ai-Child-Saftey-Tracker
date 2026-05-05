@@ -29,6 +29,7 @@ interface AuthContextType {
     email: string,
     password: string,
     role: string,
+    fcmToken?: string,
   ) => Promise<void>;
   updateUser: (data: Record<string, string>) => Promise<void>;
   completePairing: (user: User, token: string) => Promise<void>;
@@ -76,8 +77,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     restoreSession();
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const res = (await authAPI.login(email, password)) as any;
+  const login = useCallback(async (email: string, password: string, fcmToken?: string) => {
+    const res = (await authAPI.login(email, password, fcmToken)) as any;
     await SecureStore.setItemAsync("authToken", res.token);
     await SecureStore.setItemAsync("authUser", JSON.stringify(res.user));
     setToken(res.token);
@@ -85,8 +86,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signup = useCallback(
-    async (name: string, email: string, password: string, role: string) => {
-      const res = (await authAPI.signup(name, email, password, role)) as any;
+    async (name: string, email: string, password: string, role: string, fcmToken?: string) => {
+      const res = (await authAPI.signup(name, email, password, role, fcmToken)) as any;
       await SecureStore.setItemAsync("authToken", res.token);
       await SecureStore.setItemAsync("authUser", JSON.stringify(res.user));
       setToken(res.token);

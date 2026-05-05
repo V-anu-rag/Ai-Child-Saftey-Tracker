@@ -71,23 +71,60 @@ export default function TrackingScreen() {
   });
 
   const handleSOS = () => {
-    Vibration.vibrate([0, 200, 100, 200]);
-    Alert.alert("🚨 SOS Alert", "Notify your parent with your current location?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Send SOS", style: "destructive", onPress: async () => {
-          if (child) {
-            let lat = currentCoords?.lat;
-            let lng = currentCoords?.lng;
+    Vibration.vibrate([0, 500, 200, 500]);
+    
+    Alert.alert(
+      "🚨 EMERGENCY SOS", 
+      "This will notify your parent immediately with your precise location. Do you want to proceed?", 
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "SEND SOS", 
+          style: "destructive", 
+          onPress: async () => {
+            if (!child) return;
+
             try {
-              const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-              lat = loc.coords.latitude; lng = loc.coords.longitude;
-            } catch {}
-            await alertsAPI.triggerSOS({ childId: child._id, latitude: lat, longitude: lng, message: `${user?.name} has pressed the SOS button!` });
-          }
+              // 1. Get high accuracy location immediately
+              const loc = await Location.getCurrentPositionAsync({ 
+                accuracy: Location.Accuracy.Highest 
+              });
+              
+              const payload = {
+                childId: child._id,
+                latitude: loc.coords.latitude,
+                longitude: loc.coords.longitude,
+                timestamp: new Date().toISOString(),
+                message: `${user?.name} has triggered an Emergency SOS!`
+              };
+
+              // 2. Dual-path Alerting for reliability
+              // Path A: Socket.io (Instant for active dashboard)
+              emit("send-alert", { ...payload, type: "sos" });
+
+              // Path B: REST API (Ensures DB persistence and Push Notifications)
+              await alertsAPI.triggerSOS(payload);
+              
+              Alert.alert("SOS Sent", "Your parent has been notified.");
+            } catch (err) {
+              console.error("SOS Trigger Error:", err);
+              // Fallback: send with last known coords if GPS fails
+              if (currentCoords) {
+                const fallbackPayload = {
+                  childId: child._id,
+                  latitude: currentCoords.lat,
+                  longitude: currentCoords.lng,
+                  timestamp: new Date().toISOString(),
+                  message: `${user?.name} triggered SOS (GPS failed, using last known location)`
+                };
+                emit("send-alert", { ...fallbackPayload, type: "sos" });
+                await alertsAPI.triggerSOS(fallbackPayload);
+              }
+            }
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   if (loadingChild) {

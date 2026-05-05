@@ -1,6 +1,6 @@
 const express = require("express");
 const { body } = require("express-validator");
-const { signup, login, getMe, logout, updateMe } = require("../controllers/authController");
+const { signup, login, getMe, logout, updateMe, registerFcmToken } = require("../controllers/authController");
 const { protect } = require("../middleware/auth");
 
 const router = express.Router();
@@ -22,5 +22,6 @@ router.post("/login", loginValidation, login);
 router.get("/me", protect, getMe);
 router.post("/logout", protect, logout);
 router.patch("/update-me", protect, updateMe);
+router.patch("/fcm-token", protect, registerFcmToken);
 
 module.exports = router;

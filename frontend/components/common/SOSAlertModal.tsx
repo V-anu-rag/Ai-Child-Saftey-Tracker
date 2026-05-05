@@ -17,9 +17,20 @@ export function SOSAlertModal() {
   useEffect(() => {
     if (latestAlert && latestAlert.type === "sos") {
       setIsVisible(true);
-      // Play sound
-      const audio = new Audio("/sos_alert.mp3");
-      audio.play().catch(() => console.log("Audio play failed"));
+      // Play high-priority alert sound
+      const audio = new Audio("/sos-siren.mp3"); // Ensure this asset exists in public
+      audio.loop = true;
+      audio.play().catch(() => console.log("Audio play failed (user interaction required)"));
+      
+      // Stop after 30 seconds to prevent annoyance if not dismissed
+      const timer = setTimeout(() => {
+        audio.pause();
+      }, 30000);
+
+      return () => {
+        audio.pause();
+        clearTimeout(timer);
+      };
     }
   }, [latestAlert]);
 
@@ -52,12 +63,25 @@ export function SOSAlertModal() {
           className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border-2 border-red-500"
         >
           {/* Header */}
-          <div className="bg-red-500 p-3 flex flex-col items-center text-white text-center">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-2">
-              <AlertTriangle className="w-7 h-7 text-white" />
+          <div className="bg-red-500 p-4 flex flex-col items-center text-white text-center relative overflow-hidden">
+            <motion.div 
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+              className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-3 relative z-10"
+            >
+              <AlertTriangle className="w-9 h-9 text-white" />
+            </motion.div>
+            <h2 className="text-xl font-black uppercase tracking-tighter relative z-10">Emergency SOS</h2>
+            <p className="text-xs text-white/80 font-bold relative z-10">Immediate help requested</p>
+            
+            {/* Background animated circles */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+              <motion.div 
+                animate={{ scale: [1, 2], opacity: [0.3, 0] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-white rounded-full"
+              />
             </div>
-            <h2 className="text-lg font-black uppercase">Emergency SOS</h2>
-            <p className="text-xs text-white/80">Immediate help requested</p>
           </div>
 
           {/* Content */}

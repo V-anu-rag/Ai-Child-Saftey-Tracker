@@ -98,22 +98,15 @@ exports.triggerSOS = async (req, res, next) => {
 
     // Emit real-time alert to parent's room
     const io = getIO();
-    let parentConnected = false;
-
     if (io) {
-      const alertData = alert.toObject();
       const parentRoom = `parent:${child.parentId.toString()}`;
       
-      // Check if parent has any active connections in the room
-      const room = io.sockets.adapter.rooms.get(parentRoom);
-      parentConnected = room && room.size > 0;
-
-      console.log(`🚨 API SOS: Broadcasting to ${parentRoom} (Connected: ${parentConnected})`);
+      console.log(`🚨 SOS Triggered: Broadcasting to ${parentRoom}`);
       
       io.to(parentRoom).emit("alert-received", {
-        ...alertData,
-        id: alertData._id,
-        timestamp: alertData.createdAt,
+        ...alert.toObject(),
+        id: alert._id,
+        timestamp: alert.createdAt,
         childName: child.name,
       });
     }
@@ -152,10 +145,12 @@ exports.resolveSOS = async (req, res, next) => {
     );
     if (!alert) return next(new AppError("SOS Alert not found.", 404));
 
-    // Notify dashboard to hide modal
+    // Notify dashboard to hide modal on ALL tabs
     const io = getIO();
     if (io) {
-      io.to(`parent:${req.user._id}`).emit("alert-resolved", { alertId: alert._id });
+      const parentRoom = `parent:${req.user._id}`;
+      console.log(`✅ SOS Resolved: Notifying ${parentRoom}`);
+      io.to(parentRoom).emit("alert-resolved", { alertId: alert._id });
     }
 
     res.json({ success: true, alert });
