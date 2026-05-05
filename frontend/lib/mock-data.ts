@@ -25,6 +25,8 @@ export const mockChildren: Child[] = [
     safeStatus: "safe",
     school: "Lincoln Elementary",
     grade: "3rd Grade",
+    isPaired: true,
+    pairingCode: "123 456",
   },
   {
     id: "child-2",
@@ -44,6 +46,8 @@ export const mockChildren: Child[] = [
     safeStatus: "warning",
     school: "Washington Middle School",
     grade: "7th Grade",
+    isPaired: true,
+    pairingCode: "234 567",
   },
   {
     id: "child-3",
@@ -63,6 +67,8 @@ export const mockChildren: Child[] = [
     safeStatus: "safe",
     school: "Maple Street Primary",
     grade: "1st Grade",
+    isPaired: false,
+    pairingCode: "345 678",
   },
 ];
 
