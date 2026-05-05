@@ -110,7 +110,7 @@ export function Topbar({ title = "Dashboard", onToggleSidebar }: TopbarProps) {
                       <div className="w-12 h-12 rounded-full bg-app-green/10 flex items-center justify-center mb-3">
                         <BellOff className="w-6 h-6 text-app-green" />
                       </div>
-                      <p className="text-sm font-medium text-app-jet">You're all caught up!</p>
+                      <p className="text-sm font-medium text-app-jet">You&apos;re all caught up!</p>
                       <p className="text-xs text-app-jet/50 mt-1">No unread notifications</p>
                     </div>
                   ) : (
