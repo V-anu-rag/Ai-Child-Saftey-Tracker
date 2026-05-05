@@ -111,7 +111,7 @@ export default function DemoDashboard() {
           <div className="flex items-center justify-between flex-wrap gap-4 bg-white border border-app-green rounded-2xl p-6 shadow-sm">
             <div>
               <h2 className="text-2xl font-extrabold text-app-jet">Good afternoon, Jane 👋</h2>
-              <p className="text-sm text-app-jet/50 mt-1">Here is a real-time overview of your children's safety.</p>
+              <p className="text-sm text-app-jet/50 mt-1">Here is a real-time overview of your children&apos;s safety.</p>
             </div>
             <div className="flex gap-3">
                <div className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-green-100 text-green-700">
