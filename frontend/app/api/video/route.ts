@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 export async function GET() {
-  const filePath = path.join(process.cwd(), 'assets', 'SafeTrack_ The Complete Parent Walkthrough_720p_caption (1).mp4');
+  const filePath = path.join(process.cwd(), 'public', 'demo-video.mp4');
   
   try {
     const stat = fs.statSync(filePath);
