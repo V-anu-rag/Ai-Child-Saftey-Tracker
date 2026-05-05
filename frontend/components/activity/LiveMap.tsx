@@ -2,26 +2,35 @@
 
 import { useEffect, useRef, useState } from "react";
 
+interface Geofence {
+  _id?: string;
+  id?: string;
+  name: string;
+  center?: {
+    lat: number;
+    lng: number;
+  };
+  lat?: number;
+  lng?: number;
+  radius: number;
+  childId?: string;
+}
+
 interface ChildData {
-  _id: string;
+  _id?: string;
+  id?: string;
   name: string;
   lastLocation?: {
     lat: number;
     lng: number;
     address?: string;
   };
-  isOnline: boolean;
-}
-
-interface Geofence {
-  _id: string;
-  name: string;
-  center: {
+  location?: {
     lat: number;
     lng: number;
+    address?: string;
   };
-  radius: number;
-  childId: string;
+  isOnline: boolean;
 }
 
 interface HistoryPoint {
@@ -113,20 +122,22 @@ export default function LiveMap({
     // --- RENDER CHILDREN MARKERS ---
     const displayChildren = selectedChildId === "all" 
       ? childrenData 
-      : childrenData.filter(c => c._id === selectedChildId);
+      : childrenData.filter(c => (c._id || c.id) === selectedChildId);
 
     Object.keys(currentMarkers).forEach(id => {
-      if (!displayChildren.find(c => c._id === id)) {
+      if (!displayChildren.find(c => (c._id || c.id) === id)) {
         currentMarkers[id].remove();
         delete currentMarkers[id];
       }
     });
 
     displayChildren.forEach(child => {
-      if (child.lastLocation?.lat && child.lastLocation?.lng) {
-        const pos: [number, number] = [child.lastLocation.lat, child.lastLocation.lng];
-        if (currentMarkers[child._id]) {
-          currentMarkers[child._id].setLatLng(pos);
+      const loc = child.location || child.lastLocation;
+      const childId = child._id || child.id;
+      if (loc?.lat && loc?.lng && childId) {
+        const pos: [number, number] = [loc.lat, loc.lng];
+        if (currentMarkers[childId]) {
+          currentMarkers[childId].setLatLng(pos);
         } else {
           const customIcon = L.divIcon({
             className: 'custom-div-icon',
@@ -138,7 +149,7 @@ export default function LiveMap({
             iconSize: [14, 14],
             iconAnchor: [7, 7]
           });
-          currentMarkers[child._id] = L.marker(pos, { icon: customIcon }).addTo(map);
+          currentMarkers[childId] = L.marker(pos, { icon: customIcon }).addTo(map);
         }
       }
     });
@@ -149,23 +160,24 @@ export default function LiveMap({
       : geofences.filter(g => g.childId === selectedChildId);
 
     Object.keys(currentCircles).forEach(id => {
-      if (!displayGeofences.find(g => g._id === id)) {
+      if (!displayGeofences.find(g => (g._id || g.id) === id)) {
         currentCircles[id].remove();
         delete currentCircles[id];
       }
     });
 
     displayGeofences.forEach(zone => {
-      const lat = zone.center?.lat;
-      const lng = zone.center?.lng;
+      const lat = zone.center?.lat ?? zone.lat;
+      const lng = zone.center?.lng ?? zone.lng;
       const radius = zone.radius;
+      const zoneId = zone._id || zone.id;
 
-      if (typeof lat === 'number' && typeof lng === 'number') {
-        if (currentCircles[zone._id]) {
-          currentCircles[zone._id].setLatLng([lat, lng]);
-          currentCircles[zone._id].setRadius(radius);
+      if (typeof lat === 'number' && typeof lng === 'number' && zoneId) {
+        if (currentCircles[zoneId]) {
+          currentCircles[zoneId].setLatLng([lat, lng]);
+          currentCircles[zoneId].setRadius(radius);
         } else {
-          currentCircles[zone._id] = L.circle([lat, lng], {
+          currentCircles[zoneId] = L.circle([lat, lng], {
             radius: radius,
             color: '#3B82F6',
             fillColor: '#3B82F6',
