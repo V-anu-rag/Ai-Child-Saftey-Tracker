@@ -149,7 +149,7 @@ export function Hero() {
           >
             <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-white/20 shadow-2xl shadow-app-jet/50 bg-black group">
               <video
-                src="/api/video"
+                src="/demo-video.mp4"
                 autoPlay
                 controls
                 onEnded={() => setIsPlayingDemo(false)}
