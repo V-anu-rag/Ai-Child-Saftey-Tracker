@@ -61,8 +61,10 @@ export function ChildCard({ child, delay = 0 }: ChildCardProps) {
     try {
       const res = await childrenAPI.regenerateCode(childId) as any;
       setNewCode(res.pairingCode);
-    } catch (err) {
-      alert("Failed to generate new pairing code.");
+    } catch (err: any) {
+      import("sonner").then(({ toast }) => {
+        toast.error(err.message || "Failed to generate new pairing code.");
+      });
     } finally {
       setIsRegenerating(false);
     }

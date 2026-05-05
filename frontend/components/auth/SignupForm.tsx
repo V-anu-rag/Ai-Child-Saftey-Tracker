@@ -157,6 +157,13 @@ export function SignupForm() {
         </button>
       </div>
 
+      <p className="text-center text-[10px] text-white/30 pt-2 leading-relaxed">
+        By creating an account, you agree to our{" "}
+        <Link href="/terms-of-service" className="text-white/50 hover:text-white underline">Terms of Service</Link>{" "}
+        and{" "}
+        <Link href="/privacy-policy" className="text-white/50 hover:text-white underline">Privacy Policy</Link>.
+      </p>
+
       <p className="text-center text-sm text-white/40 pt-2">
         Already have an account?{" "}
         <Link href="/login" className="text-app-salmon hover:underline">Sign in</Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { Plus, RefreshCw, Wifi, WifiOff } from "lucide-react";
 import { useChildren } from "@/hooks/useChildren";
@@ -16,6 +16,7 @@ import { Button } from "@/components/common/Button";
 import { CardSkeleton } from "@/components/common/LoadingSkeleton";
 import type { Alert } from "@/types";
 import Link from "next/link";
+import { comingSoon } from "@/lib/utils";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -51,8 +52,19 @@ export default function DashboardPage() {
   const [isPairingOpen, setIsPairingOpen] = useState(false);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const lastRefresh = useRef<number>(0);
 
   const handleRefresh = async () => {
+    const now = Date.now();
+    // Throttle: max 1 refresh every 5 seconds
+    if (now - lastRefresh.current < 5000) {
+      import("sonner").then(({ toast }) => {
+        toast("Please wait a moment before refreshing again.", { id: "throttle" });
+      });
+      return;
+    }
+    
+    lastRefresh.current = now;
     setIsRefreshing(true);
     try {
       await Promise.all([refresh(), fetchAlerts(), refreshUnreadCount()]);
@@ -124,7 +136,7 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-app-jet text-lg">Your Children</h3>
-            <Link href="#" className="text-sm text-app-red hover:underline font-medium">Manage →</Link>
+            <button onClick={comingSoon} className="text-sm text-app-red hover:underline font-medium">Manage →</button>
           </div>
 
           {childrenLoading ? (

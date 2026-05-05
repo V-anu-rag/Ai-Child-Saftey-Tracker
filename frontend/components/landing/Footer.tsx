@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Shield, Twitter, Github, Linkedin } from "lucide-react";
+import { comingSoon } from "@/lib/utils";
 
 const links: Record<string, { label: string; href: string }[]> = {
   Product: [
@@ -18,7 +19,7 @@ const links: Record<string, { label: string; href: string }[]> = {
   ],
   Legal: [
     { label: "Privacy Policy", href: "/privacy-policy" },
-    { label: "Terms of Service", href: "#" },
+    { label: "Terms of Service", href: "/terms-of-service" },
     { label: "Cookie Policy", href: "#" },
     { label: "COPPA", href: "#" },
   ],
@@ -51,13 +52,13 @@ export function Footer() {
             </p>
             <div className="flex gap-4 mt-6">
               {[Twitter, Github, Linkedin].map((Icon, i) => (
-                <a
+                <button
                   key={i}
-                  href="#"
+                  onClick={comingSoon}
                   className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center hover:bg-app-red transition-colors"
                 >
                   <Icon className="w-4 h-4" />
-                </a>
+                </button>
               ))}
             </div>
           </div>
@@ -69,7 +70,7 @@ export function Footer() {
               <ul className="space-y-2">
                 {items.map((item) => (
                   <li key={item.label}>
-                    {item.href.startsWith("/") ? (
+                    {item.href.startsWith("/") || (item.href.startsWith("#") && item.href.length > 1) ? (
                       <Link
                         href={item.href}
                         className="text-sm text-white/50 hover:text-white transition-colors"
@@ -77,12 +78,12 @@ export function Footer() {
                         {item.label}
                       </Link>
                     ) : (
-                      <a
-                        href={item.href}
-                        className="text-sm text-white/50 hover:text-white transition-colors"
+                      <button
+                        onClick={comingSoon}
+                        className="text-sm text-white/50 hover:text-white transition-colors text-left"
                       >
                         {item.label}
-                      </a>
+                      </button>
                     )}
                   </li>
                 ))}

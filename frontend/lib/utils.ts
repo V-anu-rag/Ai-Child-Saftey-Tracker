@@ -46,3 +46,23 @@ export function getSeverityColor(severity: "low" | "medium" | "high" | "critical
   };
   return map[severity];
 }
+
+/**
+ * Global "Coming Soon" handler
+ */
+export const comingSoon = (e?: React.MouseEvent) => {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  import("sonner").then(({ toast }) => {
+    toast.info("Feature Coming Soon!", {
+      description: "We're working hard to bring this feature to you. Stay tuned for updates!",
+      icon: "🚀",
+      duration: 4000,
+      position: "top-center",
+    });
+  });
+};
+

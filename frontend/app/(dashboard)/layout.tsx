@@ -32,6 +32,19 @@ export default function DashboardLayout({
     if (window.innerWidth < 768) {
       setCollapsed(true);
     }
+
+    const handleApiRetry = () => {
+      import("sonner").then(({ toast }) => {
+        toast.error("Server is busy. Retrying...", {
+          id: "api-retry",
+          duration: 3000,
+          description: "This might take a few seconds.",
+        });
+      });
+    };
+
+    window.addEventListener("api-retrying", handleApiRetry);
+    return () => window.removeEventListener("api-retrying", handleApiRetry);
   }, []);
 
   useEffect(() => {

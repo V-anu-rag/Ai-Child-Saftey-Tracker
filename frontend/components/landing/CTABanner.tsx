@@ -39,13 +39,15 @@ export function CTABanner() {
               <Link href="/login">
                 <Button size="lg" rightIcon={<ArrowRight className="w-5 h-5" />}>Get Started Free</Button>
               </Link>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white/20 text-white hover:bg-white/10"
-              >
-                View Demo Dashboard
-              </Button>
+              <Link href="/demo">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-white/20 text-white hover:bg-white/10"
+                >
+                  View Demo Dashboard
+                </Button>
+              </Link>
             </div>
           </div>
         </motion.div>

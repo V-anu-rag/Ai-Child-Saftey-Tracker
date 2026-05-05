@@ -34,8 +34,8 @@ export function AuthCard({ children, title, subtitle }: AuthCardProps) {
         className="relative z-10 w-full max-w-md"
       >
         {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2.5 mb-4">
+        <div className="text-center mb-4">
+          <div className="inline-flex items-center gap-2 mb-2">
             <div className="w-11 h-11 rounded-2xl bg-app-red flex items-center justify-center shadow-lg shadow-app-red/30">
               <Shield className="w-6 h-6 text-white" />
             </div>
@@ -44,11 +44,11 @@ export function AuthCard({ children, title, subtitle }: AuthCardProps) {
             </span>
           </div>
           <h1 className="text-2xl font-extrabold text-white">{title}</h1>
-          <p className="text-sm text-white/50 mt-2">{subtitle}</p>
+          <p className="text-sm text-white/50 ">{subtitle}</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-2xl">
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl px-8 py-4 shadow-2xl">
           {children}
         </div>
 

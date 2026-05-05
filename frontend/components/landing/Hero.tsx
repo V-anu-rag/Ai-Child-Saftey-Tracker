@@ -95,9 +95,9 @@ export function Hero() {
               <Button
                 size="lg"
                 variant="outline"
-                onClick={() => setIsPlayingDemo(true)}
-                leftIcon={<Play className="w-4 h-4 fill-white" />}
+                leftIcon={<Play className="w-4 h-4 fill-white/20" />}
                 className="border-white/20 text-white hover:bg-white/10"
+                onClick={() => setIsPlayingDemo(true)}
               >
                 Watch Demo
               </Button>
