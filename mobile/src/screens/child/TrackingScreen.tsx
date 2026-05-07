@@ -11,11 +11,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useLocation } from "../../hooks/useLocation";
 import { useSocket } from "../../context/SocketContext";
 import { childrenAPI, alertsAPI } from "../../api/client";
-
-const COLORS = {
-  bg: "#EEF4D4", green: "#DAEFB3", red: "#D64550",
-  salmon: "#EA9E8D", jet: "#1C2826",
-};
+import { COLORS } from "../../constants/theme";
 
 interface Child {
   _id: string; name: string; parentId: string;
@@ -130,7 +126,7 @@ export default function TrackingScreen() {
   if (loadingChild) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="small" color={COLORS.red} />
+        <ActivityIndicator size="small" color={COLORS.primary} />
       </View>
     );
   }
@@ -238,43 +234,43 @@ const styles = StyleSheet.create({
   loader: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: COLORS.bg },
   scroll: { padding: 20, paddingBottom: 40 },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 },
-  greeting: { fontSize: 22, fontWeight: "800", color: COLORS.jet },
-  subGreeting: { fontSize: 13, color: `${COLORS.jet}80`, marginTop: 2 },
-  profileAvatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: COLORS.jet, alignItems: "center", justifyContent: "center" },
+  greeting: { fontSize: 22, fontWeight: "800", color: COLORS.text },
+  subGreeting: { fontSize: 13, color: COLORS.textMuted, marginTop: 2 },
+  profileAvatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: COLORS.text, alignItems: "center", justifyContent: "center" },
   avatarText: { color: "#fff", fontWeight: "700", fontSize: 16 },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "flex-start", alignItems: "flex-end", padding: 16, paddingTop: 60 },
   menuContainer: { backgroundColor: "#fff", width: 250, borderRadius: 24, padding: 20, shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 20, elevation: 10 },
   menuHeader: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 20 },
-  menuAvatarLarge: { width: 48, height: 48, borderRadius: 24, backgroundColor: COLORS.jet, alignItems: "center", justifyContent: "center" },
+  menuAvatarLarge: { width: 48, height: 48, borderRadius: 24, backgroundColor: COLORS.text, alignItems: "center", justifyContent: "center" },
   avatarTextLarge: { color: "#fff", fontWeight: "700", fontSize: 20 },
-  menuName: { fontSize: 16, fontWeight: "800", color: COLORS.jet },
-  menuEmail: { fontSize: 11, color: `${COLORS.jet}60` },
-  menuDivider: { height: 1, backgroundColor: `${COLORS.jet}10`, marginVertical: 12 },
+  menuName: { fontSize: 16, fontWeight: "800", color: COLORS.text },
+  menuEmail: { fontSize: 11, color: COLORS.textMuted },
+  menuDivider: { height: 1, backgroundColor: COLORS.border, marginVertical: 12 },
   menuItem: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 8 },
-  menuItemText: { fontSize: 14, fontWeight: "600", color: COLORS.jet },
+  menuItemText: { fontSize: 14, fontWeight: "600", color: COLORS.text },
   statusBar: { flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12, marginBottom: 16 },
   statusOnline: { backgroundColor: "#dcfce7" },
   statusOffline: { backgroundColor: "#fee2e2" },
   dot: { width: 8, height: 8, borderRadius: 4 },
-  statusText: { fontSize: 13, fontWeight: "600", color: COLORS.jet },
+  statusText: { fontSize: 13, fontWeight: "600", color: COLORS.text },
   trackingCard: { backgroundColor: "#fff", borderRadius: 20, padding: 20, marginBottom: 16, shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 12, elevation: 3 },
   trackingTop: { flexDirection: "row", alignItems: "center", gap: 16 },
   shieldIcon: { width: 60, height: 60, borderRadius: 16, backgroundColor: COLORS.bg, alignItems: "center", justifyContent: "center" },
   trackingInfo: { flex: 1 },
-  trackingLabel: { fontSize: 16, fontWeight: "700", color: COLORS.jet },
+  trackingLabel: { fontSize: 16, fontWeight: "700", color: COLORS.text },
   trackingStatus: { fontSize: 13, fontWeight: "600", marginTop: 2 },
-  trackingDetails: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: COLORS.green, gap: 6 },
+  trackingDetails: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: COLORS.border, gap: 6 },
   detailRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  detailText: { fontSize: 12, color: `${COLORS.jet}80` },
+  detailText: { fontSize: 12, color: COLORS.textMuted },
   statsRow: { flexDirection: "row", gap: 12, marginBottom: 24 },
   statCard: { flex: 1, backgroundColor: "#fff", borderRadius: 16, padding: 16, alignItems: "center", gap: 4, shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
-  statValue: { fontSize: 15, fontWeight: "800", color: COLORS.jet },
-  statLabel: { fontSize: 11, color: `${COLORS.jet}60` },
-  sosButton: { backgroundColor: COLORS.red, borderRadius: 24, marginBottom: 20, overflow: "hidden", shadowColor: COLORS.red, shadowOpacity: 0.4, shadowRadius: 20, elevation: 10 },
+  statValue: { fontSize: 15, fontWeight: "800", color: COLORS.text },
+  statLabel: { fontSize: 11, color: COLORS.textMuted },
+  sosButton: { backgroundColor: COLORS.danger, borderRadius: 24, marginBottom: 20, overflow: "hidden", shadowColor: COLORS.danger, shadowOpacity: 0.4, shadowRadius: 20, elevation: 10 },
   sosInner: { paddingVertical: 28, alignItems: "center", gap: 4 },
   sosText: { fontSize: 32, fontWeight: "900", color: "#fff", letterSpacing: 4 },
   sosCaption: { fontSize: 12, color: "rgba(255,255,255,0.7)" },
-  safetyNote: { textAlign: "center", fontSize: 12, color: `${COLORS.jet}60`, lineHeight: 18, marginTop: 10 },
-  repairButton: { backgroundColor: "#fff", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: COLORS.red },
-  repairButtonText: { color: COLORS.red, fontSize: 11, fontWeight: "700" },
+  safetyNote: { textAlign: "center", fontSize: 12, color: COLORS.textMuted, lineHeight: 18, marginTop: 10 },
+  repairButton: { backgroundColor: "#fff", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: COLORS.danger },
+  repairButtonText: { color: COLORS.danger, fontSize: 11, fontWeight: "700" },
 });

@@ -84,7 +84,7 @@ export function Topbar({ title = "Dashboard", onToggleSidebar }: TopbarProps) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-app-green overflow-hidden"
+                className="fixed md:absolute right-4 md:right-0 top-16 md:top-full mt-2 w-[calc(100vw-32px)] md:w-80 bg-white rounded-2xl shadow-2xl border border-app-green overflow-hidden z-50"
               >
                 <div className="p-4 border-b border-app-green">
                   <div className="flex items-center justify-between">

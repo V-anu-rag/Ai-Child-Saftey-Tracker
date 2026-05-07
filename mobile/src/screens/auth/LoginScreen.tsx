@@ -14,17 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
-
-const COLORS = {
-  bg: "#1C2826",
-  card: "rgba(255,255,255,0.06)",
-  border: "rgba(255,255,255,0.12)",
-  text: "#FFFFFF",
-  textMuted: "rgba(255,255,255,0.55)",
-  red: "#D64550",
-  green: "#DAEFB3",
-  salmon: "#EA9E8D",
-};
+import { COLORS } from "../../constants/theme";
 
 export default function LoginScreen({ navigation }: any) {
   const { login, setUnauthRole } = useAuth();
@@ -41,7 +31,6 @@ export default function LoginScreen({ navigation }: any) {
 
     try {
       setLoading(true);
-      // In a real app, you'd get the token via Notifications.getDevicePushTokenAsync()
       await login(email.trim().toLowerCase(), password);
     } catch (err: any) {
       Alert.alert("Login Failed", err.message || "Invalid credentials.");
@@ -75,7 +64,7 @@ export default function LoginScreen({ navigation }: any) {
               <Ionicons name="shield-checkmark" size={36} color="#FFFFFF" />
             </View>
             <Text style={styles.brand}>
-              Safe<Text style={{ color: COLORS.red }}>Track</Text>
+              Safe<Text style={{ color: COLORS.primary }}>Track</Text>
             </Text>
             <Text style={styles.subtitle}>Child Safety Monitoring</Text>
           </View>
@@ -173,13 +162,13 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 20,
-    backgroundColor: COLORS.red,
+    backgroundColor: COLORS.primary,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
-    shadowColor: COLORS.red,
+    shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 8,
   },
@@ -191,6 +180,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     padding: 24,
+    shadowColor: COLORS.text,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.03,
+    shadowRadius: 12,
+    elevation: 2,
   },
   title: { fontSize: 22, fontWeight: "800", color: COLORS.text, marginBottom: 4 },
   caption: { fontSize: 13, color: COLORS.textMuted, marginBottom: 24 },
@@ -199,7 +193,7 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "rgba(0,0,0,0.02)",
     borderRadius: 14,
     borderWidth: 1,
     borderColor: COLORS.border,
@@ -210,13 +204,13 @@ const styles = StyleSheet.create({
   input: { flex: 1, color: COLORS.text, fontSize: 15 },
   eyeBtn: { padding: 4 },
   btn: {
-    backgroundColor: COLORS.red,
+    backgroundColor: COLORS.primary,
     borderRadius: 14,
     height: 52,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 8,
-    shadowColor: COLORS.red,
+    shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 10,
@@ -226,5 +220,5 @@ const styles = StyleSheet.create({
   btnText: { color: "#fff", fontSize: 16, fontWeight: "700" },
   footer: { flexDirection: "row", justifyContent: "center", marginTop: 20 },
   footerText: { color: COLORS.textMuted, fontSize: 13 },
-  link: { color: COLORS.salmon, fontSize: 13, fontWeight: "600" },
+  link: { color: COLORS.primary, fontSize: 13, fontWeight: "600" },
 });

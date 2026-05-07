@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Activity,
@@ -110,7 +111,7 @@ function LocationAddress({ lat, lng }: { lat: number; lng: number }) {
   );
 }
 
-export default function ActivityPage() {
+function ActivityPageContent() {
   const { children, isLoading: childrenLoading } = useChildren();
   const [selectedChild, setSelectedChild] = useState<string>("all");
   const [activities, setActivities] = useState<any[]>([]);
@@ -118,6 +119,15 @@ export default function ActivityPage() {
   const [loading, setLoading] = useState(true);
   const [geofences, setGeofences] = useState<any[]>([]);
   const [history, setHistory] = useState<any[]>([]);
+
+  const searchParams = useSearchParams();
+  const childIdParam = searchParams.get("childId");
+
+  useEffect(() => {
+    if (childIdParam) {
+      setSelectedChild(childIdParam);
+    }
+  }, [childIdParam]);
 
   const fetchActivities = useCallback(async () => {
     try {
@@ -313,5 +323,17 @@ export default function ActivityPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ActivityPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="w-8 h-8 border-4 border-app-salmon border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <ActivityPageContent />
+    </Suspense>
   );
 }

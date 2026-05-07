@@ -203,7 +203,7 @@ export default function GeofencingPage() {
 
           <SectionWrapper title={isPlacing ? "2. Click on Map to Select Location" : "Interactive Map"} noPadding>
             <div className="p-5">
-              <div className="h-[500px] rounded-2xl overflow-hidden border border-app-green/30 relative">
+              <div className="h-[500px] rounded-2xl overflow-hidden border border-app-green/30 relative z-0">
                 <LiveMap 
                   childrenData={children as any[]} 
                   selectedChildId="all"
@@ -218,7 +218,7 @@ export default function GeofencingPage() {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="absolute top-4 left-1/4 -translate-x-1/2 z-[450] w-[90%] md:w-[70%]"
+                        className="absolute top-4 left-1/4 -translate-x-1/2 z-10 w-[90%] md:w-[70%]"
                       >
                         <div className="bg-app-jet/95 backdrop-blur-md text-white p-4 rounded-2xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4 border border-white/20">
                           <div className="flex items-center gap-3">

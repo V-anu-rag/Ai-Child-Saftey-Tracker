@@ -65,7 +65,7 @@ export function Hero() {
             >
               Keep Your Kids{" "}
               <span className="relative">
-                <span className="text-app-salmon">Safe</span>
+                <span className="text-app-red">Safe</span>
               </span>
               ,<br />
               Always & Everywhere

@@ -10,95 +10,155 @@ interface LocationMapProps {
   geofences?: GeofenceZone[];
 }
 
+// Precise mathematical GeoJSON polygon generator for geofences (radius in meters)
+function getGeoJSONCircle(center: [number, number], radiusInMeters: number, points = 64) {
+  const [lng, lat] = center;
+  const km = radiusInMeters / 1000;
+  const coords = [];
+  const distanceX = km / (111.32 * Math.cos((lat * Math.PI) / 180));
+  const distanceY = km / 110.574;
+
+  for (let i = 0; i < points; i++) {
+    const theta = (i / points) * (2 * Math.PI);
+    const x = distanceX * Math.cos(theta);
+    const y = distanceY * Math.sin(theta);
+    coords.push([lng + x, lat + y]);
+  }
+  coords.push(coords[0]); // Close polygon loop
+
+  return {
+    type: "Feature" as const,
+    geometry: {
+      type: "Polygon" as const,
+      coordinates: [coords],
+    },
+  };
+}
+
 export function LocationMap({ child, geofences = [] }: LocationMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const leafletMap = useRef<any>(null);
+  const maplibreMap = useRef<any>(null);
   const marker = useRef<any>(null);
-  const circles = useRef<any[]>([]);
-  const [isLeafletLoaded, setIsLeafletLoaded] = useState(false);
+  const [isMapCNLoaded, setIsMapCNLoaded] = useState(false);
 
-  // --- Load Leaflet ---
+  // --- Load MapLibre GL ---
   useEffect(() => {
-    if (!document.getElementById('leaflet-css')) {
+    if (!document.getElementById("maplibre-css")) {
       const link = document.createElement("link");
-      link.id = 'leaflet-css';
+      link.id = "maplibre-css";
       link.rel = "stylesheet";
-      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      link.href = "https://unpkg.com/maplibre-gl@4.3.0/dist/maplibre-gl.css";
       document.head.appendChild(link);
     }
 
-    if (!(window as any).L) {
+    if (!(window as any).maplibregl) {
       const script = document.createElement("script");
-      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      script.src = "https://unpkg.com/maplibre-gl@4.3.0/dist/maplibre-gl.js";
       script.async = true;
-      script.onload = () => setIsLeafletLoaded(true);
+      script.onload = () => setIsMapCNLoaded(true);
       document.body.appendChild(script);
     } else {
-      setIsLeafletLoaded(true);
+      setIsMapCNLoaded(true);
     }
   }, []);
 
   // --- Initialize Map ---
   useEffect(() => {
-    if (!isLeafletLoaded || !mapRef.current || leafletMap.current) return;
+    if (!isMapCNLoaded || !mapRef.current || maplibreMap.current) return;
 
-    const L = (window as any).L;
-    const initialPos = child.location?.lat ? [child.location.lat, child.location.lng] : [20.5937, 78.9629];
+    const maplibregl = (window as any).maplibregl;
+    const initialPos = child.location?.lat 
+      ? [child.location.lng, child.location.lat] 
+      : [78.9629, 20.5937]; // Lng, Lat for MapLibre
     
-    const map = L.map(mapRef.current, {
-      zoomControl: false,
+    const map = new maplibregl.Map({
+      container: mapRef.current,
+      style: "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
+      center: initialPos,
+      zoom: 15,
       attributionControl: false
-    }).setView(initialPos, 15);
+    });
 
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-      maxZoom: 20
-    }).addTo(map);
+    maplibreMap.current = { map, maplibregl };
 
-    leafletMap.current = { map, L };
-  }, [isLeafletLoaded, child.location]);
+    return () => {
+      if (map) {
+        map.remove();
+        maplibreMap.current = null;
+      }
+    };
+  }, [isMapCNLoaded, child.id]);
 
   // --- Update Marker & Geofences ---
   useEffect(() => {
-    if (!leafletMap.current) return;
-    const { map, L } = leafletMap.current;
+    if (!maplibreMap.current) return;
+    const { map, maplibregl } = maplibreMap.current;
 
     // Update Child Marker
     if (child.location?.lat && child.location?.lng) {
-      const pos: [number, number] = [child.location.lat, child.location.lng];
+      const pos: [number, number] = [child.location.lng, child.location.lat];
       
       if (marker.current) {
-        marker.current.setLatLng(pos);
+        marker.current.setLngLat(pos);
       } else {
-        const customIcon = L.divIcon({
-          className: 'custom-div-icon',
-          html: `<div style="background-color: #D64550; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px rgba(214, 69, 80, 0.5);"></div>`,
-          iconSize: [16, 16],
-          iconAnchor: [8, 8]
-        });
-        marker.current = L.marker(pos, { icon: customIcon }).addTo(map);
+        const el = document.createElement("div");
+        el.className = "custom-div-icon";
+        el.innerHTML = `<div style="background-color: #D64550; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px rgba(214, 69, 80, 0.5);"></div>`;
+        
+        marker.current = new maplibregl.Marker({ element: el })
+          .setLngLat(pos)
+          .addTo(map);
       }
       
       // Smoothly pan to new location
-      map.panTo(pos, { animate: true, duration: 1 });
+      map.easeTo({ center: pos, duration: 1000 });
     }
 
-    // Update Geofence Circles
-    circles.current.forEach(c => c.remove());
-    circles.current = [];
+    // Function to apply geofence updates safely
+    const applyGeofences = () => {
+      if (map.getLayer("geofence-fill")) map.removeLayer("geofence-fill");
+      if (map.getLayer("geofence-stroke")) map.removeLayer("geofence-stroke");
+      if (map.getSource("geofences")) map.removeSource("geofences");
 
-    geofences.forEach(zone => {
-      if (zone.lat && zone.lng) {
-        const circle = L.circle([zone.lat, zone.lng], {
-          radius: zone.radius,
-          color: '#3B82F6',
-          fillColor: '#3B82F6',
-          fillOpacity: 0.1,
-          weight: 2,
-          dashArray: '5, 10'
-        }).addTo(map);
-        circles.current.push(circle);
-      }
-    });
+      const features = geofences
+        .filter(zone => zone.lat && zone.lng)
+        .map(zone => getGeoJSONCircle([zone.lng, zone.lat], zone.radius));
+
+      map.addSource("geofences", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: features
+        }
+      });
+
+      map.addLayer({
+        id: "geofence-fill",
+        type: "fill",
+        source: "geofences",
+        paint: {
+          "fill-color": "#3B82F6",
+          "fill-opacity": 0.1
+        }
+      });
+
+      map.addLayer({
+        id: "geofence-stroke",
+        type: "line",
+        source: "geofences",
+        paint: {
+          "line-color": "#3B82F6",
+          "line-width": 2,
+          "line-dasharray": [2, 2]
+        }
+      });
+    };
+
+    if (map.isStyleLoaded()) {
+      applyGeofences();
+    } else {
+      map.once("style.load", applyGeofences);
+    }
 
   }, [child.location, geofences]);
 
@@ -125,7 +185,7 @@ export function LocationMap({ child, geofences = [] }: LocationMapProps) {
       <div className="relative h-72 bg-app-bg">
         <div ref={mapRef} className="w-full h-full z-0" />
         
-        {!isLeafletLoaded && (
+        {!isMapCNLoaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-app-bg/50 backdrop-blur-sm z-10">
             <div className="flex flex-col items-center gap-2">
               <div className="w-6 h-6 border-2 border-app-salmon border-t-transparent rounded-full animate-spin" />
@@ -134,7 +194,7 @@ export function LocationMap({ child, geofences = [] }: LocationMapProps) {
           </div>
         )}
 
-        {!child.location && isLeafletLoaded && (
+        {!child.location && isMapCNLoaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-10">
             <div className="text-center p-6">
               <MapPin className="w-8 h-8 text-app-jet/20 mx-auto mb-2" />

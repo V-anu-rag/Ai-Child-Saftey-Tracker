@@ -14,17 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
-
-const COLORS = {
-  bg: "#1C2826",
-  card: "rgba(255,255,255,0.06)",
-  border: "rgba(255,255,255,0.12)",
-  text: "#FFFFFF",
-  textMuted: "rgba(255,255,255,0.55)",
-  red: "#D64550",
-  green: "#DAEFB3",
-  salmon: "#EA9E8D",
-};
+import { COLORS } from "../../constants/theme";
 
 export default function RegisterScreen({ navigation }: any) {
   const { signup } = useAuth();
@@ -141,36 +131,37 @@ const styles = StyleSheet.create({
   logoSection: { alignItems: "center", marginBottom: 28 },
   logoBox: {
     width: 64, height: 64, borderRadius: 18,
-    backgroundColor: COLORS.red, alignItems: "center", justifyContent: "center", marginBottom: 12,
-    shadowColor: COLORS.red, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 8,
+    backgroundColor: COLORS.primary, alignItems: "center", justifyContent: "center", marginBottom: 12,
+    shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 8,
   },
   title: { fontSize: 22, fontWeight: "800", color: COLORS.text },
   subtitle: { fontSize: 13, color: COLORS.textMuted, marginTop: 4 },
   card: {
     backgroundColor: COLORS.card, borderRadius: 24, borderWidth: 1,
     borderColor: COLORS.border, padding: 24,
+    shadowColor: COLORS.text, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.03, shadowRadius: 12, elevation: 2,
   },
   roleRow: { flexDirection: "row", gap: 12, marginBottom: 20 },
   roleBtn: {
     flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8,
     paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border,
-    backgroundColor: "rgba(255,255,255,0.04)",
+    backgroundColor: "rgba(0,0,0,0.02)",
   },
-  roleActive: { backgroundColor: COLORS.red, borderColor: COLORS.red },
+  roleActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
   roleText: { color: COLORS.textMuted, fontSize: 14, fontWeight: "600" },
   roleTextActive: { color: "#fff" },
   fieldGroup: { marginBottom: 16 },
   label: { fontSize: 13, fontWeight: "600", color: COLORS.textMuted, marginBottom: 8 },
   inputWrapper: {
     flexDirection: "row", alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 14,
+    backgroundColor: "rgba(0,0,0,0.02)", borderRadius: 14,
     borderWidth: 1, borderColor: COLORS.border, paddingHorizontal: 14, height: 50,
   },
   input: { flex: 1, color: COLORS.text, fontSize: 15 },
   btn: {
-    backgroundColor: COLORS.red, borderRadius: 14, height: 52,
+    backgroundColor: COLORS.primary, borderRadius: 14, height: 52,
     alignItems: "center", justifyContent: "center", marginTop: 8,
-    shadowColor: COLORS.red, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.35, shadowRadius: 10, elevation: 5,
+    shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.35, shadowRadius: 10, elevation: 5,
   },
   btnDisabled: { opacity: 0.6 },
   btnText: { color: "#fff", fontSize: 16, fontWeight: "700" },
