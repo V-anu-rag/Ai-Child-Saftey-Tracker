@@ -116,8 +116,8 @@ const FreeMap = forwardRef<FreeMapRef, FreeMapProps>(({
                             if (!markers[child.id]) {
                                 var el = document.createElement('div');
                                 el.className = 'custom-div-icon';
-                                el.innerHTML = '<div style="background-color: #D64550; width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px rgba(214, 69, 80, 0.4); position: relative;">' +
-                                               '<div style="position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: white; color: #1C2826; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #eee;">' +
+                                el.innerHTML = '<div style="background-color: #635BFF; width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px rgba(99, 91, 255, 0.4); position: relative;">' +
+                                               '<div style="position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: white; color: #0A0F1E; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #e2e8f0;">' +
                                                (child.name || "Child") +
                                                '</div>' +
                                                '</div>';

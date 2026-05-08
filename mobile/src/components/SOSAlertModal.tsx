@@ -10,14 +10,9 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { SOSAlertModalProps } from "../types"; // I'll fix types later if needed, but for now I'll just keep it inline or import from where it is
-import { navigationRef } from "../utils/navigationRef";
-
-const COLORS = {
-  red: "#D64550",
-  jet: "#1C2826",
-  bg: "#FFFFFF",
-};
+import { SOSAlertModalProps } from "../types";
+import { navigate } from "../utils/navigationRef";
+import { COLORS } from "../constants/theme";
 
 export const SOSAlertModal: React.FC<SOSAlertModalProps> = ({
   isVisible,
@@ -28,13 +23,11 @@ export const SOSAlertModal: React.FC<SOSAlertModalProps> = ({
 
   const handleViewMap = () => {
     onClose();
-    if (navigationRef.isReady()) {
-      navigationRef.navigate("Map" as never, { 
-        childId: alertData.childId,
-        latitude: alertData.location?.lat,
-        longitude: alertData.location?.lng,
-      } as never);
-    }
+    navigate("Map", { 
+      childId: alertData.childId,
+      latitude: alertData.location?.lat,
+      longitude: alertData.location?.lng,
+    });
   };
 
   return (
@@ -45,7 +38,7 @@ export const SOSAlertModal: React.FC<SOSAlertModalProps> = ({
       onRequestClose={onClose}
     >
       <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor={COLORS.red} />
+        <StatusBar barStyle="light-content" backgroundColor={COLORS.danger} />
         
         {/* Header / Siren Area */}
         <View style={styles.header}>
@@ -75,7 +68,7 @@ export const SOSAlertModal: React.FC<SOSAlertModalProps> = ({
           {alertData.location && (
             <View style={styles.locationBox}>
               <View style={styles.locationHeader}>
-                <Ionicons name="location" size={20} color={COLORS.red} />
+                <Ionicons name="location" size={20} color={COLORS.danger} />
                 <Text style={styles.locationTitle}>LAST KNOWN LOCATION</Text>
               </View>
               <Text style={styles.locationValue}>
@@ -115,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.bg,
   },
   header: {
-    backgroundColor: COLORS.red,
+    backgroundColor: COLORS.danger,
     height: "35%",
     justifyContent: "center",
     alignItems: "center",
@@ -124,7 +117,6 @@ const styles = StyleSheet.create({
   },
   sirenIcon: {
     marginBottom: 20,
-    // Add pulse animation if using Reanimated
   },
   emergencyText: {
     color: "#FFF",
@@ -133,7 +125,7 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   immediateText: {
-    color: "rgba(255,255,255,0.8)",
+    color: "rgba(255,255,255,0.9)",
     fontSize: 16,
     fontWeight: "600",
     marginTop: 8,
@@ -153,14 +145,16 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 20,
-    backgroundColor: "#F0F4D4",
+    backgroundColor: "rgba(0, 212, 170, 0.1)",
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+    borderColor: COLORS.green,
   },
   avatarText: {
     fontSize: 24,
-    fontWeight: "700",
-    color: COLORS.jet,
+    fontWeight: "800",
+    color: COLORS.salmon,
   },
   childName: {
     fontSize: 20,
@@ -169,28 +163,34 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 14,
-    color: "rgba(28, 40, 38, 0.4)",
+    color: COLORS.textMuted,
   },
   messageBox: {
-    backgroundColor: "#FEF2F2",
+    backgroundColor: "rgba(255, 77, 77, 0.04)",
     padding: 20,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: "#FEE2E2",
+    borderColor: "rgba(255, 77, 77, 0.15)",
     marginBottom: 24,
   },
   messageContent: {
     fontSize: 18,
-    color: COLORS.red,
+    color: COLORS.danger,
     textAlign: "center",
-    fontWeight: "600",
+    fontWeight: "700",
     lineHeight: 26,
   },
   locationBox: {
-    backgroundColor: "#F8FAFC",
+    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 24,
     gap: 8,
+    borderWidth: 1,
+    borderColor: COLORS.green,
+    shadowColor: COLORS.jet,
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    elevation: 1,
   },
   locationHeader: {
     flexDirection: "row",
@@ -198,9 +198,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   locationTitle: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "800",
-    color: "rgba(28, 40, 38, 0.3)",
+    color: COLORS.textMuted,
     letterSpacing: 1,
   },
   locationValue: {
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   },
   addressText: {
     fontSize: 14,
-    color: "rgba(28, 40, 38, 0.5)",
+    color: COLORS.textMuted,
     fontStyle: "italic",
   },
   footer: {
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     padding: 24,
     gap: 12,
     borderTopWidth: 1,
-    borderTopColor: "#F1F5F9",
+    borderTopColor: COLORS.green,
   },
   button: {
     flex: 1,
@@ -232,8 +232,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.jet,
   },
   mapButton: {
-    backgroundColor: COLORS.red,
-    shadowColor: COLORS.red,
+    backgroundColor: COLORS.danger,
+    shadowColor: COLORS.danger,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 10,

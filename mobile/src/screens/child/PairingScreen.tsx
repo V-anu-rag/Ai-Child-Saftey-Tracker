@@ -169,7 +169,7 @@ export default function ChildPairingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1C2826",
+    backgroundColor: "#0A0F1E",
   },
   content: {
     flex: 1,

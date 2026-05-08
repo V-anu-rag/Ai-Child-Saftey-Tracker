@@ -7,4 +7,10 @@ export const COLORS = {
   primary: "#635BFF",     // Stripe Violet primary CTAs & branding
   accent: "#00D4AA",      // Emerald Cyan green highlights
   danger: "#FF4D4D",      // Coral Red for SOS & Critical states
+
+  // Developer aliases to bridge literal brand naming with standard semantic variables
+  green: "#E2E8F0",       // Alias of border (Slate 200)
+  salmon: "#00D4AA",      // Alias of accent (Emerald Cyan)
+  jet: "#0A0F1E",         // Alias of text (Deep Navy)
+  red: "#635BFF",         // Alias of primary / Stripe Violet (matches frontend config)
 };

@@ -8,13 +8,9 @@ import { Ionicons } from "@expo/vector-icons";
 import FreeMap from "../../components/FreeMap";
 import { useSocket } from "../../context/SocketContext";
 import { childrenAPI, activityAPI, geofencesAPI } from "../../api/client";
+import { COLORS } from "../../constants/theme";
 
 const { width } = Dimensions.get("window");
-
-const COLORS = {
-  bg: "#EEF4D4", green: "#DAEFB3", red: "#D64550",
-  salmon: "#EA9E8D", jet: "#1C2826",
-};
 
 export default function ChildDetailsScreen({ route, navigation }: any) {
   const { childId } = route.params;
@@ -102,12 +98,12 @@ export default function ChildDetailsScreen({ route, navigation }: any) {
       latitude: child?.lastLocation?.lat || 28.6139,
       longitude: child?.lastLocation?.lng || 77.2090,
     };
-  }, [child?.id]); // Only change if the child being viewed changes
+  }, [child?.id]);
 
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="small" color={COLORS.red} />
+        <ActivityIndicator size="small" color={COLORS.primary} />
       </View>
     );
   }
@@ -120,13 +116,13 @@ export default function ChildDetailsScreen({ route, navigation }: any) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{child?.name}'s Activity</Text>
         <TouchableOpacity onPress={handleDelete} style={styles.deleteBtn}>
-          <Ionicons name="trash-outline" size={20} color={COLORS.red} />
+          <Ionicons name="trash-outline" size={20} color={COLORS.danger} />
         </TouchableOpacity>
       </View>
 
       <ScrollView
         contentContainerStyle={styles.scroll}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchData(); }} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchData(); }} tintColor={COLORS.primary} />}
       >
         <View style={styles.mapContainer}>
           <FreeMap
@@ -157,7 +153,7 @@ export default function ChildDetailsScreen({ route, navigation }: any) {
             </View>
             <View style={styles.divider} />
             <View style={styles.stat}>
-              <View style={[styles.statusDot, { backgroundColor: child?.isOnline ? "#16a34a" : "#9ca3af" }]} />
+              <View style={[styles.statusDot, { backgroundColor: child?.isOnline ? COLORS.salmon : "#9ca3af" }]} />
               <Text style={styles.statVal}>{child?.isOnline ? "Online" : "Offline"}</Text>
               <Text style={styles.statLab}>Status</Text>
             </View>
@@ -166,7 +162,7 @@ export default function ChildDetailsScreen({ route, navigation }: any) {
 
         <View style={styles.pairingCard}>
           <View style={styles.pairingInfo}>
-            <View style={styles.keyIcon}><Ionicons name="key" size={20} color={COLORS.salmon} /></View>
+            <View style={styles.keyIcon}><Ionicons name="key" size={20} color={COLORS.primary} /></View>
             <View>
               <Text style={styles.pairingLabel}>Pairing Code</Text>
               <Text style={styles.pairingCode}>{child?.pairingCode || "--- ---"}</Text>
@@ -185,8 +181,8 @@ export default function ChildDetailsScreen({ route, navigation }: any) {
         <Text style={styles.sectionTitle}>Activity Timeline</Text>
         {activities.map((item) => (
           <View key={item.id} style={styles.activityItem}>
-            <View style={[styles.activityIcon, { backgroundColor: item.type === "alert" ? "#fee2e2" : "#dcfce7" }]}>
-              <Ionicons name={item.type === "alert" ? "warning" : "location"} size={18} color={item.type === "alert" ? COLORS.red : "#16a34a"} />
+            <View style={[styles.activityIcon, { backgroundColor: item.type === "alert" ? "rgba(255, 77, 77, 0.1)" : "rgba(0, 212, 170, 0.1)" }]}>
+              <Ionicons name={item.type === "alert" ? "warning" : "location"} size={18} color={item.type === "alert" ? COLORS.danger : COLORS.salmon} />
             </View>
             <View style={styles.activityContent}>
               <Text style={styles.activityTitle}>{item.title}</Text>
@@ -204,32 +200,30 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   loader: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: COLORS.bg },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 16 },
-  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" },
+  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: COLORS.green },
   headerTitle: { fontSize: 18, fontWeight: "800", color: COLORS.jet },
-  deleteBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#fee2e2", alignItems: "center", justifyContent: "center" },
+  deleteBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "rgba(255, 77, 77, 0.1)", alignItems: "center", justifyContent: "center" },
   scroll: { paddingBottom: 40 },
-  mapContainer: { width: "100%", height: 200, backgroundColor: "#e5e7eb" },
-  map: { width: "100%", height: "100%" },
-  marker: { width: 24, height: 24, borderRadius: 12, backgroundColor: COLORS.red, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: "#fff" },
-  summaryCard: { backgroundColor: "#fff", borderRadius: 24, padding: 20, margin: 20, marginTop: -24, elevation: 4 },
+  mapContainer: { width: "100%", height: 200, backgroundColor: COLORS.green },
+  summaryCard: { backgroundColor: "#fff", borderRadius: 24, padding: 20, margin: 20, marginTop: -24, elevation: 4, shadowColor: COLORS.jet, shadowOpacity: 0.05, shadowRadius: 12, borderWidth: 1, borderColor: COLORS.green },
   summaryRow: { flexDirection: "row", justifyContent: "space-around", alignItems: "center" },
   stat: { alignItems: "center", gap: 4 },
   statVal: { fontSize: 16, fontWeight: "800", color: COLORS.jet },
-  statLab: { fontSize: 10, color: `${COLORS.jet}60` },
+  statLab: { fontSize: 10, color: COLORS.textMuted },
   statusDot: { width: 8, height: 8, borderRadius: 4 },
   divider: { width: 1, height: 30, backgroundColor: COLORS.green },
   sectionTitle: { fontSize: 17, fontWeight: "800", color: COLORS.jet, marginLeft: 20, marginBottom: 12 },
-  activityItem: { flexDirection: "row", backgroundColor: "#fff", padding: 16, borderRadius: 16, marginHorizontal: 20, marginBottom: 12, alignItems: "center", gap: 12 },
+  activityItem: { flexDirection: "row", backgroundColor: "#fff", padding: 16, borderRadius: 16, marginHorizontal: 20, marginBottom: 12, alignItems: "center", gap: 12, borderWidth: 1, borderColor: COLORS.green, shadowColor: COLORS.jet, shadowOpacity: 0.03, shadowRadius: 8, elevation: 1 },
   activityIcon: { width: 40, height: 40, borderRadius: 12, alignItems: "center", justifyContent: "center" },
   activityContent: { flex: 1 },
   activityTitle: { fontSize: 14, fontWeight: "700", color: COLORS.jet },
-  activityMsg: { fontSize: 12, color: `${COLORS.jet}60` },
-  activityTime: { fontSize: 10, color: `${COLORS.jet}40`, marginTop: 4 },
-  pairingCard: { backgroundColor: "#fff", borderRadius: 20, padding: 16, marginHorizontal: 20, marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderWidth: 1, borderColor: `${COLORS.salmon}30` },
+  activityMsg: { fontSize: 12, color: COLORS.textMuted },
+  activityTime: { fontSize: 10, color: COLORS.textMuted, marginTop: 4 },
+  pairingCard: { backgroundColor: "#fff", borderRadius: 20, padding: 16, marginHorizontal: 20, marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderWidth: 1, borderColor: COLORS.green, shadowColor: COLORS.jet, shadowOpacity: 0.03, shadowRadius: 8, elevation: 1 },
   pairingInfo: { flexDirection: "row", alignItems: "center", gap: 12 },
-  keyIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: `${COLORS.salmon}15`, alignItems: "center", justifyContent: "center" },
-  pairingLabel: { fontSize: 10, fontWeight: "800", color: `${COLORS.jet}50`, uppercase: true },
+  keyIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: "rgba(99, 91, 255, 0.1)", alignItems: "center", justifyContent: "center" },
+  pairingLabel: { fontSize: 10, fontWeight: "800", color: COLORS.textMuted },
   pairingCode: { fontSize: 18, fontWeight: "900", color: COLORS.jet, letterSpacing: 2 },
-  regenBtn: { backgroundColor: COLORS.salmon, flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12 },
+  regenBtn: { backgroundColor: COLORS.primary, flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, shadowColor: COLORS.primary, shadowOpacity: 0.2, shadowRadius: 5 },
   regenText: { color: "#fff", fontSize: 12, fontWeight: "700" },
 });

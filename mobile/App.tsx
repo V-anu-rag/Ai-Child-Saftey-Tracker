@@ -35,7 +35,6 @@ export default function App() {
           <SocketProvider>
             <StatusBar style="auto" />
             <RootApp />
-            
           </SocketProvider>
         </AuthProvider>
       </SafeAreaProvider>

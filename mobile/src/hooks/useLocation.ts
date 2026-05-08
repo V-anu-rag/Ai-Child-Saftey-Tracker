@@ -112,7 +112,7 @@ export const useLocation = ({
           foregroundService: {
             notificationTitle: "SafeTrack Tracking Active",
             notificationBody: "Protecting your safety in the background",
-            notificationColor: "#D64550",
+            notificationColor: "#635BFF",
           },
         });
       } catch (err) {

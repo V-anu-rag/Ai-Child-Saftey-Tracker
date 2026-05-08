@@ -12,9 +12,11 @@ import AddChildScreen from "../screens/parent/AddChildScreen";
 import GeofencingScreen from "../screens/parent/GeofencingScreen";
 import AddGeofenceScreen from "../screens/parent/AddGeofenceScreen";
 import SettingsScreen from "../screens/parent/SettingsScreen";
+import { COLORS } from "../constants/theme";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
 function DashboardStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -43,15 +45,15 @@ export default function ParentNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#1C2826",
-          borderTopColor: "#DAEFB3",
+          backgroundColor: COLORS.jet,
+          borderTopColor: "rgba(255, 255, 255, 0.08)",
           borderTopWidth: 1,
           height: 60 + Math.max(insets.bottom, 8),
           paddingBottom: Math.max(insets.bottom, 8),
         },
-        tabBarActiveTintColor: "#D64550",
-        tabBarInactiveTintColor: "rgba(255,255,255,0.5)",
-        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: "rgba(255, 255, 255, 0.4)",
+        tabBarLabelStyle: { fontSize: 11, fontWeight: "700" },
         tabBarIcon: ({ color, size, focused }) => {
           const icons: Record<string, string> = {
             Dashboard: focused ? "home" : "home-outline",

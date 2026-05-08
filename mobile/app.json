@@ -3,25 +3,37 @@
     "name": "SafeTrack",
     "slug": "safetrack",
     "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
+    "scheme": "safetrack",
+
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+
     "icon": "./assets/logo.png",
+
+    "owner": "verma_51",
+
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.safetrack.app",
+      "buildNumber": "1",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "SafeTrack needs your location to keep your parent informed.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "SafeTrack tracks your location in background.",
         "NSLocationAlwaysUsageDescription": "SafeTrack uses background location."
       }
     },
+
     "android": {
       "package": "com.safetrack.app",
+      "versionCode": 1,
       "usesCleartextTraffic": true,
+
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
-        "backgroundColor": "#1C2826"
+        "backgroundColor": "#0A0F1E"
       },
+
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
@@ -34,22 +46,27 @@
         "POST_NOTIFICATIONS"
       ]
     },
+
     "plugins": [
       "expo-task-manager",
+
       [
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow SafeTrack to use your location to keep your parent informed.",
           "isAndroidBackgroundLocationEnabled": true,
           "isAndroidForegroundServiceEnabled": true,
+
           "foregroundService": {
             "notificationTitle": "SafeTrack Active",
             "notificationBody": "Location tracking is running to keep you safe.",
-            "notificationColor": "#D64550"
+            "notificationColor": "#635BFF"
           }
         }
       ],
+
       "expo-notifications",
+
       [
         "expo-build-properties",
         {
@@ -58,15 +75,18 @@
           }
         }
       ],
+
       "expo-secure-store",
       "expo-font",
       "expo-video"
     ],
+
     "extra": {
-      "apiUrl": "http://192.168.1.22:5000/api",
-      "socketUrl": "http://192.168.1.22:5000",
+      "apiUrl": "https://safetrack-api.onrender.com/api",
+      "socketUrl": "https://safetrack-api.onrender.com",
+
       "eas": {
-        "projectId": "d1e61b8b-d67c-483a-b3ff-2f51e2efbfd1"
+        "projectId": "124c8979-964f-4391-908d-8a16cf67fc8e"
       }
     }
   }

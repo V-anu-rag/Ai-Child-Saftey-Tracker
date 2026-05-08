@@ -10,6 +10,7 @@ import ChildPairingScreen from "../screens/child/PairingScreen";
 import ParentNavigator from "./ParentNavigator";
 import ChildNavigator from "./ChildNavigator";
 import { navigationRef } from "../utils/navigationRef";
+import { COLORS } from "../constants/theme";
 
 const Stack = createStackNavigator();
 
@@ -24,8 +25,8 @@ export default function AppNavigator() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#1C2826" }}>
-        <ActivityIndicator size="small" color="#D64550" />
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: COLORS.bg }}>
+        <ActivityIndicator size="small" color={COLORS.primary} />
       </View>
     );
   }

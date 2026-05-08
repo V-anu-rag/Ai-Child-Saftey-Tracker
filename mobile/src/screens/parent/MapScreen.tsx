@@ -7,10 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import FreeMap, { FreeMapRef } from "../../components/FreeMap";
 import { useSocket } from "../../context/SocketContext";
 import { childrenAPI, geofencesAPI } from "../../api/client";
-
-const COLORS = {
-  bg: "#EEF4D4", green: "#DAEFB3", red: "#D64550", salmon: "#EA9E8D", jet: "#1C2826",
-};
+import { COLORS } from "../../constants/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const IS_LARGE_SCREEN = SCREEN_WIDTH > 400;
@@ -20,7 +17,7 @@ interface LocationData {
   accuracy?: number; batteryLevel?: number; timestamp: string;
 }
 
-export default function MapScreen() {
+export default function MapScreen({ navigation }: any) {
   // Keep screen awake while on map
   useEffect(() => {
     let active = true;
@@ -33,7 +30,6 @@ export default function MapScreen() {
           console.log("🔦 Screen stay-awake active");
         }
       } catch (e) {
-        // Silently handle if activity is not ready
         console.log("KeepAwake ignored: activity not ready");
       }
     }, 1000);
@@ -48,6 +44,7 @@ export default function MapScreen() {
       }
     };
   }, []);
+
   const { on, off } = useSocket();
   const mapRef = useRef<FreeMapRef>(null);
   const route = useRoute<any>();
@@ -137,12 +134,12 @@ export default function MapScreen() {
       latitudeDelta: 0.05,
       longitudeDelta: 0.05,
     };
-  }, [children.length > 0]); // Only re-calculate when the first child is found
+  }, [children.length > 0]);
 
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="small" color={COLORS.red} />
+        <ActivityIndicator size="small" color={COLORS.primary} />
       </View>
     );
   }
@@ -211,7 +208,7 @@ export default function MapScreen() {
               style={[styles.pill, selectedChild === c._id && styles.pillActive]}
               onPress={() => focusChild(c._id)}
             >
-              <View style={[styles.pillDot, { backgroundColor: c.isOnline ? "#16a34a" : "#9ca3af" }]} />
+              <View style={[styles.pillDot, { backgroundColor: c.isOnline ? COLORS.salmon : "#9ca3af" }]} />
               <Text style={[styles.pillText, selectedChild === c._id && styles.pillTextActive]}>
                 {c.name.split(" ")[0]}
               </Text>
@@ -226,19 +223,19 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 16, backgroundColor: COLORS.bg },
-  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" },
+  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: COLORS.green },
   headerTitle: { fontSize: 18, fontWeight: "800", color: COLORS.jet },
   loader: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: COLORS.bg, padding: 20 },
   emptyText: { fontSize: 18, fontWeight: "800", color: COLORS.jet, marginTop: 16 },
-  emptySub: { fontSize: 14, color: `${COLORS.jet}60`, marginTop: 4, textAlign: "center" },
+  emptySub: { fontSize: 14, color: COLORS.textMuted, marginTop: 4, textAlign: "center" },
   map: { flex: 1 },
-  markerOuter: { width: 40, height: 40, borderRadius: 20, backgroundColor: COLORS.red, borderWidth: 2, borderColor: "#fff", alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.3, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, elevation: 4 },
+  markerOuter: { width: 40, height: 40, borderRadius: 20, backgroundColor: COLORS.primary, borderWidth: 2, borderColor: "#fff", alignItems: "center", justifyContent: "center", shadowColor: COLORS.jet, shadowOpacity: 0.1, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, elevation: 4 },
   markerSelected: { width: 48, height: 48, borderRadius: 24, borderWidth: 3 },
   markerInner: { alignItems: "center", justifyContent: "center" },
   zoneDot: { width: 24, height: 24, borderRadius: 12, alignItems: "center", justifyContent: "center" },
   callout: { padding: 8, minWidth: 120 },
   calloutName: { fontWeight: "700", fontSize: 13, color: COLORS.jet, marginBottom: 2 },
-  calloutText: { fontSize: 11, color: `${COLORS.jet}70` },
+  calloutText: { fontSize: 11, color: COLORS.textMuted },
   childPills: { 
     position: "absolute", 
     bottom: IS_LARGE_SCREEN ? 32 : 24, 
@@ -257,13 +254,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: IS_LARGE_SCREEN ? 18 : 14, 
     paddingVertical: IS_LARGE_SCREEN ? 10 : 8, 
     borderRadius: 24, 
-    shadowColor: "#000", 
-    shadowOpacity: 0.1, 
+    shadowColor: COLORS.jet, 
+    shadowOpacity: 0.05, 
     shadowRadius: 6, 
     shadowOffset: { width: 0, height: 2 }, 
-    elevation: 3 
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: COLORS.green
   },
-  pillActive: { backgroundColor: COLORS.jet },
+  pillActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
   pillDot: { width: 6, height: 6, borderRadius: 3 },
   pillText: { 
     fontSize: IS_LARGE_SCREEN ? 14 : 13, 
