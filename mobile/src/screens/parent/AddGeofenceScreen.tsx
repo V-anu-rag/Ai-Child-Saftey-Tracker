@@ -7,13 +7,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import FreeMap, { FreeMapRef } from "../../components/FreeMap";
 import { Ionicons } from "@expo/vector-icons";
 import { geofencesAPI, childrenAPI } from "../../api/client";
+import { COLORS } from "../../constants/theme";
 
 const { width } = Dimensions.get("window");
-
-const COLORS = {
-  bg: "#EEF4D4", green: "#DAEFB3", red: "#D64550",
-  salmon: "#EA9E8D", jet: "#1C2826",
-};
 
 const TYPES = [
   { id: "home", label: "Home", icon: "home" },
@@ -46,7 +42,6 @@ export default function AddGeofenceScreen({ navigation }: any) {
     if (child?.lastLocation?.lat) {
       const loc = { lat: child.lastLocation.lat, lng: child.lastLocation.lng };
       setLocation(loc);
-      // Give the WebView a moment to be ready if it's the first load
       setTimeout(() => {
         mapRef.current?.flyTo(loc.lat, loc.lng, 16);
       }, 100);
@@ -72,7 +67,7 @@ export default function AddGeofenceScreen({ navigation }: any) {
         type,
         center: location,
         radius,
-        color: type === "home" ? "#16a34a" : type === "school" ? "#d97706" : "#EA9E8D"
+        color: type === "home" ? COLORS.salmon : type === "school" ? COLORS.primary : COLORS.danger
       });
       navigation.goBack();
     } catch (err: any) {
@@ -98,7 +93,7 @@ export default function AddGeofenceScreen({ navigation }: any) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>New Safe Zone</Text>
         <TouchableOpacity onPress={handleSave} disabled={isSaving}>
-          {isSaving ? <ActivityIndicator color={COLORS.red} /> : <Text style={styles.saveText}>Save</Text>}
+          {isSaving ? <ActivityIndicator color={COLORS.primary} /> : <Text style={styles.saveText}>Save</Text>}
         </TouchableOpacity>
       </View>
 
@@ -123,7 +118,7 @@ export default function AddGeofenceScreen({ navigation }: any) {
               latitude: location.lat,
               longitude: location.lng,
               radius: radius,
-              color: "#EA9E8D"
+              color: type === "home" ? COLORS.salmon : type === "school" ? COLORS.primary : COLORS.danger
             }] : []}
             onMapPress={(coords) => setLocation(coords)}
           />
@@ -139,6 +134,7 @@ export default function AddGeofenceScreen({ navigation }: any) {
             placeholder="e.g. Grandma's House"
             value={name}
             onChangeText={setName}
+            placeholderTextColor={COLORS.textMuted}
           />
 
           <Text style={styles.label}>Target Child</Text>
@@ -187,6 +183,7 @@ export default function AddGeofenceScreen({ navigation }: any) {
               if (radius < 10) setRadius(10);
             }}
             placeholder="e.g. 200 (Min 10m)"
+            placeholderTextColor={COLORS.textMuted}
           />
         </View>
       </ScrollView>
@@ -197,25 +194,24 @@ export default function AddGeofenceScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 16 },
-  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" },
+  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: COLORS.green },
   headerTitle: { fontSize: 18, fontWeight: "800", color: COLORS.jet },
-  saveText: { fontSize: 16, fontWeight: "700", color: COLORS.red },
+  saveText: { fontSize: 16, fontWeight: "700", color: COLORS.primary },
   scroll: { paddingBottom: 40 },
-  mapContainer: { width: "100%", height: 300, backgroundColor: "#e5e7eb", position: "relative" },
-  map: { width: "100%", height: "100%" },
-  mapHint: { position: "absolute", bottom: 12, alignSelf: "center", backgroundColor: "rgba(0,0,0,0.6)", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
+  mapContainer: { width: "100%", height: 300, backgroundColor: COLORS.green, position: "relative" },
+  mapHint: { position: "absolute", bottom: 12, alignSelf: "center", backgroundColor: "rgba(10,15,30,0.85)", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
   hintText: { color: "#fff", fontSize: 11, fontWeight: "600" },
   form: { padding: 20 },
   label: { fontSize: 12, fontWeight: "800", color: COLORS.jet, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, marginTop: 16 },
-  input: { backgroundColor: "#fff", borderRadius: 12, padding: 14, fontSize: 15, fontWeight: "600", color: COLORS.jet, elevation: 1 },
+  input: { backgroundColor: "#fff", borderRadius: 12, padding: 14, fontSize: 15, fontWeight: "600", color: COLORS.jet, borderWidth: 1, borderColor: COLORS.green },
   childList: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  childChip: { backgroundColor: "#fff", paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: `${COLORS.jet}10` },
-  childChipActive: { backgroundColor: COLORS.jet, borderColor: COLORS.jet },
+  childChip: { backgroundColor: "#fff", paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: COLORS.green },
+  childChipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
   childText: { fontSize: 13, fontWeight: "600", color: COLORS.jet },
   childTextActive: { color: "#fff" },
   typeRow: { flexDirection: "row", gap: 10 },
-  typeBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "#fff", paddingVertical: 12, borderRadius: 12, elevation: 1 },
-  typeBtnActive: { backgroundColor: COLORS.jet },
+  typeBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "#fff", paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: COLORS.green },
+  typeBtnActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
   typeText: { fontSize: 13, fontWeight: "700", color: COLORS.jet },
   typeTextActive: { color: "#fff" },
 });

@@ -165,13 +165,13 @@ export default function TrackingScreen() {
               </View>
               <View style={styles.menuDivider} />
               <TouchableOpacity style={styles.menuItem} onPress={() => setShowProfileMenu(false)}>
-                <Ionicons name="person-outline" size={20} color={COLORS.jet} />
+                <Ionicons name="person-outline" size={20} color={COLORS.text} />
                 <Text style={styles.menuItemText}>My Profile</Text>
               </TouchableOpacity>
               <View style={styles.menuDivider} />
               <TouchableOpacity style={styles.menuItem} onPress={() => { setShowProfileMenu(false); logout(); }}>
-                <Ionicons name="log-out-outline" size={20} color={COLORS.red} />
-                <Text style={[styles.menuItemText, { color: COLORS.red }]}>Logout</Text>
+                <Ionicons name="log-out-outline" size={20} color={COLORS.danger} />
+                <Text style={[styles.menuItemText, { color: COLORS.danger }]}>Logout</Text>
               </TouchableOpacity>
             </View>
           </Pressable>
@@ -179,7 +179,7 @@ export default function TrackingScreen() {
 
         <View style={[styles.statusBar, isConnected ? styles.statusOnline : styles.statusOffline]}>
           <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <View style={[styles.dot, { backgroundColor: isConnected ? "#16a34a" : "#ef4444" }]} />
+            <View style={[styles.dot, { backgroundColor: isConnected ? COLORS.salmon : COLORS.danger }]} />
             <Text style={styles.statusText}>{isConnected ? "Connected to server" : "Offline — reconnecting..."}</Text>
           </View>
           {!isConnected && (
@@ -198,25 +198,30 @@ export default function TrackingScreen() {
         {/* Main tracking card */}
         <View style={styles.trackingCard}>
           <View style={styles.trackingTop}>
-            <View style={styles.shieldIcon}><Ionicons name={isTracking ? "shield-checkmark" : "shield-outline"} size={40} color={isTracking ? "#16a34a" : COLORS.jet} /></View>
+            <View style={styles.shieldIcon}><Ionicons name={isTracking ? "shield-checkmark" : "shield-outline"} size={40} color={isTracking ? COLORS.salmon : COLORS.text} /></View>
             <View style={styles.trackingInfo}>
               <Text style={styles.trackingLabel}>Location Tracking</Text>
-              <Text style={[styles.trackingStatus, { color: isTracking ? "#16a34a" : "#6b7280" }]}>{isTracking ? "● Active" : "○ Inactive"}</Text>
+              <Text style={[styles.trackingStatus, { color: isTracking ? COLORS.salmon : COLORS.textMuted }]}>{isTracking ? "● Active" : "○ Inactive"}</Text>
             </View>
-            <Switch value={isTracking} onValueChange={() => setIsTracking(!isTracking)} trackColor={{ false: "#d1d5db", true: "#bbf7d0" }} thumbColor={isTracking ? "#16a34a" : "#9ca3af"} />
+            <Switch 
+              value={isTracking} 
+              onValueChange={() => setIsTracking(!isTracking)} 
+              trackColor={{ false: COLORS.green, true: `${COLORS.salmon}50` }} 
+              thumbColor={isTracking ? COLORS.salmon : "#9ca3af"} 
+            />
           </View>
           {isTracking && (
             <View style={styles.trackingDetails}>
-              <View style={styles.detailRow}><Ionicons name="location" size={14} color={COLORS.red} /><Text style={styles.detailText}>{currentCoords ? `${currentCoords.lat.toFixed(4)}, ${currentCoords.lng.toFixed(4)}` : "Acquiring GPS..."}</Text></View>
-              {lastUpdate && <View style={styles.detailRow}><Ionicons name="time-outline" size={14} color="#6b7280" /><Text style={styles.detailText}>Last update: {lastUpdate.toLocaleTimeString()}</Text></View>}
+              <View style={styles.detailRow}><Ionicons name="location" size={14} color={COLORS.danger} /><Text style={styles.detailText}>{currentCoords ? `${currentCoords.lat.toFixed(4)}, ${currentCoords.lng.toFixed(4)}` : "Acquiring GPS..."}</Text></View>
+              {lastUpdate && <View style={styles.detailRow}><Ionicons name="time-outline" size={14} color={COLORS.textMuted} /><Text style={styles.detailText}>Last update: {lastUpdate.toLocaleTimeString()}</Text></View>}
             </View>
           )}
         </View>
 
         {/* Battery & Device */}
         <View style={styles.statsRow}>
-          <View style={styles.statCard}><Ionicons name={batteryLevel > 20 ? "battery-half" : "battery-dead"} size={24} color={batteryLevel < 20 ? COLORS.red : COLORS.jet} /><Text style={styles.statValue}>{batteryLevel}%</Text><Text style={styles.statLabel}>Battery</Text></View>
-          <View style={styles.statCard}><Ionicons name="phone-portrait-outline" size={24} color={COLORS.jet} /><Text style={styles.statValue} numberOfLines={1}>{child?.name || "Unpaired"}</Text><Text style={styles.statLabel}>Profile</Text></View>
+          <View style={styles.statCard}><Ionicons name={batteryLevel > 20 ? "battery-half" : "battery-dead"} size={24} color={batteryLevel < 20 ? COLORS.danger : COLORS.text} /><Text style={styles.statValue}>{batteryLevel}%</Text><Text style={styles.statLabel}>Battery</Text></View>
+          <View style={styles.statCard}><Ionicons name="phone-portrait-outline" size={24} color={COLORS.text} /><Text style={styles.statValue} numberOfLines={1}>{child?.name || "Unpaired"}</Text><Text style={styles.statLabel}>Profile</Text></View>
         </View>
 
         {/* SOS Button */}
@@ -239,31 +244,31 @@ const styles = StyleSheet.create({
   profileAvatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: COLORS.text, alignItems: "center", justifyContent: "center" },
   avatarText: { color: "#fff", fontWeight: "700", fontSize: 16 },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "flex-start", alignItems: "flex-end", padding: 16, paddingTop: 60 },
-  menuContainer: { backgroundColor: "#fff", width: 250, borderRadius: 24, padding: 20, shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 20, elevation: 10 },
+  menuContainer: { backgroundColor: "#fff", width: 250, borderRadius: 24, padding: 20, shadowColor: COLORS.text, shadowOpacity: 0.1, shadowRadius: 20, elevation: 10 },
   menuHeader: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 20 },
   menuAvatarLarge: { width: 48, height: 48, borderRadius: 24, backgroundColor: COLORS.text, alignItems: "center", justifyContent: "center" },
   avatarTextLarge: { color: "#fff", fontWeight: "700", fontSize: 20 },
   menuName: { fontSize: 16, fontWeight: "800", color: COLORS.text },
   menuEmail: { fontSize: 11, color: COLORS.textMuted },
-  menuDivider: { height: 1, backgroundColor: COLORS.border, marginVertical: 12 },
+  menuDivider: { height: 1, backgroundColor: COLORS.green, marginVertical: 12 },
   menuItem: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 8 },
   menuItemText: { fontSize: 14, fontWeight: "600", color: COLORS.text },
   statusBar: { flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12, marginBottom: 16 },
-  statusOnline: { backgroundColor: "#dcfce7" },
-  statusOffline: { backgroundColor: "#fee2e2" },
+  statusOnline: { backgroundColor: "rgba(0,212,170,0.1)" },
+  statusOffline: { backgroundColor: "rgba(255,77,77,0.1)" },
   dot: { width: 8, height: 8, borderRadius: 4 },
   statusText: { fontSize: 13, fontWeight: "600", color: COLORS.text },
-  trackingCard: { backgroundColor: "#fff", borderRadius: 20, padding: 20, marginBottom: 16, shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 12, elevation: 3 },
+  trackingCard: { backgroundColor: "#fff", borderRadius: 20, padding: 20, marginBottom: 16, shadowColor: COLORS.text, shadowOpacity: 0.04, shadowRadius: 12, elevation: 3 },
   trackingTop: { flexDirection: "row", alignItems: "center", gap: 16 },
   shieldIcon: { width: 60, height: 60, borderRadius: 16, backgroundColor: COLORS.bg, alignItems: "center", justifyContent: "center" },
   trackingInfo: { flex: 1 },
   trackingLabel: { fontSize: 16, fontWeight: "700", color: COLORS.text },
   trackingStatus: { fontSize: 13, fontWeight: "600", marginTop: 2 },
-  trackingDetails: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: COLORS.border, gap: 6 },
+  trackingDetails: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: COLORS.green, gap: 6 },
   detailRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   detailText: { fontSize: 12, color: COLORS.textMuted },
   statsRow: { flexDirection: "row", gap: 12, marginBottom: 24 },
-  statCard: { flex: 1, backgroundColor: "#fff", borderRadius: 16, padding: 16, alignItems: "center", gap: 4, shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
+  statCard: { flex: 1, backgroundColor: "#fff", borderRadius: 16, padding: 16, alignItems: "center", gap: 4, shadowColor: COLORS.text, shadowOpacity: 0.03, shadowRadius: 8, elevation: 2 },
   statValue: { fontSize: 15, fontWeight: "800", color: COLORS.text },
   statLabel: { fontSize: 11, color: COLORS.textMuted },
   sosButton: { backgroundColor: COLORS.danger, borderRadius: 24, marginBottom: 20, overflow: "hidden", shadowColor: COLORS.danger, shadowOpacity: 0.4, shadowRadius: 20, elevation: 10 },

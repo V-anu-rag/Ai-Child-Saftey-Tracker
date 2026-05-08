@@ -12,22 +12,15 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { childrenAPI, locationAPI } from "../../api/client";
-
-const COLORS = {
-  bg: "#EEF4D4",
-  green: "#DAEFB3",
-  red: "#D64550",
-  salmon: "#EA9E8D",
-  jet: "#1C2826",
-};
+import { COLORS } from "../../constants/theme";
 
 const typeColors: Record<string, string> = {
-  location_update: "#2563eb",
-  geofence_enter: "#16a34a",
+  location_update: COLORS.primary,
+  geofence_enter: COLORS.salmon,
   geofence_exit: "#ea580c",
-  sos_trigger: "#dc2626",
+  sos_trigger: COLORS.danger,
   app_usage: "#7c3aed",
-  device_activity: "#374151",
+  device_activity: COLORS.textMuted,
 };
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -100,7 +93,7 @@ export default function HistoryScreen() {
       <View
         style={[
           styles.typeDot,
-          { backgroundColor: typeColors[item.type] || "#6b7280" },
+          { backgroundColor: typeColors[item.type] || COLORS.textMuted },
         ]}
       />
 
@@ -110,7 +103,7 @@ export default function HistoryScreen() {
         </Text>
 
         <View style={styles.histMeta}>
-          <Ionicons name="time-outline" size={11} color={`${COLORS.jet}50`} />
+          <Ionicons name="time-outline" size={11} color={COLORS.textMuted} />
           <Text style={styles.histTime}>
             {new Date(item.createdAt).toLocaleString()}
           </Text>
@@ -128,12 +121,12 @@ export default function HistoryScreen() {
           <Ionicons
             name="battery-half"
             size={13}
-            color={item.batteryLevel < 20 ? COLORS.red : `${COLORS.jet}60`}
+            color={item.batteryLevel < 20 ? COLORS.danger : COLORS.textMuted}
           />
           <Text
             style={[
               styles.batteryText,
-              item.batteryLevel < 20 && { color: COLORS.red },
+              item.batteryLevel < 20 && { color: COLORS.danger },
             ]}
           >
             {item.batteryLevel}%
@@ -187,7 +180,7 @@ export default function HistoryScreen() {
         <ActivityIndicator
           style={{ flex: 1 }}
           size="small"
-          color={COLORS.red}
+          color={COLORS.primary}
         />
       ) : (
         <FlatList
@@ -198,7 +191,7 @@ export default function HistoryScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor={COLORS.red}
+              tintColor={COLORS.primary}
             />
           }
           onEndReached={loadMore}
@@ -210,7 +203,7 @@ export default function HistoryScreen() {
               <Ionicons
                 name="map-outline"
                 size={40}
-                color={`${COLORS.jet}30`}
+                color={`${COLORS.jet}20`}
               />
               <Text style={styles.emptyText}>No history yet</Text>
             </View>
@@ -223,7 +216,6 @@ export default function HistoryScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
-
   title: {
     fontSize: 22,
     fontWeight: "800",
@@ -231,35 +223,37 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 12,
   },
-
   childRow: {
     paddingHorizontal: 16,
     paddingBottom: 16,
     gap: IS_LARGE_SCREEN ? 12 : 8,
   },
-
   childChip: {
-  paddingHorizontal: 18,
-  height: 44,                // ✅ FIX: fixed height
-  borderRadius: 22,
-  alignItems: "center",
-  justifyContent: "center",
-},
-
-chipText: {
-  fontSize: 16,
-  fontWeight: "600",
-  lineHeight: 18,            // ✅ VERY IMPORTANT
-  textAlign: "center",
-},
-  chipActive: {
-    backgroundColor: COLORS.jet,
-    borderColor: COLORS.jet,
-    elevation: 4,
+    paddingHorizontal: 18,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: COLORS.green,
   },
-
+  chipText: {
+    fontSize: 16,
+    fontWeight: "600",
+    lineHeight: 18,
+    textAlign: "center",
+    color: COLORS.jet,
+  },
+  chipActive: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+    elevation: 4,
+    shadowColor: COLORS.primary,
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+  },
   chipTextActive: { color: "#fff" },
-
   histItem: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -267,41 +261,32 @@ chipText: {
     backgroundColor: "#fff",
     borderRadius: 14,
     padding: 14,
+    borderWidth: 1,
+    borderColor: COLORS.green,
   },
-
   typeDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
     marginTop: 4,
   },
-
   histContent: { flex: 1 },
-
   histTitle: {
     fontSize: 13,
     fontWeight: "600",
     color: COLORS.jet,
     fontFamily: "monospace",
   },
-
   histMeta: { flexDirection: "row", alignItems: "center", gap: 4 },
-
-  histTime: { fontSize: 11, color: `${COLORS.jet}55` },
-
-  histAccuracy: { fontSize: 11, color: `${COLORS.jet}40`, marginLeft: 4 },
-
+  histTime: { fontSize: 11, color: COLORS.textMuted },
+  histAccuracy: { fontSize: 11, color: COLORS.textMuted, marginLeft: 4 },
   battery: { flexDirection: "row", alignItems: "center", gap: 3 },
-
-  batteryText: { fontSize: 11, color: `${COLORS.jet}60` },
-
+  batteryText: { fontSize: 11, color: COLORS.textMuted },
   separator: { height: 8 },
-
   empty: { alignItems: "center", paddingTop: 60, gap: 8 },
-
   emptyText: {
     fontSize: 14,
-    color: `${COLORS.jet}50`,
+    color: COLORS.textMuted,
     fontWeight: "600",
   },
 });

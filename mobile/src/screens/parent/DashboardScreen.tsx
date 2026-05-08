@@ -17,8 +17,8 @@ interface Child {
   lastLocation: { lat: number; lng: number; address: string; timestamp: string } | null;
 }
 
-const statusColor = { safe: "#16a34a", warning: "#d97706", alert: "#dc2626" };
-const statusBg = { safe: "#dcfce7", warning: "#fef9c3", alert: "#fee2e2" };
+const statusColor = { safe: COLORS.salmon, warning: "#d97706", alert: COLORS.danger };
+const statusBg = { safe: "rgba(0,212,170,0.1)", warning: "#fef9c3", alert: "rgba(255,77,77,0.1)" };
 
 export default function DashboardScreen({ navigation }: any) {
   const { user, logout } = useAuth();
@@ -91,7 +91,7 @@ export default function DashboardScreen({ navigation }: any) {
           <View>
             <Text style={styles.greeting}>Good morning, {user?.name?.split(" ")[0]?.toUpperCase()}</Text>
             <View style={styles.connRow}>
-              <View style={[styles.connDot, { backgroundColor: isConnected ? "#16a34a" : "#ef4444" }]} />
+              <View style={[styles.connDot, { backgroundColor: isConnected ? COLORS.salmon : COLORS.danger }]} />
               <Text style={styles.connText}>{isConnected ? "Live tracking active" : "Reconnecting..."}</Text>
             </View>
           </View>
@@ -137,9 +137,9 @@ export default function DashboardScreen({ navigation }: any) {
         <View style={styles.statsRow}>
           {[
             { icon: "people", label: "Children", value: children.length, color: COLORS.primary },
-            { icon: "checkmark-circle", label: "Safe", value: children.filter((c) => c.safeStatus === "safe").length, color: "#16a34a" },
+            { icon: "checkmark-circle", label: "Safe", value: children.filter((c) => c.safeStatus === "safe").length, color: COLORS.salmon },
             { icon: "notifications", label: "Alerts", value: unreadCount, color: COLORS.danger },
-            { icon: "wifi", label: "Online", value: children.filter((c) => c.isOnline).length, color: "#2563eb" },
+            { icon: "wifi", label: "Online", value: children.filter((c) => c.isOnline).length, color: COLORS.primary },
           ].map((s) => (
             <View key={s.label} style={styles.statCard}>
               <Ionicons name={s.icon as any} size={20} color={s.color} />
@@ -170,7 +170,7 @@ export default function DashboardScreen({ navigation }: any) {
               <View style={styles.childTop}>
                 <View style={styles.avatarBox}>
                   <Ionicons name="person" size={24} color={COLORS.primary} />
-                  <View style={[styles.onlineDot, { backgroundColor: child.isOnline ? "#16a34a" : "#9ca3af" }]} />
+                  <View style={[styles.onlineDot, { backgroundColor: child.isOnline ? COLORS.salmon : "#9ca3af" }]} />
                 </View>
                 <View style={styles.childInfo}>
                   <Text style={styles.childName}>{child.name}</Text>
@@ -202,26 +202,26 @@ const styles = StyleSheet.create({
   connRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 },
   connDot: { width: 6, height: 6, borderRadius: 3 },
   connText: { fontSize: 12, color: COLORS.textMuted },
-  profileAvatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: COLORS.text, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: "#fff", shadowColor: "#000", shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
+  profileAvatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: COLORS.text, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: "#fff", shadowColor: COLORS.text, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
   avatarText: { color: "#fff", fontWeight: "700", fontSize: 16 },
   modalOverlay: { flex: 1, backgroundColor: "transparent", justifyContent: "flex-start", alignItems: "flex-end", paddingRight: 16, paddingTop: 60 },
-  menuContainer: { backgroundColor: "#fff", width: 208, borderRadius: 16, shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.12, shadowRadius: 24, elevation: 12, borderWidth: 1, borderColor: COLORS.border, overflow: "hidden" },
+  menuContainer: { backgroundColor: "#fff", width: 208, borderRadius: 16, shadowColor: COLORS.text, shadowOpacity: 0.1, shadowRadius: 24, elevation: 12, borderWidth: 1, borderColor: COLORS.border, overflow: "hidden" },
   menuInner: { paddingVertical: 4 },
   menuItem: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 11, paddingHorizontal: 16 },
   menuItemText: { fontSize: 14, fontWeight: "500", color: COLORS.text },
   menuItemSignOut: { borderTopWidth: 1, borderTopColor: COLORS.border, marginTop: 2 },
   statsRow: { flexDirection: "row", gap: 10, marginBottom: 24 },
-  statCard: { flex: 1, backgroundColor: "#fff", borderRadius: 16, padding: 12, alignItems: "center", gap: 4, shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
+  statCard: { flex: 1, backgroundColor: "#fff", borderRadius: 16, padding: 12, alignItems: "center", gap: 4, shadowColor: COLORS.text, shadowOpacity: 0.03, shadowRadius: 8, elevation: 2 },
   statValue: { fontSize: 18, fontWeight: "800" },
   statLabel: { fontSize: 10, color: COLORS.textMuted, textAlign: "center" },
   sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
   sectionTitle: { fontSize: 17, fontWeight: "800", color: COLORS.text },
   addText: { fontSize: 13, fontWeight: "700", color: COLORS.primary },
-  empty: { backgroundColor: "#fff", borderRadius: 20, padding: 32, alignItems: "center", gap: 12 },
+  empty: { backgroundColor: "#fff", borderRadius: 20, padding: 32, alignItems: "center", gap: 12, shadowColor: COLORS.text, shadowOpacity: 0.02, shadowRadius: 10, elevation: 2 },
   emptyText: { fontSize: 15, fontWeight: "700", color: COLORS.textMuted },
   emptyBtn: { backgroundColor: COLORS.primary, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 12 },
   emptyBtnText: { color: "#fff", fontSize: 13, fontWeight: "700" },
-  childCard: { backgroundColor: "#fff", borderRadius: 20, padding: 16, marginBottom: 12, shadowColor: "#000", shadowOpacity: 0.07, shadowRadius: 10, elevation: 3 },
+  childCard: { backgroundColor: "#fff", borderRadius: 20, padding: 16, marginBottom: 12, shadowColor: COLORS.text, shadowOpacity: 0.04, shadowRadius: 10, elevation: 3 },
   childTop: { flexDirection: "row", alignItems: "center", gap: 12 },
   avatarBox: { width: 48, height: 48, borderRadius: 14, backgroundColor: COLORS.bg, alignItems: "center", justifyContent: "center", position: "relative" },
   onlineDot: { position: "absolute", bottom: -1, right: -1, width: 12, height: 12, borderRadius: 6, borderWidth: 2, borderColor: "#fff" },

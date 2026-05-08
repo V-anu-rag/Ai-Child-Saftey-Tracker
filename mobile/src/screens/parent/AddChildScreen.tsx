@@ -6,11 +6,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { childrenAPI } from "../../api/client";
-
-const COLORS = {
-  bg: "#EEF4D4", green: "#DAEFB3", red: "#D64550",
-  salmon: "#EA9E8D", jet: "#1C2826",
-};
+import { COLORS } from "../../constants/theme";
 
 export default function AddChildScreen({ navigation }: any) {
   const [name, setName] = useState("");
@@ -62,7 +58,7 @@ export default function AddChildScreen({ navigation }: any) {
           {step === 1 ? (
             <View style={styles.form}>
               <View style={styles.iconCircle}>
-                <Ionicons name="person-add" size={40} color={COLORS.red} />
+                <Ionicons name="person-add" size={40} color={COLORS.primary} />
               </View>
               <Text style={styles.title}>Create Child Profile</Text>
               <Text style={styles.subtitle}>Enter your child's details to generate a unique pairing code for their device.</Text>
@@ -72,7 +68,7 @@ export default function AddChildScreen({ navigation }: any) {
                 <TextInput
                   style={styles.input}
                   placeholder="e.g. Leo Johnson"
-                  placeholderTextColor={`${COLORS.jet}40`}
+                  placeholderTextColor={COLORS.textMuted}
                   value={name}
                   onChangeText={setName}
                 />
@@ -83,7 +79,7 @@ export default function AddChildScreen({ navigation }: any) {
                 <TextInput
                   style={styles.input}
                   placeholder="e.g. 10"
-                  placeholderTextColor={`${COLORS.jet}40`}
+                  placeholderTextColor={COLORS.textMuted}
                   value={age}
                   onChangeText={setAge}
                   keyboardType="numeric"
@@ -108,7 +104,7 @@ export default function AddChildScreen({ navigation }: any) {
           ) : (
             <View style={styles.successView}>
               <View style={styles.iconCircleSuccess}>
-                <Ionicons name="checkmark-circle" size={40} color="#16a34a" />
+                <Ionicons name="checkmark-circle" size={40} color={COLORS.salmon} />
               </View>
               <Text style={styles.title}>Profile Created!</Text>
               <Text style={styles.subtitle}>Download SafeTrack on your child's phone and enter this code during setup:</Text>
@@ -141,25 +137,25 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   scroll: { padding: 20 },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 30 },
-  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" },
+  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: COLORS.green },
   headerTitle: { fontSize: 18, fontWeight: "800", color: COLORS.jet },
   form: { alignItems: "center" },
-  iconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", marginBottom: 20, shadowColor: COLORS.red, shadowOpacity: 0.1, shadowRadius: 10, elevation: 5 },
+  iconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", marginBottom: 20, shadowColor: COLORS.primary, shadowOpacity: 0.1, shadowRadius: 10, elevation: 5 },
   iconCircleSuccess: { width: 80, height: 80, borderRadius: 40, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", marginBottom: 20 },
   title: { fontSize: 24, fontWeight: "900", color: COLORS.jet, marginBottom: 8 },
-  subtitle: { fontSize: 14, color: `${COLORS.jet}60`, textAlign: "center", paddingHorizontal: 20, marginBottom: 30, lineHeight: 20 },
+  subtitle: { fontSize: 14, color: COLORS.textMuted, textAlign: "center", paddingHorizontal: 20, marginBottom: 30, lineHeight: 20 },
   inputGroup: { width: "100%", marginBottom: 20 },
-  label: { fontSize: 11, fontWeight: "800", color: `${COLORS.jet}50`, marginBottom: 8, marginLeft: 4 },
-  input: { backgroundColor: "#fff", borderRadius: 16, paddingHorizontal: 16, paddingVertical: 14, fontSize: 16, color: COLORS.jet, borderWeight: 1, borderColor: "transparent" },
-  mainBtn: { width: "100%", backgroundColor: COLORS.red, borderRadius: 18, height: 56, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, marginTop: 10, shadowColor: COLORS.red, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 6 },
+  label: { fontSize: 11, fontWeight: "800", color: COLORS.textMuted, marginBottom: 8, marginLeft: 4 },
+  input: { backgroundColor: "#fff", borderRadius: 16, paddingHorizontal: 16, paddingVertical: 14, fontSize: 16, color: COLORS.jet, borderWidth: 1, borderColor: COLORS.green },
+  mainBtn: { width: "100%", backgroundColor: COLORS.primary, borderRadius: 18, height: 56, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, marginTop: 10, shadowColor: COLORS.primary, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 6 },
   disabledBtn: { opacity: 0.5 },
   mainBtnText: { color: "#fff", fontSize: 16, fontWeight: "800" },
   successView: { alignItems: "center" },
-  codeContainer: { backgroundColor: "#fff", borderRadius: 24, padding: 30, width: "100%", alignItems: "center", marginBottom: 20, borderStyle: "dashed", borderWidth: 2, borderColor: COLORS.red },
-  codeLabel: { fontSize: 12, fontWeight: "800", color: COLORS.red, marginBottom: 10, letterSpacing: 2 },
+  codeContainer: { backgroundColor: "#fff", borderRadius: 24, padding: 30, width: "100%", alignItems: "center", marginBottom: 20, borderStyle: "dashed", borderWidth: 2, borderColor: COLORS.primary },
+  codeLabel: { fontSize: 12, fontWeight: "800", color: COLORS.primary, marginBottom: 10, letterSpacing: 2 },
   codeText: { fontSize: 42, fontWeight: "900", color: COLORS.jet, letterSpacing: 8 },
-  infoBox: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: `${COLORS.jet}05`, padding: 12, borderRadius: 12, marginBottom: 30 },
-  infoText: { fontSize: 12, color: `${COLORS.jet}60` },
+  infoBox: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "rgba(10,15,30,0.05)", padding: 12, borderRadius: 12, marginBottom: 30 },
+  infoText: { fontSize: 12, color: COLORS.textMuted },
   doneBtn: { width: "100%", backgroundColor: COLORS.jet, borderRadius: 18, height: 56, alignItems: "center", justifyContent: "center" },
   doneBtnText: { color: "#fff", fontSize: 16, fontWeight: "800" },
 });
