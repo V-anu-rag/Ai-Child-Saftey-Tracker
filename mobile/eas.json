@@ -14,7 +14,9 @@
     },
     "preview": {
       "distribution": "internal",
-      "image": "ubuntu-22.04",
+      "android": {
+        "image": "ubuntu-22.04"
+      },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://safetrack-api.onrender.com/api",
         "EXPO_PUBLIC_SOCKET_URL": "https://safetrack-api.onrender.com",
@@ -25,9 +27,9 @@
     "production": {
       "autoIncrement": true,
       "distribution": "internal",
-      "image": "ubuntu-22.04",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "image": "ubuntu-22.04"
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://safetrack-api.onrender.com/api",
