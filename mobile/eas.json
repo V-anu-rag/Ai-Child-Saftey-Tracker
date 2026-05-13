@@ -13,11 +13,7 @@
       }
     },
     "preview": {
-      "channel": "preview",
       "distribution": "internal",
-      "android": {
-        "image": "ubuntu-22.04-jdk-17-ndk-r26b"
-      },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://safetrack-api.onrender.com/api",
         "EXPO_PUBLIC_SOCKET_URL": "https://safetrack-api.onrender.com",
@@ -26,12 +22,10 @@
       }
     },
     "production": {
-      "channel": "production",
       "autoIncrement": true,
       "distribution": "internal",
       "android": {
-        "buildType": "apk",
-        "image": "ubuntu-22.04-jdk-17-ndk-r26b"
+        "buildType": "apk"
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://safetrack-api.onrender.com/api",

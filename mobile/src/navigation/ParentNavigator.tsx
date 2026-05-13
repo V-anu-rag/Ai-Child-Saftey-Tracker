@@ -45,14 +45,19 @@ export default function ParentNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: COLORS.jet,
-          borderTopColor: "rgba(255, 255, 255, 0.08)",
+          backgroundColor: COLORS.card,
+          borderTopColor: COLORS.border,
           borderTopWidth: 1,
           height: 60 + Math.max(insets.bottom, 8),
           paddingBottom: Math.max(insets.bottom, 8),
+          shadowColor: COLORS.jet,
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.03,
+          shadowRadius: 10,
+          elevation: 10,
         },
         tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: "rgba(255, 255, 255, 0.4)",
+        tabBarInactiveTintColor: COLORS.textMuted,
         tabBarLabelStyle: { fontSize: 11, fontWeight: "700" },
         tabBarIcon: ({ color, size, focused }) => {
           const icons: Record<string, string> = {

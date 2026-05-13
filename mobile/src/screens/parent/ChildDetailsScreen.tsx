@@ -12,12 +12,43 @@ import { COLORS } from "../../constants/theme";
 
 const { width } = Dimensions.get("window");
 
+interface Child {
+  _id: string;
+  id?: string;
+  name: string;
+  pairingCode?: string;
+  lastLocation?: {
+    lat: number;
+    lng: number;
+    timestamp: string;
+  };
+  batteryLevel?: number;
+  isOnline?: boolean;
+}
+
+interface Activity {
+  id: string;
+  type: "location" | "alert" | string;
+  title: string;
+  message: string;
+  timestamp: string;
+  coords?: { lat: number; lng: number };
+}
+
+interface Geofence {
+  _id: string;
+  center: { lat: number; lng: number };
+  radius: number;
+  color?: string;
+}
+
+
 export default function ChildDetailsScreen({ route, navigation }: any) {
   const { childId } = route.params;
   const { on, off } = useSocket();
-  const [child, setChild] = useState<any>(null);
-  const [activities, setActivities] = useState<any[]>([]);
-  const [geofences, setGeofences] = useState<any[]>([]);
+  const [child, setChild] = useState<Child | null>(null);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [geofences, setGeofences] = useState<Geofence[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -83,7 +114,7 @@ export default function ChildDetailsScreen({ route, navigation }: any) {
       setRefreshing(true);
       const res = await childrenAPI.regenerateCode(childId) as any;
       if (res.success) {
-        setChild({ ...child, pairingCode: res.pairingCode });
+        setChild(prev => prev ? { ...prev, pairingCode: res.pairingCode } : null);
         Alert.alert("Success", "Pairing code regenerated successfully.");
       }
     } catch (err) {
@@ -200,30 +231,30 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   loader: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: COLORS.bg },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 16 },
-  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: COLORS.green },
-  headerTitle: { fontSize: 18, fontWeight: "800", color: COLORS.jet },
-  deleteBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: "rgba(255, 77, 77, 0.1)", alignItems: "center", justifyContent: "center" },
+  backBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: COLORS.green, shadowColor: COLORS.jet, shadowOpacity: 0.05, shadowRadius: 8 },
+  headerTitle: { fontSize: 20, fontWeight: "900", color: COLORS.jet, letterSpacing: -0.5 },
+  deleteBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: "rgba(255, 77, 77, 0.08)", alignItems: "center", justifyContent: "center" },
   scroll: { paddingBottom: 40 },
-  mapContainer: { width: "100%", height: 200, backgroundColor: COLORS.green },
-  summaryCard: { backgroundColor: "#fff", borderRadius: 24, padding: 20, margin: 20, marginTop: -24, elevation: 4, shadowColor: COLORS.jet, shadowOpacity: 0.05, shadowRadius: 12, borderWidth: 1, borderColor: COLORS.green },
+  mapContainer: { width: "100%", height: 220, backgroundColor: COLORS.green },
+  summaryCard: { backgroundColor: "#fff", borderRadius: 28, padding: 24, margin: 20, marginTop: -32, elevation: 6, shadowColor: COLORS.jet, shadowOpacity: 0.08, shadowRadius: 15, borderWidth: 1, borderColor: COLORS.green },
   summaryRow: { flexDirection: "row", justifyContent: "space-around", alignItems: "center" },
-  stat: { alignItems: "center", gap: 4 },
-  statVal: { fontSize: 16, fontWeight: "800", color: COLORS.jet },
-  statLab: { fontSize: 10, color: COLORS.textMuted },
-  statusDot: { width: 8, height: 8, borderRadius: 4 },
-  divider: { width: 1, height: 30, backgroundColor: COLORS.green },
-  sectionTitle: { fontSize: 17, fontWeight: "800", color: COLORS.jet, marginLeft: 20, marginBottom: 12 },
-  activityItem: { flexDirection: "row", backgroundColor: "#fff", padding: 16, borderRadius: 16, marginHorizontal: 20, marginBottom: 12, alignItems: "center", gap: 12, borderWidth: 1, borderColor: COLORS.green, shadowColor: COLORS.jet, shadowOpacity: 0.03, shadowRadius: 8, elevation: 1 },
-  activityIcon: { width: 40, height: 40, borderRadius: 12, alignItems: "center", justifyContent: "center" },
-  activityContent: { flex: 1 },
-  activityTitle: { fontSize: 14, fontWeight: "700", color: COLORS.jet },
-  activityMsg: { fontSize: 12, color: COLORS.textMuted },
-  activityTime: { fontSize: 10, color: COLORS.textMuted, marginTop: 4 },
-  pairingCard: { backgroundColor: "#fff", borderRadius: 20, padding: 16, marginHorizontal: 20, marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderWidth: 1, borderColor: COLORS.green, shadowColor: COLORS.jet, shadowOpacity: 0.03, shadowRadius: 8, elevation: 1 },
-  pairingInfo: { flexDirection: "row", alignItems: "center", gap: 12 },
-  keyIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: "rgba(99, 91, 255, 0.1)", alignItems: "center", justifyContent: "center" },
-  pairingLabel: { fontSize: 10, fontWeight: "800", color: COLORS.textMuted },
-  pairingCode: { fontSize: 18, fontWeight: "900", color: COLORS.jet, letterSpacing: 2 },
-  regenBtn: { backgroundColor: COLORS.primary, flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, shadowColor: COLORS.primary, shadowOpacity: 0.2, shadowRadius: 5 },
-  regenText: { color: "#fff", fontSize: 12, fontWeight: "700" },
+  stat: { alignItems: "center", gap: 6 },
+  statVal: { fontSize: 18, fontWeight: "900", color: COLORS.jet },
+  statLab: { fontSize: 11, color: COLORS.textMuted, fontWeight: "700", textTransform: "uppercase" },
+  statusDot: { width: 10, height: 10, borderRadius: 5 },
+  divider: { width: 1, height: 40, backgroundColor: COLORS.green },
+  sectionTitle: { fontSize: 18, fontWeight: "800", color: COLORS.jet, marginLeft: 24, marginBottom: 16, marginTop: 8 },
+  activityItem: { flexDirection: "row", backgroundColor: "#fff", padding: 18, borderRadius: 24, marginHorizontal: 20, marginBottom: 12, alignItems: "center", gap: 14, borderWidth: 1, borderColor: COLORS.green, shadowColor: COLORS.jet, shadowOpacity: 0.04, shadowRadius: 10, elevation: 2 },
+  activityIcon: { width: 44, height: 44, borderRadius: 16, alignItems: "center", justifyContent: "center" },
+  activityContent: { flex: 1, gap: 2 },
+  activityTitle: { fontSize: 15, fontWeight: "800", color: COLORS.jet },
+  activityMsg: { fontSize: 13, color: COLORS.textMuted, fontWeight: "500" },
+  activityTime: { fontSize: 11, color: COLORS.textMuted, marginTop: 4, fontWeight: "600" },
+  pairingCard: { backgroundColor: "#fff", borderRadius: 24, padding: 20, marginHorizontal: 20, marginBottom: 24, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderWidth: 1, borderColor: COLORS.green, shadowColor: COLORS.jet, shadowOpacity: 0.03, shadowRadius: 12, elevation: 2 },
+  pairingInfo: { flexDirection: "row", alignItems: "center", gap: 16 },
+  keyIcon: { width: 48, height: 48, borderRadius: 16, backgroundColor: "rgba(99, 91, 255, 0.08)", alignItems: "center", justifyContent: "center" },
+  pairingLabel: { fontSize: 11, fontWeight: "900", color: COLORS.textMuted, textTransform: "uppercase" },
+  pairingCode: { fontSize: 20, fontWeight: "900", color: COLORS.jet, letterSpacing: 3 },
+  regenBtn: { backgroundColor: COLORS.primary, flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 14, shadowColor: COLORS.primary, shadowOpacity: 0.25, shadowRadius: 8, elevation: 4 },
+  regenText: { color: "#fff", fontSize: 13, fontWeight: "800" },
 });

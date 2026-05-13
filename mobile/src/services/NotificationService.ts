@@ -12,7 +12,7 @@ class NotificationService {
         name: "Emergency SOS",
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 500, 250, 500, 250, 500],
-        lightColor: "#FF0000",
+        lightColor: "#FF4D4D",
         sound: "default", // Or a custom sound if available
         lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
         bypassDnd: true, // Attempt to bypass Do Not Disturb for critical alerts
@@ -22,7 +22,7 @@ class NotificationService {
         name: "Geofence Alerts",
         importance: Notifications.AndroidImportance.HIGH,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#3B82F6",
+        lightColor: "#635BFF",
       });
 
       await Notifications.setNotificationChannelAsync("general-alerts", {

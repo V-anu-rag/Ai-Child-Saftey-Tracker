@@ -163,8 +163,8 @@ export default function SettingsScreen({ navigation, route }: any) {
                 <Switch 
                   value={notifs.email} 
                   onValueChange={(val) => setNotifs({ ...notifs, email: val })}
-                  trackColor={{ false: COLORS.green, true: `${COLORS.salmon}50` }}
-                  thumbColor={notifs.email ? COLORS.salmon : "#9ca3af"}
+                  trackColor={{ false: "#CBD5E1", true: "rgba(0, 212, 170, 0.3)" }}
+                  thumbColor={notifs.email ? "#00D4AA" : "#94A3B8"}
                 />
               </View>
               <View style={styles.separator} />
@@ -176,8 +176,8 @@ export default function SettingsScreen({ navigation, route }: any) {
                 <Switch 
                   value={notifs.push} 
                   onValueChange={(val) => setNotifs({ ...notifs, push: val })}
-                  trackColor={{ false: COLORS.green, true: `${COLORS.salmon}50` }}
-                  thumbColor={notifs.push ? COLORS.salmon : "#9ca3af"}
+                  trackColor={{ false: "#CBD5E1", true: "rgba(0, 212, 170, 0.3)" }}
+                  thumbColor={notifs.push ? "#00D4AA" : "#94A3B8"}
                 />
               </View>
               <View style={styles.separator} />
@@ -189,8 +189,8 @@ export default function SettingsScreen({ navigation, route }: any) {
                 <Switch 
                   value={notifs.weekly} 
                   onValueChange={(val) => setNotifs({ ...notifs, weekly: val })}
-                  trackColor={{ false: COLORS.green, true: `${COLORS.salmon}50` }}
-                  thumbColor={notifs.weekly ? COLORS.salmon : "#9ca3af"}
+                  trackColor={{ false: "#CBD5E1", true: "rgba(0, 212, 170, 0.3)" }}
+                  thumbColor={notifs.weekly ? "#00D4AA" : "#94A3B8"}
                 />
               </View>
             </View>
