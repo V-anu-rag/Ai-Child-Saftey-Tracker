@@ -120,6 +120,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await SecureStore.deleteItemAsync("authToken");
     await SecureStore.deleteItemAsync("authUser");
     await SecureStore.deleteItemAsync("tracking_child_id");
+    await SecureStore.deleteItemAsync("unauthRole");
+    setUnauthRole(null);
     setToken(null);
     setUser(null);
   }, []);

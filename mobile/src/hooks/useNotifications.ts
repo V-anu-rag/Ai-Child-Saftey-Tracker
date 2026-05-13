@@ -1,24 +1,29 @@
 import { useEffect, useRef } from "react";
-import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { authAPI } from "../api/client";
 import { navigate } from "../utils/navigationRef";
+import NotificationService from "../services/NotificationService";
 
 // Configure how foreground notifications are shown when the app is active
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
+  handleNotification: async (notification) => {
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    } as Notifications.NotificationBehavior;
+  },
 });
 
 export const useNotifications = (userId: string | undefined, userRole: string | undefined) => {
-  const responseListenerRef = useRef<any>();
+  const responseListenerRef = useRef<any>(null);
 
   useEffect(() => {
     if (!userId) return;
+
+    // Initialize Max Priority Android Channel for Critical Safety Alerts
+    NotificationService.setupChannels();
 
     const registerForPushNotifications = async () => {
       try {
@@ -60,17 +65,6 @@ export const useNotifications = (userId: string | undefined, userRole: string | 
       }
     };
 
-    // Initialize Max Priority Android Channel for Critical Safety Alerts
-    if (Platform.OS === "android") {
-      Notifications.setNotificationChannelAsync("emergency-alerts", {
-        name: "Emergency Alerts",
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#635BFF",
-        sound: "default",
-      });
-    }
-
     registerForPushNotifications();
 
     // Listener for when a user taps/interacts with a notification (Foreground, Background, or Killed State)
@@ -83,10 +77,19 @@ export const useNotifications = (userId: string | undefined, userRole: string | 
           if (data && data.latitude && data.longitude) {
             // Automatically open live map at precise coordinates!
             navigate("Map", {
-              childId: data.childId,
-              latitude: parseFloat(data.latitude),
-              longitude: parseFloat(data.longitude),
-              childName: data.childName || "Child",
+              childId: data.childId as string,
+              latitude: parseFloat(String(data.latitude)),
+              longitude: parseFloat(String(data.longitude)),
+              childName: (data.childName as string) || "Child",
+            });
+          } else if (data && data.location && (data.location as any).lat) {
+            // Fallback for location object
+            const loc = data.location as any;
+            navigate("Map", {
+              childId: data.childId as string,
+              latitude: parseFloat(String(loc.lat)),
+              longitude: parseFloat(String(loc.lng)),
+              childName: (data.childName as string) || "Child",
             });
           } else {
             // Fallback: Navigate straight to emergency alert dashboard feed
@@ -100,7 +103,7 @@ export const useNotifications = (userId: string | undefined, userRole: string | 
 
     return () => {
       if (responseListenerRef.current) {
-        Notifications.removeNotificationSubscription(responseListenerRef.current);
+        responseListenerRef.current.remove();
       }
     };
   }, [userId, userRole]);

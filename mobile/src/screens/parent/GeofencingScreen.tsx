@@ -6,41 +6,43 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { geofencesAPI, childrenAPI } from "../../api/client";
+import { childrenAPI } from "../../api/client";
 import { COLORS } from "../../constants/theme";
+import { useGeofences } from "../../context/GeofenceContext";
 
 export default function GeofencingScreen({ navigation }: any) {
-  const [geofences, setGeofences] = useState<any[]>([]);
+  const { geofences, fetchGeofences, removeGeofence, toggleGeofence, isLoading: contextLoading } = useGeofences();
   const [children, setChildren] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingChildren, setLoadingChildren] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchData = useCallback(async () => {
+  const fetchChildren = useCallback(async () => {
     try {
-      const [geoRes, childRes] = await Promise.all([
-        geofencesAPI.getAll() as any,
-        childrenAPI.getAll() as any
-      ]);
-      setGeofences(geoRes.geofences || []);
+      const childRes = await childrenAPI.getAll() as any;
       setChildren(childRes.children || []);
     } catch (err) {
       console.error("Geofencing fetch error:", err);
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      setLoadingChildren(false);
     }
   }, []);
 
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([fetchGeofences(), fetchChildren()]);
+    setRefreshing(false);
+  }, [fetchGeofences, fetchChildren]);
+
   useFocusEffect(
     useCallback(() => {
-      fetchData();
-    }, [fetchData])
+      fetchChildren();
+      fetchGeofences();
+    }, [fetchChildren, fetchGeofences])
   );
 
   const handleToggle = async (id: string) => {
     try {
-      await geofencesAPI.toggle(id);
-      setGeofences(prev => prev.map(z => z._id === id ? { ...z, isActive: !z.isActive } : z));
+      await toggleGeofence(id);
     } catch (err) {
       Alert.alert("Error", "Failed to toggle geofence.");
     }
@@ -52,8 +54,7 @@ export default function GeofencingScreen({ navigation }: any) {
       {
         text: "Delete", style: "destructive", onPress: async () => {
           try {
-            await geofencesAPI.remove(id);
-            setGeofences(prev => prev.filter(z => z._id !== id));
+            await removeGeofence(id);
           } catch (err) {
             Alert.alert("Error", "Failed to delete geofence.");
           }
@@ -110,9 +111,9 @@ export default function GeofencingScreen({ navigation }: any) {
         keyExtractor={item => item._id}
         renderItem={renderItem}
         contentContainerStyle={styles.list}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchData(); }} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ListEmptyComponent={
-          !loading ? (
+          !(contextLoading || loadingChildren) ? (
             <View style={styles.empty}>
               <Ionicons name="map-outline" size={60} color={`${COLORS.jet}20`} />
               <Text style={styles.emptyText}>No safe zones found</Text>

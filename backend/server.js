@@ -40,6 +40,15 @@ function startInactivityCron() {
       });
 
       for (const child of staleChildren) {
+        // Prevent duplicate alerts: skip if an unresolved device_offline alert already exists
+        const existingAlert = await Alert.findOne({
+          childId: child._id,
+          type: "device_offline",
+          status: "active",
+          createdAt: { $gt: cutoff },
+        });
+        if (existingAlert) continue;
+
         const message = `No location update from ${child.name} for over 30 minutes.`;
         const alert = await Alert.create({
           childId: child._id,

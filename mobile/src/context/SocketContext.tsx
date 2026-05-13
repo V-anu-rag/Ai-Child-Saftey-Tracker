@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useRef,
   useState,
+  useCallback,
   ReactNode,
 } from "react";
 import { io, Socket } from "socket.io-client";
@@ -11,6 +12,8 @@ import Constants from "expo-constants";
 import { Alert, Vibration } from "react-native";
 import { useAuth } from "./AuthContext";
 import { SOSAlertModal } from "../components/SOSAlertModal";
+import NotificationService from "../services/NotificationService";
+import * as Notifications from "expo-notifications";
 
 // Detect computer's IP for Socket.io
 const debuggerHost = Constants.expoConfig?.hostUri?.split(":")[0];
@@ -67,14 +70,16 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 
     // 🚨 SAFE ALERT HANDLING
     socket.on("alert-received", (data: any) => {
-      console.log("🚨 Alert Received:", data);
+      console.log("🚨 Alert Received via Socket:", data);
 
       setTimeout(() => {
         try {
           Vibration.vibrate([0, 500, 200, 500]);
 
           if (data.type === "sos" || data.alertType === "sos") {
-            setActiveSOS(data);
+            // ✅ Trigger local notification for native tray/heads-up
+            // DO NOT force-open the modal automatically
+            NotificationService.triggerLocalSOS(data);
           } else {
             Alert.alert(
               "🚨 ALERT RECEIVED",
@@ -108,28 +113,40 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 
     socketRef.current = socket;
 
+    // Optional Modal Interaction: Listen for taps on notifications to open the modal
+    const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data;
+      if (data && (data.type === "sos" || data.alertType === "sos")) {
+        // Open the optional SOS modal when the user manually taps the push notification
+        setActiveSOS(data);
+      }
+    });
+
     return () => {
       socket.disconnect();
       socketRef.current = null;
       setIsConnected(false);
+      if (responseListener) {
+        responseListener.remove();
+      }
     };
   }, [isAuthenticated, token]);
 
-  const emit = (event: string, data?: unknown) => {
+  const emit = useCallback((event: string, data?: unknown) => {
     socketRef.current?.emit(event, data);
-  };
+  }, []);
 
-  const on = (event: string, handler: (...args: unknown[]) => void) => {
+  const on = useCallback((event: string, handler: (...args: unknown[]) => void) => {
     socketRef.current?.on(event, handler);
-  };
+  }, []);
 
-  const off = (event: string, handler?: (...args: unknown[]) => void) => {
+  const off = useCallback((event: string, handler?: (...args: unknown[]) => void) => {
     if (handler) {
       socketRef.current?.off(event, handler);
     } else {
       socketRef.current?.off(event);
     }
-  };
+  }, []);
 
   return (
     <SocketContext.Provider
@@ -143,7 +160,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
     >
       {children}
 
-      {/* ✅ SAFE MODAL RENDER */}
+      {/* ✅ SAFE MODAL RENDER (Only opens on explicit tap or action) */}
       {activeSOS && (
         <SOSAlertModal
           isVisible={true}

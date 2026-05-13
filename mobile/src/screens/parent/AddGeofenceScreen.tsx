@@ -8,6 +8,7 @@ import FreeMap, { FreeMapRef } from "../../components/FreeMap";
 import { Ionicons } from "@expo/vector-icons";
 import { geofencesAPI, childrenAPI } from "../../api/client";
 import { COLORS } from "../../constants/theme";
+import { useGeofences } from "../../context/GeofenceContext";
 
 const { width } = Dimensions.get("window");
 
@@ -48,6 +49,8 @@ export default function AddGeofenceScreen({ navigation }: any) {
     }
   };
 
+  const { fetchGeofences } = useGeofences();
+
   const handleSave = async () => {
     if (!name || !location) {
       Alert.alert("Missing Info", "Please provide a name and select a location on the map.");
@@ -69,6 +72,8 @@ export default function AddGeofenceScreen({ navigation }: any) {
         radius,
         color: type === "home" ? COLORS.salmon : type === "school" ? COLORS.primary : COLORS.danger
       });
+      // ✅ Update global state immediately
+      await fetchGeofences();
       navigation.goBack();
     } catch (err: any) {
       Alert.alert("Error", err.message || "Failed to save geofence.");
@@ -83,7 +88,7 @@ export default function AddGeofenceScreen({ navigation }: any) {
       latitude: first?.lastLocation?.lat || 28.6139,
       longitude: first?.lastLocation?.lng || 77.2090
     };
-  }, [children.length > 0]);
+  }, [children]);
 
   return (
     <SafeAreaView style={styles.container}>

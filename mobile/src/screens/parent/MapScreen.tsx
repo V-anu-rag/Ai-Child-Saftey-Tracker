@@ -6,8 +6,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import FreeMap, { FreeMapRef } from "../../components/FreeMap";
 import { useSocket } from "../../context/SocketContext";
-import { childrenAPI, geofencesAPI } from "../../api/client";
+import { childrenAPI } from "../../api/client";
 import { COLORS } from "../../constants/theme";
+import { useGeofences } from "../../context/GeofenceContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const IS_LARGE_SCREEN = SCREEN_WIDTH > 400;
@@ -46,23 +47,23 @@ export default function MapScreen({ navigation }: any) {
   }, []);
 
   const { on, off } = useSocket();
+  const { geofences, fetchGeofences } = useGeofences();
   const mapRef = useRef<FreeMapRef>(null);
   const route = useRoute<any>();
   const [children, setChildren] = useState<any[]>([]);
-  const [geofences, setGeofences] = useState<any[]>([]);
   const [locations, setLocations] = useState<Record<string, LocationData>>({});
   const [loading, setLoading] = useState(true);
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
-      const [childRes, geoRes] = await Promise.all([
+      // Fetch both children and geofences in parallel for initial load
+      const [childRes] = await Promise.all([
         childrenAPI.getAll() as any,
-        geofencesAPI.getAll({ active: true }) as any,
+        fetchGeofences(),
       ]);
       const kids = childRes.children || [];
       setChildren(kids);
-      setGeofences(geoRes.geofences || []);
 
       // Seed initial locations from lastLocation
       const initial: Record<string, LocationData> = {};
@@ -88,7 +89,7 @@ export default function MapScreen({ navigation }: any) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [fetchGeofences]);
 
   useEffect(() => { 
     fetchData().then(() => {
@@ -134,7 +135,7 @@ export default function MapScreen({ navigation }: any) {
       latitudeDelta: 0.05,
       longitudeDelta: 0.05,
     };
-  }, [children.length > 0]);
+  }, [children]);
 
   if (loading) {
     return (
@@ -182,7 +183,7 @@ export default function MapScreen({ navigation }: any) {
             timestamp: loc?.timestamp,
           };
         })}
-        geofences={geofences.map((zone) => ({
+        geofences={geofences.filter((zone) => zone.isActive).map((zone) => ({
           id: zone._id,
           latitude: zone.center.lat,
           longitude: zone.center.lng,

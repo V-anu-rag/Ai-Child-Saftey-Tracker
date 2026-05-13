@@ -94,11 +94,9 @@ export default function TrackingScreen() {
                 message: `${user?.name} has triggered an Emergency SOS!`
               };
 
-              // 2. Dual-path Alerting for reliability
-              // Path A: Socket.io (Instant for active dashboard)
-              emit("send-alert", { ...payload, type: "sos" });
-
-              // Path B: REST API (Ensures DB persistence and Push Notifications)
+              // REST API is the authoritative path: it persists the alert,
+              // emits the socket event, AND sends the push notification.
+              // No separate socket emit needed — that caused duplicate alerts.
               await alertsAPI.triggerSOS(payload);
               
               Alert.alert("SOS Sent", "Your parent has been notified.");
@@ -106,15 +104,25 @@ export default function TrackingScreen() {
               console.error("SOS Trigger Error:", err);
               // Fallback: send with last known coords if GPS fails
               if (currentCoords) {
-                const fallbackPayload = {
-                  childId: child._id,
-                  latitude: currentCoords.lat,
-                  longitude: currentCoords.lng,
-                  timestamp: new Date().toISOString(),
-                  message: `${user?.name} triggered SOS (GPS failed, using last known location)`
-                };
-                emit("send-alert", { ...fallbackPayload, type: "sos" });
-                await alertsAPI.triggerSOS(fallbackPayload);
+                try {
+                  const fallbackPayload = {
+                    childId: child._id,
+                    latitude: currentCoords.lat,
+                    longitude: currentCoords.lng,
+                    timestamp: new Date().toISOString(),
+                    message: `${user?.name} triggered SOS (GPS failed, using last known location)`
+                  };
+                  await alertsAPI.triggerSOS(fallbackPayload);
+                } catch (fallbackErr) {
+                  // Last resort: use socket as emergency fallback when REST is completely down
+                  emit("send-alert", {
+                    childId: child._id,
+                    type: "sos",
+                    latitude: currentCoords.lat,
+                    longitude: currentCoords.lng,
+                    message: `${user?.name} triggered SOS (offline fallback)`,
+                  });
+                }
               }
             }
           },

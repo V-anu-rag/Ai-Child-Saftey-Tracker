@@ -14,6 +14,8 @@ LogBox.ignoreLogs(["InteractionManager has been deprecated"]);
 
 import useNotifications from "./src/hooks/useNotifications";
 
+import { GeofenceProvider } from "./src/context/GeofenceContext";
+
 function RootApp() {
   const [splashDone, setSplashDone] = useState(false);
   const { isLoading, user } = useAuth();
@@ -26,9 +28,9 @@ function RootApp() {
   }
 
   return (
-    <SocketProvider>
+    <GeofenceProvider>
       <AppNavigator />
-    </SocketProvider>
+    </GeofenceProvider>
   );
 }
 

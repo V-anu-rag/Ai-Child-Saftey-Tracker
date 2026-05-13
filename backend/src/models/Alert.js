@@ -52,7 +52,7 @@ const alertSchema = new mongoose.Schema(
     dedupeKey: {
       type: String,
       default: null,
-      index: true,
+      unique: true,
       sparse: true,
     },
     status: {
