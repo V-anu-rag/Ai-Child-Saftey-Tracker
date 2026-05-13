@@ -27,13 +27,13 @@ try {
     throw new Error("Placeholder detected");
   }
 } catch (err) {
-  console.warn("⚠️ Firebase Admin could not be initialized. Push notifications will be disabled.");
+  console.warn("⚠️ Firebase Admin could not be initialized. FCM push notifications will be disabled.");
   console.warn("Reason:", err.message === "Placeholder detected" ? "firebase-service-account.json contains placeholders." : err.message);
   console.log("👉 ACTION REQUIRED: Download your service account key from Firebase Console and paste it into backend/src/config/firebase-service-account.json");
 }
 
 /**
- * Send a push notification to a specific user via their saved FCM tokens
+ * Send a push notification to a specific user via their saved tokens (FCM or Expo)
  * @param {string} userId - The parent user ID
  * @param {object} notification - { title, body }
  * @param {object} data - Extra data payload
@@ -43,29 +43,70 @@ exports.sendPushNotification = async (userId, notification, data = {}) => {
     const User = require("../models/User");
     const user = await User.findById(userId);
     
-    // Check if user has registered FCM tokens
+    // Check if user has registered tokens
     if (!user || !user.fcmTokens || user.fcmTokens.length === 0) {
-      console.log(`ℹ️ No FCM tokens found for user ${userId}. Skipping push.`);
+      console.log(`ℹ️ No push tokens found for user ${userId}. Skipping push.`);
       return;
     }
 
-    const message = {
-      notification,
-      data: {
-        ...data,
-        click_action: "FLUTTER_NOTIFICATION_CLICK", // Standard for many libraries
-      },
-      tokens: user.fcmTokens,
-    };
+    const expoTokens = [];
+    const fcmTokens = [];
 
-    const response = await admin.messaging().sendEachForMulticast(message);
-    console.log(`✅ Push notification sent: ${response.successCount} successful, ${response.failureCount} failed.`);
-    
-    // Cleanup invalid tokens if necessary (optional)
-    if (response.failureCount > 0) {
-      // Logic to remove expired tokens could go here
+    // Separate Expo push tokens from FCM tokens
+    user.fcmTokens.forEach(token => {
+      if (token.startsWith("ExponentPushToken") || token.startsWith("ExpoPushToken")) {
+        expoTokens.push(token);
+      } else {
+        fcmTokens.push(token);
+      }
+    });
+
+    // 1. Deliver to Expo tokens via native fetch
+    if (expoTokens.length > 0) {
+      const messages = expoTokens.map(token => ({
+        to: token,
+        sound: "default",
+        title: notification.title,
+        body: notification.body,
+        data: data,
+        priority: "high",
+        channelId: "emergency-alerts",
+      }));
+
+      try {
+        const response = await fetch("https://exp.host/--/api/v2/push/send", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Accept-encoding": "gzip, deflate",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(messages),
+        });
+        const resData = await response.json();
+        console.log(`✅ Expo push notifications dispatched:`, JSON.stringify(resData));
+      } catch (expoErr) {
+        console.error("❌ Expo Push API dispatch error:", expoErr.message);
+      }
+    }
+
+    // 2. Deliver to FCM tokens (if Firebase is initialized)
+    if (firebaseInitialized && fcmTokens.length > 0) {
+      const message = {
+        notification,
+        data: {
+          ...data,
+          click_action: "FLUTTER_NOTIFICATION_CLICK",
+        },
+        tokens: fcmTokens,
+      };
+
+      const response = await admin.messaging().sendEachForMulticast(message);
+      console.log(`✅ FCM Push sent: ${response.successCount} successful, ${response.failureCount} failed.`);
+    } else if (fcmTokens.length > 0) {
+      console.log(`ℹ️ Skip FCM dispatch for ${fcmTokens.length} tokens (Firebase not initialized)`);
     }
   } catch (err) {
-    console.error("❌ FCM Error:", err.message);
+    console.error("❌ Send Push Notification error:", err.message);
   }
 };

@@ -115,15 +115,17 @@ exports.triggerSOS = async (req, res, next) => {
     await sendPushNotification(
       child.parentId,
       {
-        title: `🚨 EMERGENCY SOS: ${child.name}`,
-        body: `${child.name} has triggered an SOS! Tap to view location.`,
+        title: `🚨 Emergency SOS: ${child.name}`,
+        body: `${child.name} has triggered an Emergency SOS! Tap to view live location.`,
       },
       {
         type: "sos",
         childId: childId.toString(),
+        childName: child.name,
         alertId: alert._id.toString(),
         latitude: latitude?.toString() || "",
         longitude: longitude?.toString() || "",
+        timestamp: alert.createdAt.toISOString(),
       }
     );
 

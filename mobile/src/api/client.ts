@@ -58,6 +58,7 @@ export const authAPI = {
     api.post("/auth/signup", { name, email, password, role, fcmToken }),
   getMe: () => api.get("/auth/me"),
   updateMe: (data: Record<string, string>) => api.patch("/auth/update-me", data),
+  registerFcmToken: (fcmToken: string) => api.patch("/auth/fcm-token", { fcmToken }),
 };
 
 // ─── Children ─────────────────────────────────────────────────────────────────

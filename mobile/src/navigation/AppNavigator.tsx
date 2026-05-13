@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import RoleSelectionScreen from "../screens/auth/RoleSelectionScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import RegisterScreen from "../screens/auth/RegisterScreen";
-import ChildPairingScreen from "../screens/child/PairingScreen";
+import PairChildScreen from "../screens/child/PairChildScreen";
 import ParentNavigator from "./ParentNavigator";
 import ChildNavigator from "./ChildNavigator";
 import { navigationRef } from "../utils/navigationRef";
@@ -45,7 +45,7 @@ export default function AppNavigator() {
                 <Stack.Screen name="Register" component={RegisterScreen} />
               </>
             ) : (
-              <Stack.Screen name="ChildPairing" component={ChildPairingScreen} />
+              <Stack.Screen name="ChildPairing" component={PairChildScreen} />
             )}
           </>
         ) : user?.role === "parent" ? (

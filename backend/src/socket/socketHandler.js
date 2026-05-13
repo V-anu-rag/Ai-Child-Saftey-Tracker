@@ -7,6 +7,65 @@ const { checkGeofences } = require("../utils/geofenceUtils");
 let io = null;
 
 /**
+ * Send a low battery warning push notification (15-minute debounced)
+ */
+const triggerLowBatteryAlert = async (child, batteryLevel, io, lat = null, lng = null) => {
+  try {
+    if (batteryLevel == null || batteryLevel > 20) return;
+
+    const Alert = require("../models/Alert");
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+    const recentAlert = await Alert.findOne({
+      childId: child._id,
+      type: "low_battery",
+      createdAt: { $gt: fifteenMinutesAgo },
+    });
+
+    if (recentAlert) return;
+
+    const finalLat = lat || child.lastLocation?.lat;
+    const finalLng = lng || child.lastLocation?.lng;
+
+    const lowBatteryAlert = await Alert.create({
+      childId: child._id,
+      parentId: child.parentId,
+      type: "low_battery",
+      severity: "medium",
+      title: `🪫 Low Battery: ${child.name}`,
+      message: `${child.name}'s device is at ${batteryLevel}% battery. Please charge it soon.`,
+      location: finalLat ? { lat: finalLat, lng: finalLng } : undefined,
+    });
+
+    // Emit to socket
+    io.to(`parent:${child.parentId}`).emit("alert-received", {
+      ...lowBatteryAlert.toObject(),
+      childName: child.name,
+    });
+
+    // Send push notification
+    const { sendPushNotification } = require("../utils/fcm");
+    await sendPushNotification(
+      child.parentId,
+      {
+        title: `🪫 Low Battery: ${child.name}`,
+        body: `${child.name}'s device is at ${batteryLevel}%. Tap to view live map.`,
+      },
+      {
+        type: "low_battery",
+        childId: child._id.toString(),
+        childName: child.name,
+        alertId: lowBatteryAlert._id.toString(),
+        latitude: finalLat ? finalLat.toString() : "",
+        longitude: finalLng ? finalLng.toString() : "",
+        timestamp: lowBatteryAlert.createdAt.toISOString(),
+      }
+    );
+  } catch (err) {
+    console.error("❌ triggerLowBatteryAlert Error:", err.message);
+  }
+};
+
+/**
  * Initialize Socket.io server and attach all event handlers
  */
 const initSocket = (httpServer) => {
@@ -139,6 +198,11 @@ const initSocket = (httpServer) => {
           timestamp: new Date().toISOString(),
         });
 
+        // Trigger low battery check (non-blocking)
+        triggerLowBatteryAlert(child, batteryLevel, io, latitude, longitude).catch(
+          console.error
+        );
+
         // Geofence check (non-blocking)
         checkGeofences(childId, child.parentId.toString(), latitude, longitude).catch(
           console.error
@@ -186,13 +250,17 @@ const initSocket = (httpServer) => {
         await sendPushNotification(
           child.parentId,
           {
-            title: type === "sos" ? `🚨 SOS: ${child.name}` : `Alert: ${child.name}`,
-            body: message,
+            title: type === "sos" ? `🚨 Emergency SOS: ${child.name}` : `⚠️ Alert: ${child.name}`,
+            body: type === "sos" ? `${child.name} has triggered an Emergency SOS! Tap to view live location.` : message,
           },
           {
             type: type || "sos",
             childId: childId.toString(),
+            childName: child.name,
             alertId: alert._id.toString(),
+            latitude: latitude ? latitude.toString() : "",
+            longitude: longitude ? longitude.toString() : "",
+            timestamp: alert.createdAt.toISOString(),
           }
         );
       } catch (err) {
@@ -214,6 +282,9 @@ const initSocket = (httpServer) => {
             isOnline: true,
             batteryLevel,
           });
+
+          // Trigger low battery check (non-blocking)
+          triggerLowBatteryAlert(child, batteryLevel, io).catch(console.error);
         }
       } catch (err) {
         console.error("update-status error:", err.message);
@@ -237,6 +308,43 @@ const initSocket = (httpServer) => {
               childId: child._id,
               isOnline: false,
             });
+
+            // Create device offline alert in database
+            const Alert = require("../models/Alert");
+            const offlineAlert = await Alert.create({
+              childId: child._id,
+              parentId: child.parentId,
+              type: "device_offline",
+              severity: "high",
+              title: `⚠️ Device Offline: ${child.name}`,
+              message: `${child.name}'s device went offline. Connection lost.`,
+              location: child.lastLocation?.lat ? { lat: child.lastLocation.lat, lng: child.lastLocation.lng } : undefined,
+            });
+
+            // Broadcast real-time alert to parent room
+            io.to(`parent:${child.parentId}`).emit("alert-received", {
+              ...offlineAlert.toObject(),
+              childName: child.name,
+            });
+
+            // Send push notification
+            const { sendPushNotification } = require("../utils/fcm");
+            await sendPushNotification(
+              child.parentId,
+              {
+                title: `⚠️ Device Offline: ${child.name}`,
+                body: `${child.name}'s device went offline. Tap to check last seen details.`,
+              },
+              {
+                type: "device_offline",
+                childId: child._id.toString(),
+                childName: child.name,
+                alertId: offlineAlert._id.toString(),
+                latitude: child.lastLocation?.lat ? child.lastLocation.lat.toString() : "",
+                longitude: child.lastLocation?.lng ? child.lastLocation.lng.toString() : "",
+                timestamp: offlineAlert.createdAt.toISOString(),
+              }
+            );
           }
         } catch (err) {
           console.error("disconnect cleanup error:", err.message);

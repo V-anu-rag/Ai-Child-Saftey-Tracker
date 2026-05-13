@@ -12,9 +12,14 @@ import SplashScreen from "./src/components/SplashScreen";
 
 LogBox.ignoreLogs(["InteractionManager has been deprecated"]);
 
+import useNotifications from "./src/hooks/useNotifications";
+
 function RootApp() {
   const [splashDone, setSplashDone] = useState(false);
   const { isLoading, user } = useAuth();
+
+  // Register push notifications and listener hooks on authentication resolution
+  useNotifications(user?._id, user?.role);
 
   if (!splashDone || isLoading) {
     return <SplashScreen onFinish={() => setSplashDone(true)} />;

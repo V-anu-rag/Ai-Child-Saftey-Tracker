@@ -108,6 +108,25 @@ const checkGeofences = async (childId, parentId, lat, lng) => {
           zoneName: zone.name,
         });
       }
+
+      // Trigger high-priority push notification for geofence alerts
+      const { sendPushNotification } = require("./fcm");
+      await sendPushNotification(
+        parentId,
+        {
+          title: alertType === "geofence_exit" ? `🚨 Geofence Exit: ${child.name}` : `📍 Geofence Entry: ${child.name}`,
+          body: message,
+        },
+        {
+          type: alertType,
+          childId: childId.toString(),
+          childName: child.name,
+          alertId: alert._id.toString(),
+          latitude: lat.toString(),
+          longitude: lng.toString(),
+          timestamp: alert.createdAt.toISOString(),
+        }
+      );
     } catch (err) {
       if (err.code !== 11000) console.error("Geofence alert error:", err.message);
     }

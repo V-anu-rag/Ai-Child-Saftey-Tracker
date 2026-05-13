@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,13 +10,13 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { Shield, Smartphone, QrCode, ArrowRight, ChevronLeft, X } from "lucide-react-native";
+import { Smartphone, QrCode, ArrowRight, ChevronLeft, X } from "lucide-react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useAuth } from "../../context/AuthContext";
 import { childrenAPI } from "../../api/client";
 import { COLORS } from "../../constants/theme";
 
-export default function ChildPairingScreen() {
+export default function PairChildScreen() {
   const { setUnauthRole, completePairing } = useAuth();
   const [pairingCode, setPairingCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -111,9 +111,9 @@ export default function ChildPairingScreen() {
           <View style={styles.iconContainer}>
             <Smartphone size={40} stroke={COLORS.primary} />
           </View>
-          <Text style={styles.title}>Link Device</Text>
+          <Text style={styles.title}>Link Child Device</Text>
           <Text style={styles.subtitle}>
-            Enter the pairing code shown on your parent's dashboard.
+            Enter the pairing code shown on your parent's dashboard to synchronize tracking.
           </Text>
         </View>
 
@@ -129,7 +129,7 @@ export default function ChildPairingScreen() {
             onChangeText={setPairingCode}
           />
           <Text style={styles.hint}>
-            The code is case-insensitive.
+            Codes are case-insensitive and expire periodically.
           </Text>
         </View>
 
@@ -142,7 +142,7 @@ export default function ChildPairingScreen() {
             <ActivityIndicator color="#FFFFFF" />
           ) : (
             <>
-              <Text style={styles.buttonText}>Pair Device</Text>
+              <Text style={styles.buttonText}>Connect Device</Text>
               <ArrowRight size={20} stroke="#FFFFFF" />
             </>
           )}

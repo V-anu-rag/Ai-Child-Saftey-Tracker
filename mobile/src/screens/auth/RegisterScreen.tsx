@@ -62,26 +62,6 @@ export default function RegisterScreen({ navigation }: any) {
           </View>
 
           <View style={styles.card}>
-            {/* Role selector */}
-            <View style={styles.roleRow}>
-              {["parent", "child"].map((r) => (
-                <TouchableOpacity
-                  key={r}
-                  style={[styles.roleBtn, form.role === r && styles.roleActive]}
-                  onPress={() => update("role", r)}
-                >
-                  <Ionicons
-                    name={r === "parent" ? "people" : "person"}
-                    size={16}
-                    color={form.role === r ? "#fff" : COLORS.textMuted}
-                  />
-                  <Text style={[styles.roleText, form.role === r && styles.roleTextActive]}>
-                    {r.charAt(0).toUpperCase() + r.slice(1)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
             {[
               { key: "name", label: "Full Name", placeholder: "Sarah Johnson", icon: "person-outline", keyboard: "default" },
               { key: "email", label: "Email", placeholder: "you@example.com", icon: "mail-outline", keyboard: "email-address" },
@@ -141,15 +121,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border, padding: 24,
     shadowColor: COLORS.text, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.03, shadowRadius: 12, elevation: 2,
   },
-  roleRow: { flexDirection: "row", gap: 12, marginBottom: 20 },
-  roleBtn: {
-    flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8,
-    paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border,
-    backgroundColor: "rgba(0,0,0,0.02)",
-  },
-  roleActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  roleText: { color: COLORS.textMuted, fontSize: 14, fontWeight: "600" },
-  roleTextActive: { color: "#fff" },
   fieldGroup: { marginBottom: 16 },
   label: { fontSize: 13, fontWeight: "600", color: COLORS.textMuted, marginBottom: 8 },
   inputWrapper: {
