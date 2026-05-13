@@ -69,8 +69,9 @@ exports.sendPushNotification = async (userId, notification, data = {}) => {
         title: notification.title,
         body: notification.body,
         data: data,
-        priority: "high",
-        channelId: "emergency-alerts",
+        priority: data.type === "sos" ? "high" : "default",
+        channelId: data.type === "sos" ? "emergency-sos" : data.type === "geofence" ? "geofence-alerts" : "general-alerts",
+        badge: 1, // iOS requirement for proper updates
       }));
 
       try {
@@ -85,6 +86,23 @@ exports.sendPushNotification = async (userId, notification, data = {}) => {
         });
         const resData = await response.json();
         console.log(`✅ Expo push notifications dispatched:`, JSON.stringify(resData));
+
+        // Token cleanup for Expo
+        if (resData && resData.data) {
+          const invalidTokens = [];
+          resData.data.forEach((ticket, index) => {
+            if (ticket.status === "error" && ticket.details && ticket.details.error === "DeviceNotRegistered") {
+              invalidTokens.push(messages[index].to);
+            }
+          });
+
+          if (invalidTokens.length > 0) {
+            console.log(`🧹 Cleaning up ${invalidTokens.length} invalid Expo push tokens for user ${userId}.`);
+            await User.findByIdAndUpdate(userId, {
+              $pullAll: { fcmTokens: invalidTokens }
+            });
+          }
+        }
       } catch (expoErr) {
         console.error("❌ Expo Push API dispatch error:", expoErr.message);
       }
@@ -103,6 +121,22 @@ exports.sendPushNotification = async (userId, notification, data = {}) => {
 
       const response = await admin.messaging().sendEachForMulticast(message);
       console.log(`✅ FCM Push sent: ${response.successCount} successful, ${response.failureCount} failed.`);
+      
+      // Token cleanup for FCM
+      if (response.failureCount > 0) {
+        const invalidTokens = [];
+        response.responses.forEach((res, idx) => {
+          if (!res.success && (res.error.code === 'messaging/invalid-registration-token' || res.error.code === 'messaging/registration-token-not-registered')) {
+            invalidTokens.push(fcmTokens[idx]);
+          }
+        });
+        if (invalidTokens.length > 0) {
+          console.log(`🧹 Cleaning up ${invalidTokens.length} invalid FCM tokens for user ${userId}.`);
+          await User.findByIdAndUpdate(userId, {
+            $pullAll: { fcmTokens: invalidTokens }
+          });
+        }
+      }
     } else if (fcmTokens.length > 0) {
       console.log(`ℹ️ Skip FCM dispatch for ${fcmTokens.length} tokens (Firebase not initialized)`);
     }

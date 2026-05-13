@@ -8,16 +8,29 @@ class NotificationService {
    */
   static async setupChannels() {
     if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync("emergency-alerts", {
-        name: "Emergency Alerts",
+      await Notifications.setNotificationChannelAsync("emergency-sos", {
+        name: "Emergency SOS",
         importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 500, 250, 500],
+        vibrationPattern: [0, 500, 250, 500, 250, 500],
         lightColor: "#FF0000",
-        sound: "default",
+        sound: "default", // Or a custom sound if available
         lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
         bypassDnd: true, // Attempt to bypass Do Not Disturb for critical alerts
       });
-      console.log("[NotificationService] Android emergency channel configured.");
+      
+      await Notifications.setNotificationChannelAsync("geofence-alerts", {
+        name: "Geofence Alerts",
+        importance: Notifications.AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#3B82F6",
+      });
+
+      await Notifications.setNotificationChannelAsync("general-alerts", {
+        name: "General Alerts",
+        importance: Notifications.AndroidImportance.DEFAULT,
+      });
+
+      console.log("[NotificationService] Android channels configured.");
     }
   }
 
@@ -43,7 +56,10 @@ class NotificationService {
         sound: "default",
         priority: Notifications.AndroidNotificationPriority.MAX,
       },
-      trigger: null, // show immediately
+      trigger: {
+        type: Notifications.AndroidNotificationPriority.MAX,
+        channelId: "emergency-sos"
+      } as any,
     });
     console.log("[NotificationService] Local SOS notification triggered.");
   }
