@@ -5,14 +5,10 @@
     "version": "1.0.0",
     "runtimeVersion": "1.0.0",
     "scheme": "safetrack",
-
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-
     "icon": "./assets/logo.png",
-
     "owner": "verma_51",
-
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.safetrack.app",
@@ -23,17 +19,14 @@
         "NSLocationAlwaysUsageDescription": "SafeTrack uses background location."
       }
     },
-
     "android": {
       "package": "com.safetrack.app",
       "versionCode": 1,
       "usesCleartextTraffic": true,
-
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#0A0F1E"
       },
-
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
@@ -43,20 +36,31 @@
         "RECEIVE_BOOT_COMPLETED",
         "WAKE_LOCK",
         "VIBRATE",
-        "POST_NOTIFICATIONS"
+        "POST_NOTIFICATIONS",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "WAKE_LOCK",
+        "VIBRATE",
+        "POST_NOTIFICATIONS",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION"
       ]
     },
-
     "plugins": [
       "expo-task-manager",
-
       [
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow SafeTrack to use your location to keep your parent informed.",
           "isAndroidBackgroundLocationEnabled": true,
           "isAndroidForegroundServiceEnabled": true,
-
           "foregroundService": {
             "notificationTitle": "SafeTrack Active",
             "notificationBody": "Location tracking is running to keep you safe.",
@@ -64,9 +68,7 @@
           }
         }
       ],
-
       "expo-notifications",
-
       [
         "expo-build-properties",
         {
@@ -75,19 +77,19 @@
           }
         }
       ],
-
       "expo-secure-store",
       "expo-font",
       "expo-video"
     ],
-
     "extra": {
       "apiUrl": "https://safetrack-api.onrender.com/api",
       "socketUrl": "https://safetrack-api.onrender.com",
-
       "eas": {
         "projectId": "124c8979-964f-4391-908d-8a16cf67fc8e"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/124c8979-964f-4391-908d-8a16cf67fc8e"
     }
   }
 }
