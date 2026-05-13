@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator,
+  StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
+  ActivityIndicator,
   Alert,
 } from "react-native";
-import { Smartphone, QrCode, ArrowRight, ChevronLeft, X } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useAuth } from "../../context/AuthContext";
 import { childrenAPI } from "../../api/client";
@@ -86,7 +88,7 @@ export default function PairChildScreen() {
           style={styles.closeScanner}
           onPress={() => setIsScannerOpen(false)}
         >
-          <X size={28} stroke="#FFFFFF" />
+          <Ionicons name="close" size={28} color="#FFFFFF" />
         </TouchableOpacity>
         <Text style={styles.scannerHint}>Align the QR code within the frame</Text>
       </View>
@@ -94,195 +96,180 @@ export default function PairChildScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <View style={styles.content}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => setUnauthRole(null)}
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
         >
-          <ChevronLeft size={24} stroke="#FFFFFF" />
-          <Text style={styles.backText}>Back</Text>
-        </TouchableOpacity>
+          {/* Back to Role Selection */}
+          <TouchableOpacity 
+            style={styles.backLink}
+            onPress={() => setUnauthRole(null)}
+          >
+            <Ionicons name="arrow-back" size={20} color={COLORS.textMuted} />
+            <Text style={styles.backLinkText}>Switch Role</Text>
+          </TouchableOpacity>
 
-        <View style={styles.header}>
-          <View style={styles.iconContainer}>
-            <Smartphone size={40} stroke={COLORS.primary} />
+          {/* Logo */}
+          <View style={styles.logoSection}>
+            <View style={styles.logoBox}>
+              <Ionicons name="shield-checkmark" size={36} color="#FFFFFF" />
+            </View>
+            <Text style={styles.brand}>
+              Safe<Text style={{ color: COLORS.primary }}>Track</Text>
+            </Text>
+            <Text style={styles.subtitle}>Child Safety Monitoring</Text>
           </View>
-          <Text style={styles.title}>Link Child Device</Text>
-          <Text style={styles.subtitle}>
-            Enter the pairing code shown on your parent's dashboard to synchronize tracking.
-          </Text>
-        </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Pairing Code</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="e.g. 7H2X9L"
-            placeholderTextColor="rgba(255, 255, 255, 0.25)"
-            autoCapitalize="characters"
-            maxLength={6}
-            value={pairingCode}
-            onChangeText={setPairingCode}
-          />
-          <Text style={styles.hint}>
-            Codes are case-insensitive and expire periodically.
-          </Text>
-        </View>
+          {/* Card */}
+          <View style={styles.card}>
+            <Text style={styles.title}>Link Child Device</Text>
+            <Text style={styles.caption}>Enter pairing code to synchronize tracking</Text>
 
-        <TouchableOpacity
-          style={[styles.button, pairingCode.length < 6 && styles.buttonDisabled]}
-          onPress={() => handlePair(pairingCode)}
-          disabled={isLoading || pairingCode.length < 6}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="#FFFFFF" />
-          ) : (
-            <>
-              <Text style={styles.buttonText}>Connect Device</Text>
-              <ArrowRight size={20} stroke="#FFFFFF" />
-            </>
-          )}
-        </TouchableOpacity>
+            {/* Pairing Code Field */}
+            <View style={styles.fieldGroup}>
+              <Text style={styles.label}>Pairing Code</Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="key-outline" size={18} color={COLORS.textMuted} style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter 6-digit code"
+                  placeholderTextColor={COLORS.textMuted}
+                  autoCapitalize="characters"
+                  maxLength={6}
+                  value={pairingCode}
+                  onChangeText={setPairingCode}
+                />
+              </View>
+            </View>
 
-        <View style={styles.divider}>
-          <View style={styles.line} />
-          <Text style={styles.orText}>OR</Text>
-          <View style={styles.line} />
-        </View>
+            {/* Connect Button */}
+            <TouchableOpacity
+              style={[styles.btn, (pairingCode.length < 6 || isLoading) && styles.btnDisabled]}
+              onPress={() => handlePair(pairingCode)}
+              disabled={isLoading || pairingCode.length < 6}
+              activeOpacity={0.85}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <Text style={styles.btnText}>Connect Device →</Text>
+              )}
+            </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.qrButton}
-          onPress={openScanner}
-        >
-          <QrCode size={20} stroke="rgba(255, 255, 255, 0.6)" />
-          <Text style={styles.qrButtonText}>Scan QR Code</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+            {/* Divider */}
+            <View style={styles.divider}>
+              <View style={styles.line} />
+              <Text style={styles.orText}>OR</Text>
+              <View style={styles.line} />
+            </View>
+
+            {/* QR Scan Button (Secondary outline style) */}
+            <TouchableOpacity 
+              style={styles.qrButton}
+              onPress={openScanner}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="qr-code-outline" size={18} color={COLORS.primary} style={{ marginRight: 8 }} />
+              <Text style={styles.qrButtonText}>Scan QR Code</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.jet,
-  },
-  content: {
-    flex: 1,
-    padding: 24,
-    justifyContent: "center",
-  },
-  backButton: {
+  container: { flex: 1, backgroundColor: COLORS.bg },
+  scroll: { flexGrow: 1, justifyContent: "center", padding: 24 },
+  backLink: {
     flexDirection: "row",
     alignItems: "center",
-    position: "absolute",
-    top: 60,
-    left: 24,
-    zIndex: 10,
+    marginBottom: 20,
+    gap: 8,
   },
-  backText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    marginLeft: 4,
-    fontWeight: "500",
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 40,
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 24,
-    backgroundColor: "rgba(99, 91, 255, 0.12)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "rgba(99, 91, 255, 0.25)",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "900",
-    color: "#FFFFFF",
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.6)",
-    textAlign: "center",
-    marginTop: 8,
-    paddingHorizontal: 20,
-    lineHeight: 22,
-  },
-  inputContainer: {
-    marginBottom: 24,
-  },
-  label: {
-    color: "rgba(255, 255, 255, 0.6)",
+  backLinkText: {
+    color: COLORS.textMuted,
     fontSize: 14,
-    marginBottom: 8,
     fontWeight: "600",
-    marginLeft: 4,
   },
-  input: {
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderRadius: 16,
-    padding: 18,
-    fontSize: 24,
-    color: "#FFFFFF",
-    textAlign: "center",
-    fontWeight: "800",
-    letterSpacing: 4,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
-  },
-  hint: {
-    color: "rgba(255, 255, 255, 0.3)",
-    fontSize: 12,
-    marginTop: 8,
-    textAlign: "center",
-  },
-  button: {
+  logoSection: { alignItems: "center", marginBottom: 32 },
+  logoBox: {
+    width: 72,
+    height: 72,
+    borderRadius: 20,
     backgroundColor: COLORS.primary,
-    borderRadius: 16,
-    padding: 18,
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 10,
+    marginBottom: 12,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  brand: { fontSize: 28, fontWeight: "800", color: COLORS.text, letterSpacing: -0.5 },
+  subtitle: { fontSize: 13, color: COLORS.textMuted, marginTop: 4 },
+  card: {
+    backgroundColor: COLORS.card,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    padding: 24,
+    shadowColor: COLORS.text,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.03,
+    shadowRadius: 12,
+    elevation: 2,
+  },
+  title: { fontSize: 22, fontWeight: "800", color: COLORS.text, marginBottom: 4 },
+  caption: { fontSize: 13, color: COLORS.textMuted, marginBottom: 24 },
+  fieldGroup: { marginBottom: 16 },
+  label: { fontSize: 13, fontWeight: "600", color: COLORS.textMuted, marginBottom: 8 },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.02)",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingHorizontal: 14,
+    height: 50,
+  },
+  inputIcon: { marginRight: 10 },
+  input: { flex: 1, color: COLORS.text, fontSize: 15 },
+  btn: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 14,
+    height: 52,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 8,
     shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 5,
   },
-  buttonDisabled: {
-    backgroundColor: "rgba(99, 91, 255, 0.25)",
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "700",
-  },
+  btnDisabled: { opacity: 0.6 },
+  btnText: { color: "#fff", fontSize: 16, fontWeight: "700" },
   divider: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 32,
+    marginVertical: 24,
   },
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: COLORS.border,
   },
   orText: {
-    color: "rgba(255, 255, 255, 0.3)",
+    color: COLORS.textMuted,
     marginHorizontal: 16,
     fontSize: 12,
     fontWeight: "700",
@@ -291,17 +278,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 10,
-    padding: 16,
-    borderRadius: 16,
+    borderColor: COLORS.primary,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    borderRadius: 14,
+    height: 52,
+    marginTop: 4,
+    backgroundColor: "transparent",
   },
   qrButtonText: {
-    color: "rgba(255, 255, 255, 0.7)",
+    color: COLORS.primary,
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
   },
   scannerContainer: {
     flex: 1,
