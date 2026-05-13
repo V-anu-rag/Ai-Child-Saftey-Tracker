@@ -24,7 +24,7 @@ export default function TrackingScreen() {
   const [loadingChild, setLoadingChild] = useState(true);
   const [batteryLevel, setBatteryLevel] = useState<number>(100);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [currentCoords, setCurrentCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [currentCoords, setCurrentCoords] = useState<{ lat: number; lng: number; accuracy?: number } | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function TrackingScreen() {
   }, [child]);
 
   const handleLocationUpdate = useCallback((coords: any) => {
-    setCurrentCoords({ lat: coords.latitude, lng: coords.longitude });
+    setCurrentCoords({ lat: coords.latitude, lng: coords.longitude, accuracy: coords.accuracy });
     setLastUpdate(new Date());
   }, []);
 
@@ -216,7 +216,10 @@ export default function TrackingScreen() {
               <Text style={styles.trackingLabel}>Background Protection</Text>
               
               {trackingState === "active" && (
-                <Text style={[styles.trackingStatus, { color: COLORS.salmon }]}>● Active & Tracking</Text>
+                <View>
+                  <Text style={[styles.trackingStatus, { color: COLORS.salmon }]}>🟢 Live Protection Enabled</Text>
+                  <Text style={[styles.trackingStatus, { color: COLORS.textMuted, fontSize: 11, fontWeight: "500", marginTop: 1 }]}>Background tracking active</Text>
+                </View>
               )}
               {trackingState === "waiting" && (
                 <Text style={[styles.trackingStatus, { color: COLORS.textMuted }]}>○ Initializing...</Text>
@@ -248,17 +251,48 @@ export default function TrackingScreen() {
           {trackingState === "active" && (
             <View style={styles.trackingDetails}>
               <View style={styles.detailRow}>
-                <Ionicons name="location" size={14} color={COLORS.danger} />
-                <Text style={styles.detailText}>
-                  {currentCoords ? `${currentCoords.lat.toFixed(4)}, ${currentCoords.lng.toFixed(4)}` : "Acquiring GPS..."}
-                </Text>
+                <View style={styles.detailIconBox}><Ionicons name="location" size={16} color={COLORS.danger} /></View>
+                <View>
+                  <Text style={styles.detailLabel}>Current Location</Text>
+                  <Text style={styles.detailText}>
+                    {currentCoords ? `${currentCoords.lat.toFixed(4)}, ${currentCoords.lng.toFixed(4)}` : "Acquiring GPS..."}
+                  </Text>
+                </View>
               </View>
+              
               {lastUpdate && (
                 <View style={styles.detailRow}>
-                  <Ionicons name="time-outline" size={14} color={COLORS.textMuted} />
-                  <Text style={styles.detailText}>Last update: {lastUpdate.toLocaleTimeString()}</Text>
+                  <View style={styles.detailIconBox}><Ionicons name="time-outline" size={16} color={COLORS.textMuted} /></View>
+                  <View>
+                    <Text style={styles.detailLabel}>Last Updated</Text>
+                    <Text style={styles.detailText}>{lastUpdate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                  </View>
                 </View>
               )}
+
+              <View style={styles.detailRow}>
+                <View style={styles.detailIconBox}><Ionicons name="radio" size={16} color={COLORS.primary} /></View>
+                <View>
+                  <Text style={styles.detailLabel}>GPS Accuracy</Text>
+                  <Text style={styles.detailText}>
+                    {currentCoords?.accuracy 
+                      ? (currentCoords.accuracy < 20 ? "High Precision" : currentCoords.accuracy < 50 ? "Good Precision" : "Fair Precision")
+                      : "Connecting..."}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.detailRow}>
+                <View style={[styles.detailIconBox, { backgroundColor: isConnected ? "rgba(0,212,170,0.1)" : "rgba(255,77,77,0.1)" }]}>
+                  <Ionicons name={isConnected ? "shield-checkmark" : "warning"} size={16} color={isConnected ? COLORS.salmon : COLORS.danger} />
+                </View>
+                <View>
+                  <Text style={styles.detailLabel}>Connection</Text>
+                  <Text style={[styles.detailText, { color: isConnected ? COLORS.salmon : COLORS.danger, fontWeight: "600" }]}>
+                    {isConnected ? "🟢 Connected Securely" : "🔴 Disconnected"}
+                  </Text>
+                </View>
+              </View>
             </View>
           )}
         </View>
@@ -309,9 +343,11 @@ const styles = StyleSheet.create({
   trackingInfo: { flex: 1 },
   trackingLabel: { fontSize: 16, fontWeight: "700", color: COLORS.text },
   trackingStatus: { fontSize: 13, fontWeight: "600", marginTop: 2 },
-  trackingDetails: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: COLORS.green, gap: 6 },
-  detailRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  detailText: { fontSize: 12, color: COLORS.textMuted },
+  trackingDetails: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: COLORS.green, gap: 14 },
+  detailRow: { flexDirection: "row", alignItems: "center", gap: 12 },
+  detailIconBox: { width: 32, height: 32, borderRadius: 16, backgroundColor: COLORS.bg, alignItems: "center", justifyContent: "center" },
+  detailLabel: { fontSize: 11, fontWeight: "600", color: COLORS.textMuted, marginBottom: 2, textTransform: "uppercase", letterSpacing: 0.5 },
+  detailText: { fontSize: 14, color: COLORS.text, fontWeight: "500" },
   statsRow: { flexDirection: "row", gap: 12, marginBottom: 24 },
   statCard: { flex: 1, backgroundColor: "#fff", borderRadius: 16, padding: 16, alignItems: "center", gap: 4, shadowColor: COLORS.text, shadowOpacity: 0.03, shadowRadius: 8, elevation: 2 },
   statValue: { fontSize: 15, fontWeight: "800", color: COLORS.text },
