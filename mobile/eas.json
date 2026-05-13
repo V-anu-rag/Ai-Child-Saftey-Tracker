@@ -13,6 +13,7 @@
       }
     },
     "preview": {
+      "channel": "preview",
       "distribution": "internal",
       "android": {
         "image": "ubuntu-22.04-jdk-17-ndk-r26b"
@@ -25,6 +26,7 @@
       }
     },
     "production": {
+      "channel": "production",
       "autoIncrement": true,
       "distribution": "internal",
       "android": {
