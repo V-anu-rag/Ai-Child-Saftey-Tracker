@@ -86,7 +86,7 @@ export function Navbar() {
               Sign In
             </Link>
             <Link href="/signup">
-              <Button size="sm">Get Started Free</Button>
+              <Button size="sm">Get Started</Button>
             </Link>
           </div>
 

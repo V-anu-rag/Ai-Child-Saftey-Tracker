@@ -51,7 +51,10 @@ export function Hero() {
               transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white/80 text-sm font-medium px-4 py-2 rounded-full mb-8"
             >
-              <span className="w-2 h-2 bg-app-green rounded-full animate-pulse" />
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-app-salmon opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-app-salmon"></span>
+              </span>
               Real-time tracking, now available
               <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
             </motion.div>
