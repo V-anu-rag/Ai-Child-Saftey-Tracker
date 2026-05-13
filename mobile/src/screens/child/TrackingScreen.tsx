@@ -20,7 +20,6 @@ interface Child {
 export default function TrackingScreen() {
   const { user, logout } = useAuth();
   const { isConnected, emit } = useSocket();
-  const [isTracking, setIsTracking] = useState(false);
   const [child, setChild] = useState<Child | null>(null);
   const [loadingChild, setLoadingChild] = useState(true);
   const [batteryLevel, setBatteryLevel] = useState<number>(100);
@@ -49,19 +48,19 @@ export default function TrackingScreen() {
     const sub = Battery.addBatteryLevelListener(({ batteryLevel: lvl }) => {
       const pct = Math.round(lvl * 100);
       setBatteryLevel(pct);
-      if (child && isTracking) emit("update-status", { childId: child._id, batteryLevel: pct });
+      if (child) emit("update-status", { childId: child._id, batteryLevel: pct });
     });
     return () => sub.remove();
-  }, [child, isTracking]);
+  }, [child]);
 
   const handleLocationUpdate = useCallback((coords: any) => {
     setCurrentCoords({ lat: coords.latitude, lng: coords.longitude });
     setLastUpdate(new Date());
   }, []);
 
-  useLocation({
+  const { trackingState, startTracking } = useLocation({
     childId: child?._id || "",
-    enabled: isTracking && !!child,
+    enabled: !!child, // ALWAYS ON
     batteryLevel,
     onLocationUpdate: handleLocationUpdate,
   });
@@ -206,22 +205,60 @@ export default function TrackingScreen() {
         {/* Main tracking card */}
         <View style={styles.trackingCard}>
           <View style={styles.trackingTop}>
-            <View style={styles.shieldIcon}><Ionicons name={isTracking ? "shield-checkmark" : "shield-outline"} size={40} color={isTracking ? COLORS.salmon : COLORS.text} /></View>
-            <View style={styles.trackingInfo}>
-              <Text style={styles.trackingLabel}>Location Tracking</Text>
-              <Text style={[styles.trackingStatus, { color: isTracking ? COLORS.salmon : COLORS.textMuted }]}>{isTracking ? "● Active" : "○ Inactive"}</Text>
+            <View style={[styles.shieldIcon, { backgroundColor: trackingState === "active" ? `${COLORS.salmon}15` : trackingState === "denied" ? `${COLORS.danger}15` : `${COLORS.jet}10` }]}>
+              <Ionicons 
+                name={trackingState === "active" ? "shield-checkmark" : trackingState === "denied" ? "warning" : "shield-half"} 
+                size={32} 
+                color={trackingState === "active" ? COLORS.salmon : trackingState === "denied" ? COLORS.danger : COLORS.textMuted} 
+              />
             </View>
-            <Switch 
-              value={isTracking} 
-              onValueChange={() => setIsTracking(!isTracking)} 
-              trackColor={{ false: COLORS.green, true: `${COLORS.salmon}50` }} 
-              thumbColor={isTracking ? COLORS.salmon : "#9ca3af"} 
-            />
+            <View style={styles.trackingInfo}>
+              <Text style={styles.trackingLabel}>Background Protection</Text>
+              
+              {trackingState === "active" && (
+                <Text style={[styles.trackingStatus, { color: COLORS.salmon }]}>● Active & Tracking</Text>
+              )}
+              {trackingState === "waiting" && (
+                <Text style={[styles.trackingStatus, { color: COLORS.textMuted }]}>○ Initializing...</Text>
+              )}
+              {trackingState === "denied" && (
+                <Text style={[styles.trackingStatus, { color: COLORS.danger }]}>● Permission Required</Text>
+              )}
+            </View>
           </View>
-          {isTracking && (
+
+          {trackingState === "denied" && (
+            <TouchableOpacity 
+              style={styles.fixPermissionBtn} 
+              onPress={() => {
+                Alert.alert(
+                  "Location Required",
+                  "SafeTrack needs 'Allow all the time' location access to protect you in the background.",
+                  [
+                    { text: "Cancel", style: "cancel" },
+                    { text: "Open Settings", onPress: startTracking }
+                  ]
+                );
+              }}
+            >
+              <Text style={styles.fixPermissionText}>Fix Permissions</Text>
+            </TouchableOpacity>
+          )}
+
+          {trackingState === "active" && (
             <View style={styles.trackingDetails}>
-              <View style={styles.detailRow}><Ionicons name="location" size={14} color={COLORS.danger} /><Text style={styles.detailText}>{currentCoords ? `${currentCoords.lat.toFixed(4)}, ${currentCoords.lng.toFixed(4)}` : "Acquiring GPS..."}</Text></View>
-              {lastUpdate && <View style={styles.detailRow}><Ionicons name="time-outline" size={14} color={COLORS.textMuted} /><Text style={styles.detailText}>Last update: {lastUpdate.toLocaleTimeString()}</Text></View>}
+              <View style={styles.detailRow}>
+                <Ionicons name="location" size={14} color={COLORS.danger} />
+                <Text style={styles.detailText}>
+                  {currentCoords ? `${currentCoords.lat.toFixed(4)}, ${currentCoords.lng.toFixed(4)}` : "Acquiring GPS..."}
+                </Text>
+              </View>
+              {lastUpdate && (
+                <View style={styles.detailRow}>
+                  <Ionicons name="time-outline" size={14} color={COLORS.textMuted} />
+                  <Text style={styles.detailText}>Last update: {lastUpdate.toLocaleTimeString()}</Text>
+                </View>
+              )}
             </View>
           )}
         </View>
@@ -286,4 +323,6 @@ const styles = StyleSheet.create({
   safetyNote: { textAlign: "center", fontSize: 12, color: COLORS.textMuted, lineHeight: 18, marginTop: 10 },
   repairButton: { backgroundColor: "#fff", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: COLORS.danger },
   repairButtonText: { color: COLORS.danger, fontSize: 11, fontWeight: "700" },
+  fixPermissionBtn: { backgroundColor: COLORS.danger, marginTop: 16, paddingVertical: 12, borderRadius: 12, alignItems: "center" },
+  fixPermissionText: { color: "#fff", fontWeight: "700", fontSize: 14 },
 });

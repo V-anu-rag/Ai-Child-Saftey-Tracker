@@ -72,6 +72,9 @@ exports.login = async (req, res, next) => {
     user.lastSeen = new Date();
     if (fcmToken && !user.fcmTokens.includes(fcmToken)) {
       user.fcmTokens.push(fcmToken);
+      if (user.fcmTokens.length > 5) {
+        user.fcmTokens = user.fcmTokens.slice(-5);
+      }
     }
     await user.save({ validateBeforeSave: false });
 
@@ -138,9 +141,16 @@ exports.registerFcmToken = async (req, res, next) => {
     const { fcmToken } = req.body;
     if (!fcmToken) return next(new AppError("FCM Token is required", 400));
 
-    await User.findByIdAndUpdate(req.user._id, {
-      $addToSet: { fcmTokens: fcmToken }
-    });
+    const user = await User.findById(req.user._id);
+    if (!user) return next(new AppError("User not found", 404));
+
+    if (!user.fcmTokens.includes(fcmToken)) {
+      user.fcmTokens.push(fcmToken);
+      if (user.fcmTokens.length > 5) {
+        user.fcmTokens = user.fcmTokens.slice(-5);
+      }
+      await user.save({ validateBeforeSave: false });
+    }
 
     res.json({ success: true, message: "FCM Token registered" });
   } catch (err) {

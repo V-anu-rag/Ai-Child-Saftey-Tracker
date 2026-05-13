@@ -66,6 +66,13 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 
     socket.on("connect_error", (err) => {
       console.warn("Socket connect error:", err.message);
+      if (err.message === "Invalid token") {
+        Alert.alert(
+          "Session Expired",
+          "Your session has expired. Please log in again to continue tracking safely.",
+          [{ text: "OK", onPress: () => logout() }]
+        );
+      }
     });
 
     // 🚨 SAFE ALERT HANDLING

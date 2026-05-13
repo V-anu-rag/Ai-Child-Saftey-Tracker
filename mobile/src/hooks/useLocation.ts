@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import { Platform, Alert } from "react-native";
@@ -29,6 +29,7 @@ export const useLocation = ({
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isTrackingRef = useRef(false);
   const lastSentRef = useRef<number>(0);
+  const [trackingState, setTrackingState] = useState<"inactive" | "active" | "denied" | "waiting">("inactive");
 
   const requestPermissions = useCallback(async (): Promise<boolean> => {
     const { status: fg } = await Location.requestForegroundPermissionsAsync();
@@ -92,10 +93,11 @@ export const useLocation = ({
 
     const hasPermission = await requestPermissions();
     if (!hasPermission) {
-      Alert.alert("Permission Required", "Please set location permission to 'Allow all the time' in system settings.");
-      return;
+      setTrackingState("denied");
+      return false;
     }
 
+    setTrackingState("active");
     isTrackingRef.current = true;
     await SecureStore.setItemAsync("tracking_child_id", childId);
 
@@ -119,10 +121,12 @@ export const useLocation = ({
         // Silent failure
       }
     }
+    return true;
   }, [childId, requestPermissions, sendLocation]);
 
   const stopTracking = useCallback(async () => {
     isTrackingRef.current = false;
+    setTrackingState("inactive");
     await SecureStore.deleteItemAsync("tracking_child_id");
 
     if (intervalRef.current) {
@@ -142,6 +146,7 @@ export const useLocation = ({
 
   useEffect(() => {
     if (enabled) {
+      setTrackingState("waiting");
       startTracking();
     } else {
       stopTracking();
@@ -151,5 +156,5 @@ export const useLocation = ({
     };
   }, [enabled, startTracking, stopTracking]);
 
-  return { startTracking, stopTracking };
+  return { startTracking, stopTracking, trackingState };
 };

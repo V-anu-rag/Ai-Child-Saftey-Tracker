@@ -55,13 +55,18 @@ app.use(
   })
 );
 
-// Rate limiting — 100 req / 15 min per IP
-const limiter = rateLimit({
+// Rate limiting
+const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 100, // 100 req / 15 min per IP for standard API calls
   message: { success: false, message: "Too many requests. Try again later." },
 });
-app.use("/api/", limiter);
+
+const locationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 600, // 600 req / 15 min per IP for high-frequency location updates
+  message: { success: false, message: "Too many location updates. Try again later." },
+});
 
 // ─── Body Parsing ─────────────────────────────────────────────────────────────
 app.use(express.json({ limit: "10kb" }));
@@ -82,12 +87,12 @@ app.get("/api/health", (req, res) => {
 });
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
-app.use("/api/auth", authRoutes);
-app.use("/api/children", childRoutes);
-app.use("/api/location", locationRoutes);
-app.use("/api/alerts", alertRoutes);
-app.use("/api/geofences", geofenceRoutes);
-app.use("/api/activity", activityRoutes);
+app.use("/api/auth", apiLimiter, authRoutes);
+app.use("/api/children", apiLimiter, childRoutes);
+app.use("/api/location", locationLimiter, locationRoutes);
+app.use("/api/alerts", apiLimiter, alertRoutes);
+app.use("/api/geofences", apiLimiter, geofenceRoutes);
+app.use("/api/activity", apiLimiter, activityRoutes);
 
 // ─── Error Handling ───────────────────────────────────────────────────────────
 app.use(notFound);

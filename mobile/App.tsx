@@ -15,6 +15,7 @@ LogBox.ignoreLogs(["InteractionManager has been deprecated"]);
 import useNotifications from "./src/hooks/useNotifications";
 
 import { GeofenceProvider } from "./src/context/GeofenceContext";
+import { ErrorBoundary } from "./src/components/ErrorBoundary";
 
 function RootApp() {
   const [splashDone, setSplashDone] = useState(false);
@@ -36,15 +37,17 @@ function RootApp() {
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <AuthProvider>
-          <SocketProvider>
-            <StatusBar style="auto" />
-            <RootApp />
-          </SocketProvider>
-        </AuthProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <AuthProvider>
+            <SocketProvider>
+              <StatusBar style="auto" />
+              <RootApp />
+            </SocketProvider>
+          </AuthProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 }
