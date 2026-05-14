@@ -165,12 +165,17 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
                 
                 {coords ? (
                   <LocationAddress lat={coords.lat} lng={coords.lng} />
-                ) : item.location && (
+                ) : item.location ? (
                   <div className="flex items-center gap-1 mt-2">
                     <MapPin className="w-3 h-3 text-app-jet/30" />
-                    <p className="text-[10px] text-app-jet/40 font-semibold">{item.location}</p>
+                    <p className="text-[10px] text-app-jet/40 font-semibold truncate">
+                      {typeof item.location === "string" 
+                        ? item.location 
+                        : (item.location as any).address || 
+                          `${(item.location as any).lat?.toFixed(4)}, ${(item.location as any).lng?.toFixed(4)}`}
+                    </p>
                   </div>
-                )}
+                ) : null}
               </div>
             </motion.div>
           );

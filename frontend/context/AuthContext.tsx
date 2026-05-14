@@ -32,27 +32,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const logout = useCallback(() => {
+    localStorage.removeItem("safetrack_token");
+    localStorage.removeItem("safetrack_user");
+    setToken(null);
+    setUser(null);
+    router.push("/login");
+  }, [router]);
+
   // Restore session from localStorage on mount
   useEffect(() => {
     const restore = async () => {
-      const stored = localStorage.getItem("safetrack_token");
-      const storedUser = localStorage.getItem("safetrack_user");
-      if (stored && storedUser) {
-        setToken(stored);
-        setUser(JSON.parse(storedUser));
-        try {
-          const res = await authAPI.getMe() as any;
-          setUser(res.user);
-          localStorage.setItem("safetrack_user", JSON.stringify(res.user));
-        } catch {
-          // Token invalid
-          logout();
+      try {
+        const stored = localStorage.getItem("safetrack_token");
+        const storedUser = localStorage.getItem("safetrack_user");
+        
+        if (stored && storedUser) {
+          try {
+            const parsedUser = JSON.parse(storedUser);
+            setToken(stored);
+            setUser(parsedUser);
+            
+            // Background sync to ensure token is still valid
+            const res = await authAPI.getMe() as any;
+            if (res.user) {
+              setUser(res.user);
+              localStorage.setItem("safetrack_user", JSON.stringify(res.user));
+            }
+          } catch (parseErr) {
+            console.error("❌ [AUTH] Corrupted session data:", parseErr);
+            logout();
+          }
         }
+      } catch (err) {
+        console.error("❌ [AUTH] Restore failed:", err);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
     restore();
-  }, []);
+  }, [logout]);
 
   const login = useCallback(async (email: string, password: string) => {
     const res = await authAPI.login(email, password) as any;
@@ -74,14 +93,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     []
   );
-
-  const logout = useCallback(() => {
-    localStorage.removeItem("safetrack_token");
-    localStorage.removeItem("safetrack_user");
-    setToken(null);
-    setUser(null);
-    router.push("/login");
-  }, [router]);
 
   return (
     <AuthContext.Provider value={{ user, token, isLoading, isAuthenticated: !!user, login, signup, logout }}>

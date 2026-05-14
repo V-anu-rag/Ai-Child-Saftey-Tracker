@@ -139,7 +139,9 @@ export function ChildProfile({ child: initialChild }: ChildProfileProps) {
           </div>
           <div>
             <p className="text-xs text-app-jet/50">Current Location</p>
-            <p className="text-sm font-semibold text-app-jet line-clamp-1">{child.location.address}</p>
+            <p className="text-sm font-semibold text-app-jet line-clamp-1">
+              {child.location?.address || "Location unavailable"}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-3 bg-app-bg rounded-xl p-3">
@@ -148,7 +150,11 @@ export function ChildProfile({ child: initialChild }: ChildProfileProps) {
           </div>
           <div>
             <p className="text-xs text-app-jet/50">Last Update</p>
-            <p className="text-sm font-semibold text-app-jet">{formatRelativeTime(child.location.timestamp)}</p>
+            <p className="text-sm font-semibold text-app-jet">
+              {child.location?.timestamp 
+                ? formatRelativeTime(child.location.timestamp) 
+                : "No data received"}
+            </p>
           </div>
         </div>
       </div>
