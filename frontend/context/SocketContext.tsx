@@ -15,9 +15,6 @@ import { useAuth } from "@/context/AuthContext";
 import { alertsAPI } from "@/lib/api";
 import { toast } from "sonner";
 import { Alert } from "@/types";
-import { AlertTriangle, X, Phone } from "lucide-react";
-import { Button } from "@/components/common/Button";
-import Link from "next/link";
 
 // Global throttle to prevent 429 loops across remounts
 let GLOBAL_LAST_SYNC = 0;
@@ -193,45 +190,10 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       // Only show modal for ACTIVE SOS
       if (normalized.type === "sos" && normalized.status !== "resolved") {
         setLatestAlert(normalized);
-        
-        toast.custom((t) => (
-          <div className="w-full max-w-sm bg-[#FFF5F5] border border-red-100 rounded-2xl p-4 shadow-xl animate-in slide-in-from-top-2 duration-300">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-red-200">
-                <AlertTriangle className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-red-600 text-sm">
-                    🚨 SOS: {normalized.childName || "Child"}
-                  </h3>
-                  <button onClick={() => toast.dismiss(t)} className="text-red-300 hover:text-red-500 transition-colors">
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-                <p className="text-red-500 text-sm mt-1 font-medium">
-                  {normalized.childName || "Your child"} has pressed the SOS button!
-                </p>
-                <div className="flex gap-2 mt-4">
-                  <Link href="/alerts" className="flex-1" onClick={() => toast.dismiss(t)}>
-                    <Button size="sm" className="w-full bg-red-600 hover:bg-red-700 text-white border-none shadow-sm h-8 text-[11px] font-bold uppercase tracking-wider">
-                      View Map
-                    </Button>
-                  </Link>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="flex-1 border-red-100 text-red-600 hover:bg-red-50 h-8 text-[11px] font-bold uppercase tracking-wider"
-                    onClick={() => window.open(`tel:911`)} // Placeholder
-                  >
-                    <Phone className="w-3 h-3 mr-1" />
-                    Emergency
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ), { duration: Infinity, position: "top-center" });
+        toast.error(`🚨 SOS: ${normalized.childName || "Child"}`, {
+          duration: Infinity,
+          description: normalized.message,
+        });
       } else {
         toast.info(normalized.title, { description: normalized.message });
       }
