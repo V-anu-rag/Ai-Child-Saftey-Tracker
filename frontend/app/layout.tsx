@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { SocketProvider } from "@/context/SocketContext";
 import { Toaster } from "sonner";
+import { ServiceWorkerRegister } from "@/components/common/ServiceWorkerRegister";
 
 const displayFont = Outfit({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
       >
         <AuthProvider>
           <SocketProvider>
+            <ServiceWorkerRegister />
             <Toaster position="top-right" richColors />
             {children}
           </SocketProvider>

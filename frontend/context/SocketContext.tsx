@@ -37,6 +37,8 @@ interface SocketContextType {
   refreshUnreadCount: () => Promise<void>;
   setUnreadCount: (count: number) => void;
   forceSync: () => Promise<void>;
+  requestNotificationPermission: () => Promise<boolean>;
+  notificationPermission: NotificationPermission;
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
@@ -53,6 +55,13 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [latestAlert, setLatestAlert] = useState<Alert | null>(null);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>("default");
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      setNotificationPermission(Notification.permission);
+    }
+  }, []);
 
   const forceSync = useCallback(
     async (bypassCooldown = false) => {
@@ -97,6 +106,21 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
   const clearLatestAlert = useCallback(() => {
     setLatestAlert(null);
+  }, []);
+
+  const requestNotificationPermission = useCallback(async () => {
+    if (typeof window === "undefined" || !("Notification" in window)) return false;
+    
+    const permission = await Notification.requestPermission();
+    setNotificationPermission(permission);
+    if (permission === "granted") {
+      new Notification("Notifications Enabled", {
+        body: "You will now receive safety alerts directly on your desktop.",
+        icon: "/logo.png"
+      });
+      return true;
+    }
+    return false;
   }, []);
 
   useEffect(() => {
@@ -297,6 +321,8 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         refreshUnreadCount: () => forceSync(true),
         setUnreadCount,
         forceSync: () => forceSync(true),
+        requestNotificationPermission,
+        notificationPermission,
       }}
     >
       {children}

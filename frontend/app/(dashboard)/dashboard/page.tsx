@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
-import { Plus, RefreshCw, Wifi, WifiOff } from "lucide-react";
+import { Plus, RefreshCw, Wifi, WifiOff, Bell } from "lucide-react";
 import { useChildren } from "@/hooks/useChildren";
 import { useSocket } from "@/context/SocketContext";
 import { useAuth } from "@/context/AuthContext";
@@ -73,6 +73,8 @@ export default function DashboardPage() {
     }
   };
 
+  const { requestNotificationPermission, notificationPermission } = useSocket();
+
   const greeting = () => {
     const h = new Date().getHours();
     if (h < 12) return "Good morning";
@@ -102,6 +104,17 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex gap-3">
+          {notificationPermission !== "granted" && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-app-salmon border-app-salmon/30 hover:bg-app-salmon/5"
+              leftIcon={<Bell className="w-4 h-4" />} 
+              onClick={requestNotificationPermission}
+            >
+              Enable Desktop Alerts
+            </Button>
+          )}
           <Button 
             variant="outline" 
             size="sm" 
