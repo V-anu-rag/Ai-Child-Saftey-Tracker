@@ -45,9 +45,10 @@ exports.sendPushNotification = async (userId, notification, data = {}) => {
     
     // Check if user has registered tokens
     if (!user || !user.fcmTokens || user.fcmTokens.length === 0) {
-      console.log(`ℹ️ No push tokens found for user ${userId}. Skipping push.`);
+      console.log(`[DEBUG PUSH TOKEN] ℹ️ No push tokens found for user ${userId}. Tokens:`, user?.fcmTokens);
       return;
     }
+    console.log(`[DEBUG PUSH TOKEN] 🔍 Found ${user.fcmTokens.length} tokens for user ${userId}:`, user.fcmTokens);
 
     const expoTokens = [];
     const fcmTokens = [];
@@ -69,9 +70,9 @@ exports.sendPushNotification = async (userId, notification, data = {}) => {
         title: notification.title,
         body: notification.body,
         data: data,
-        priority: data.type === "sos" ? "high" : "default",
-        channelId: data.type === "sos" ? "emergency-sos" : data.type === "geofence" ? "geofence-alerts" : "general-alerts",
-        badge: 1, // iOS requirement for proper updates
+        priority: "high", // Always high for safety app reliability
+        channelId: data.type === "sos" ? "emergency-sos" : "geofence-alerts",
+        badge: 1, 
       }));
 
       try {

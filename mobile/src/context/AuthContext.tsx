@@ -7,6 +7,7 @@ import React, {
   ReactNode,
 } from "react";
 import * as SecureStore from "expo-secure-store";
+import * as Notifications from "expo-notifications";
 import { authAPI } from "../api/client";
 
 interface User {
@@ -117,6 +118,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const logout = useCallback(async () => {
+    try {
+      const currentToken = await Notifications.getExpoPushTokenAsync().then(t => t.data).catch(() => null);
+      await authAPI.logout(currentToken || undefined);
+    } catch {}
+    
     await SecureStore.deleteItemAsync("authToken");
     await SecureStore.deleteItemAsync("authUser");
     await SecureStore.deleteItemAsync("tracking_child_id");

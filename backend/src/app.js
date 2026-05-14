@@ -86,6 +86,41 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// ─── Debug Push Route (Temporary) ──────────────────────────────────────────────
+app.post("/api/debug/test-push", async (req, res) => {
+  const { token, title, body } = req.body;
+  console.log(`[DEBUG NOTIFICATION] Manual push test triggered for token: ${token}`);
+  
+  if (!token) return res.status(400).json({ success: false, message: "Missing token" });
+
+  try {
+    const fetch = require("node-fetch");
+    const response = await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([{
+        to: token,
+        sound: "default",
+        title: title || "Debug Test",
+        body: body || "This is a test notification from /api/debug/test-push",
+        priority: "high",
+        channelId: "emergency-sos",
+        data: { type: "debug" }
+      }]),
+    });
+
+    const resData = await response.json();
+    console.log("[DEBUG NOTIFICATION] Expo API Response:", JSON.stringify(resData));
+    res.json({ success: true, expoResponse: resData });
+  } catch (err) {
+    console.error("[DEBUG NOTIFICATION] Error:", err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use("/api/auth", apiLimiter, authRoutes);
 app.use("/api/children", apiLimiter, childRoutes);

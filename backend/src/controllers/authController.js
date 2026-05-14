@@ -105,8 +105,19 @@ exports.getMe = async (req, res, next) => {
 /**
  * POST /api/auth/logout
  */
-exports.logout = (req, res) => {
-  res.json({ success: true, message: "Logged out successfully." });
+exports.logout = async (req, res) => {
+  try {
+    const { fcmToken } = req.body;
+    if (fcmToken && req.user) {
+      await User.findByIdAndUpdate(req.user._id, {
+        $pull: { fcmTokens: fcmToken }
+      });
+      console.log(`[DEBUG PUSH TOKEN] Removed token on logout for user ${req.user._id}`);
+    }
+    res.json({ success: true, message: "Logged out successfully." });
+  } catch (err) {
+    res.json({ success: true, message: "Logged out (token cleanup failed)." });
+  }
 };
 
 /**

@@ -7,6 +7,7 @@ const {
   triggerSOS,
   resolveSOS,
   deleteAlert,
+  testPush,
 } = require("../controllers/alertController");
 
 const router = express.Router();
@@ -15,6 +16,7 @@ router.use(protect);
 
 router.get("/", getAlerts);
 router.post("/sos", triggerSOS);
+router.post("/test-push", testPush);
 router.patch("/read-all", markAllAsRead);
 router.patch("/:id/read", markAsRead);
 router.patch("/:id/resolve", resolveSOS);

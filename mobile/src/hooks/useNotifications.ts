@@ -55,17 +55,22 @@ export const useNotifications = (userId: string | undefined, userRole: string | 
         });
 
         const token = tokenData.data;
-        console.log("[useNotifications] Generated Expo Push Token:", token);
-
+        console.log("[DEBUG NOTIFICATION] 1. Generated Expo Push Token:", token);
+        
         // Register push token with the backend database
         await authAPI.registerFcmToken(token);
-        console.log("[useNotifications] Push token registered on server successfully.");
+        console.log("[DEBUG NOTIFICATION] 2. Push token registered on server successfully.");
       } catch (err: any) {
-        console.error("[useNotifications] Registration failed:", err.message);
+        console.error("[DEBUG NOTIFICATION] ❌ Registration failed:", err.message);
       }
     };
 
     registerForPushNotifications();
+
+    // Listener for when a notification is received while the app is in the foreground
+    const foregroundSubscription = Notifications.addNotificationReceivedListener((notification) => {
+      console.log("[DEBUG NOTIFICATION] Foreground notification received:", notification.request.content.title);
+    });
 
     // Listener for when a user taps/interacts with a notification (Foreground, Background, or Killed State)
     responseListenerRef.current = Notifications.addNotificationResponseReceivedListener((response) => {
@@ -102,6 +107,7 @@ export const useNotifications = (userId: string | undefined, userRole: string | 
     });
 
     return () => {
+      foregroundSubscription.remove();
       if (responseListenerRef.current) {
         responseListenerRef.current.remove();
       }

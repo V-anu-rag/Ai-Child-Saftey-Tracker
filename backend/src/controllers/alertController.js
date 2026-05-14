@@ -2,6 +2,7 @@ const Alert = require("../models/Alert");
 const { AppError } = require("../middleware/errorHandler");
 const { getIO } = require("../socket/socketHandler");
 const { sendPushNotification } = require("../utils/fcm");
+const fetch = require("node-fetch"); // for manual fetch if needed
 
 /**
  * GET /api/alerts?page=1&limit=20&unread=true&severity=critical
@@ -111,7 +112,7 @@ exports.triggerSOS = async (req, res, next) => {
       });
     }
 
-    // Fallback to Push Notification if parent is offline OR always for SOS
+    console.log("[DEBUG SOS FLOW] 4. Triggering push notification to parent:", child.parentId);
     await sendPushNotification(
       child.parentId,
       {
@@ -128,6 +129,7 @@ exports.triggerSOS = async (req, res, next) => {
         timestamp: alert.createdAt.toISOString(),
       }
     );
+    console.log("[DEBUG SOS FLOW] 5. Push notification dispatch task called.");
 
     res.status(201).json({ success: true, alert });
   } catch (err) {
@@ -170,6 +172,55 @@ exports.deleteAlert = async (req, res, next) => {
     if (!alert) return next(new AppError("Alert not found.", 404));
     res.json({ success: true, message: "Alert deleted." });
   } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * POST /api/alerts/test-push
+ * Manual test to verify Expo push backend delivery.
+ */
+exports.testPush = async (req, res, next) => {
+  try {
+    const { expoPushToken } = req.body;
+    if (!expoPushToken) {
+      return next(new AppError("Missing expoPushToken", 400));
+    }
+
+    const payload = {
+      to: expoPushToken,
+      sound: "default",
+      title: "🚨 Emergency SOS TEST",
+      body: "This is a test remote push from the backend!",
+      priority: "high",
+      channelId: "emergency-sos",
+      badge: 1,
+      data: {
+        type: "sos",
+        childId: "test-child-id",
+        childName: "Test Child"
+      }
+    };
+
+    console.log("[TestPush] Sending payload:", JSON.stringify(payload));
+
+    const fetch = require("node-fetch");
+    const response = await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([payload]),
+    });
+    
+    const resData = await response.json();
+    console.log("[TestPush] Response:", JSON.stringify(resData));
+
+    res.json({ success: true, response: resData });
+  } catch (err) {
+    console.error("[TestPush] Error:", err.message);
     next(err);
   }
 };
