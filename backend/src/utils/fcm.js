@@ -118,6 +118,23 @@ exports.sendPushNotification = async (userId, notification, data = {}) => {
           ...data,
           click_action: "FLUTTER_NOTIFICATION_CLICK",
         },
+        android: {
+          priority: "high",
+          notification: {
+            channelId: data.type === "sos" ? "emergency-sos" : "geofence-alerts",
+            priority: "max",
+            sound: "default",
+          },
+        },
+        apns: {
+          payload: {
+            aps: {
+              contentAvailable: true,
+              mutableContent: true,
+              sound: "default",
+            },
+          },
+        },
         tokens: fcmTokens,
       };
 

@@ -16,7 +16,8 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "SafeTrack needs your location to keep your parent informed.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "SafeTrack tracks your location in background.",
-        "NSLocationAlwaysUsageDescription": "SafeTrack uses background location."
+        "NSLocationAlwaysUsageDescription": "SafeTrack uses background location.",
+        "UIBackgroundModes": ["location", "fetch", "remote-notification"]
       }
     },
     "android": {
@@ -38,14 +39,6 @@
         "WAKE_LOCK",
         "VIBRATE",
         "POST_NOTIFICATIONS",
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_BACKGROUND_LOCATION",
-        "FOREGROUND_SERVICE",
-        "FOREGROUND_SERVICE_LOCATION",
-        "RECEIVE_BOOT_COMPLETED",
-        "WAKE_LOCK",
-        "VIBRATE",
         "POST_NOTIFICATIONS",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
