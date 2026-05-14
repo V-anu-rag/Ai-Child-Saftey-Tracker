@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const path = require("path");
+const fetch = require("node-fetch");
 
 // To use FCM, you must provide a service account key
 // Download from Firebase Console -> Project Settings -> Service Accounts

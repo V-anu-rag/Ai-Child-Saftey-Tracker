@@ -43,7 +43,7 @@ export default function RootLayout({
         <AuthProvider>
           <SocketProvider>
             <ServiceWorkerRegister />
-            <Toaster position="top-right" richColors />
+            <Toaster position="top-right" richColors closeButton />
             {children}
           </SocketProvider>
         </AuthProvider>
