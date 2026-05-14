@@ -142,7 +142,9 @@ export const locationAPI = {
   getLast: (childId: string) => api.get(`/location/last/${childId}`),
   getHistory: (childId: string, params?: Record<string, unknown>) =>
     api.get(`/location/history/${childId}`, { params }),
+  deleteHistory: (childId: string) => api.delete(`/location/history/${childId}`),
 };
+
 
 // ─── Geofences ────────────────────────────────────────────────────────────────
 export const geofencesAPI = {

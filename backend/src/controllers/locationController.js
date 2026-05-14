@@ -112,3 +112,26 @@ exports.getHistory = async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * DELETE /api/location/history/:childId
+ * Delete location history for a child (or all for a parent)
+ */
+exports.deleteHistory = async (req, res, next) => {
+  try {
+    const filter = req.params.childId === "all" 
+      ? { parentId: req.user._id }
+      : { childId: req.params.childId, parentId: req.user._id };
+
+    const result = await Location.deleteMany(filter);
+
+    res.json({ 
+      success: true, 
+      message: `${result.deletedCount} history records deleted.`,
+      deletedCount: result.deletedCount 
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+

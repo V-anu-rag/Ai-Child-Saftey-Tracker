@@ -12,6 +12,7 @@ import {
   Download,
   Search,
   RefreshCw,
+  Trash2,
 } from "lucide-react";
 import { locationAPI } from "@/lib/api";
 import { useChildren } from "@/hooks/useChildren";
@@ -39,8 +40,6 @@ export default function HistoryPage() {
   const fetchHistory = useCallback(async () => {
     try {
       setLoading(true);
-      // If "all", we might need to handle this differently. 
-      // For now, let's fetch for the first child or empty if all
       const childId = selectedChild === "all" ? "all" : selectedChild;
       const res = await locationAPI.getHistory(childId) as any;
       setLogs(res.locations || []);
@@ -50,6 +49,24 @@ export default function HistoryPage() {
       setLoading(false);
     }
   }, [selectedChild]);
+
+  const handleDeleteAll = async () => {
+    const targetName = selectedChild === "all" ? "all children" : children.find(c => (c._id || c.id) === selectedChild)?.name || "this child";
+    if (!window.confirm(`Are you sure you want to delete all history records for ${targetName}? This cannot be undone.`)) return;
+    
+    try {
+      setLoading(true);
+      const childId = selectedChild === "all" ? "all" : selectedChild;
+      await locationAPI.deleteHistory(childId);
+      setLogs([]);
+      import("sonner").then(({ toast }) => toast.success("History cleared successfully"));
+    } catch (err: any) {
+      console.error("Failed to delete history:", err);
+      import("sonner").then(({ toast }) => toast.error(err.message || "Failed to clear history"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchHistory();
@@ -76,6 +93,16 @@ export default function HistoryPage() {
           </Button>
           <Button size="sm" variant="outline" leftIcon={<Download className="w-4 h-4" />}>
             Export
+          </Button>
+          <Button 
+            size="sm" 
+            variant="outline" 
+            className="text-red-600 border-red-200 hover:bg-red-50"
+            onClick={handleDeleteAll}
+            leftIcon={<Trash2 className="w-4 h-4" />}
+            disabled={loading || logs.length === 0}
+          >
+            Clear All
           </Button>
         </div>
       </div>

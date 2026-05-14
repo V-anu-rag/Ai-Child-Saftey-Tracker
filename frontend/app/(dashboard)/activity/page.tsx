@@ -135,7 +135,7 @@ function ActivityPageContent() {
       const childId = selectedChild === "all" ? "all" : selectedChild;
       const res = await activityAPI.get(childId) as any;
       setActivities(res.timeline || []);
-      setDisplayLimit(6);
+      setDisplayLimit(4);
     } catch (err) {
       console.error("Failed to fetch activities:", err);
     } finally {
@@ -309,7 +309,7 @@ function ActivityPageContent() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        onClick={() => setDisplayLimit(prev => prev + 6)}
+                        onClick={() => setDisplayLimit(prev => prev + 4)}
                         className="bg-white hover:bg-app-bg"
                       >
                         Load More
