@@ -87,7 +87,7 @@ export function Features() {
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
+              transition={{ duration: 0.4, delay: i * 0.06 }}
               whileHover={{ scale: 1.03, y: -4 }}
               className={`rounded-2xl bg-white border ${feat.border} p-6 shadow-sm hover:shadow-lg transition-shadow`}
             >
