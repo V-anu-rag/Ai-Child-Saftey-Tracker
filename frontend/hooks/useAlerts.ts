@@ -17,7 +17,7 @@ export function useAlerts(initialFilter: string = "all") {
   const fetchAlerts = useCallback(async () => {
     try {
       setLoading(true);
-      const params: any = {};
+      const params: any = { status: "active" };
       if (activeFilter === "unread") params.unread = true;
       else if (activeFilter !== "all") params.severity = activeFilter;
       

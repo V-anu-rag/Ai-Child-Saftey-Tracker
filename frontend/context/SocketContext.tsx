@@ -79,7 +79,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
       try {
         console.log("🔄 [SOCKET] Syncing alerts from API...");
-        const res = (await alertsAPI.getAll({ limit: 50 })) as any;
+        const res = (await alertsAPI.getAll({ limit: 50, status: "active" })) as any;
         const normalized: Alert[] = (res.alerts || []).map((a: any) => ({
           ...a,
           id: (a._id || a.id)?.toString(),
@@ -318,7 +318,14 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         resolveAlert,
         dismissAlert,
         markAllRead,
-        refreshUnreadCount: () => forceSync(true),
+        refreshUnreadCount: async () => {
+          try {
+            const res = (await alertsAPI.getUnreadCount()) as any;
+            setUnreadCount(res.unreadCount ?? 0);
+          } catch (err) {
+            console.error("Failed to refresh unread count:", err);
+          }
+        },
         setUnreadCount,
         forceSync: () => forceSync(true),
         requestNotificationPermission,

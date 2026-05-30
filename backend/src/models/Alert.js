@@ -57,7 +57,7 @@ const alertSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["active", "resolved"],
+      enum: ["active", "resolved", "dismissed"],
       default: "active",
       index: true,
     },

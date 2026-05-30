@@ -14,6 +14,7 @@ exports.getAlerts = async (req, res, next) => {
     const skip = (page - 1) * limit;
 
     const filter = { parentId: req.user._id };
+    if (req.query.status) filter.status = req.query.status;
     if (req.query.unread === "true") filter.isRead = false;
     if (req.query.severity) filter.severity = req.query.severity;
     if (req.query.childId) filter.childId = req.query.childId;
@@ -168,9 +169,13 @@ exports.resolveSOS = async (req, res, next) => {
  */
 exports.deleteAlert = async (req, res, next) => {
   try {
-    const alert = await Alert.findOneAndDelete({ _id: req.params.id, parentId: req.user._id });
+    const alert = await Alert.findOneAndUpdate(
+      { _id: req.params.id, parentId: req.user._id },
+      { status: "dismissed", isRead: true },
+      { new: true }
+    );
     if (!alert) return next(new AppError("Alert not found.", 404));
-    res.json({ success: true, message: "Alert deleted." });
+    res.json({ success: true, message: "Alert dismissed." });
   } catch (err) {
     next(err);
   }
@@ -221,6 +226,23 @@ exports.testPush = async (req, res, next) => {
     res.json({ success: true, response: resData });
   } catch (err) {
     console.error("[TestPush] Error:", err.message);
+    next(err);
+  }
+};
+
+/**
+ * GET /api/alerts/unread-count
+ * Lightweight endpoint to get unread count without fetching all alerts
+ */
+exports.getUnreadCount = async (req, res, next) => {
+  try {
+    const count = await Alert.countDocuments({
+      parentId: req.user._id,
+      isRead: false,
+      status: "active",
+    });
+    res.json({ success: true, unreadCount: count });
+  } catch (err) {
     next(err);
   }
 };

@@ -16,7 +16,7 @@ export function useNotifications() {
     if (!isAuthenticated) return;
     try {
       setLoading(true);
-      const res = await alertsAPI.getAll({ unread: true, limit: 10 }) as any;
+      const res = await alertsAPI.getAll({ unread: true, status: "active", limit: 10 }) as any;
       setAlerts(res.alerts || []);
     } catch (err) {
       console.error("Failed to fetch notifications:", err);

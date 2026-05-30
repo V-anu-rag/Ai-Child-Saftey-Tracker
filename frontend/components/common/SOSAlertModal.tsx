@@ -35,10 +35,11 @@ export function SOSAlertModal() {
   }, [latestAlert]);
 
   const handleResolve = async () => {
-    if (!latestAlert?._id) return;
+    const alertId = latestAlert?.id || latestAlert?._id;
+    if (!alertId) return;
     setIsResolving(true);
     try {
-      await alertsAPI.resolveSOS(latestAlert._id);
+      await alertsAPI.resolveSOS(alertId);
       console.log("Emergency SOS resolved");
       setIsVisible(false);
       clearLatestAlert();
@@ -150,6 +151,10 @@ export function SOSAlertModal() {
 
                 <button
                   onClick={() => {
+                    const alertId = latestAlert?.id || latestAlert?._id;
+                    if (alertId) {
+                      alertsAPI.remove(alertId).catch(console.error);
+                    }
                     setIsVisible(false);
                     clearLatestAlert();
                   }}

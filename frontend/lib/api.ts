@@ -131,6 +131,7 @@ export const childrenAPI = {
 export const alertsAPI = {
   getAll: (params?: Record<string, unknown>) =>
     api.get("/alerts", { params }),
+  getUnreadCount: () => api.get("/alerts/unread-count"),
   markRead: (id: string) => api.patch(`/alerts/${id}/read`),
   markAllRead: () => api.patch("/alerts/read-all"),
   resolveSOS: (id: string) => api.patch(`/alerts/${id}/resolve`),

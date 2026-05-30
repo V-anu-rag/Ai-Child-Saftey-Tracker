@@ -2,6 +2,7 @@ const express = require("express");
 const { protect } = require("../middleware/auth");
 const {
   getAlerts,
+  getUnreadCount,
   markAsRead,
   markAllAsRead,
   triggerSOS,
@@ -15,6 +16,7 @@ const router = express.Router();
 router.use(protect);
 
 router.get("/", getAlerts);
+router.get("/unread-count", getUnreadCount);
 router.post("/sos", triggerSOS);
 router.post("/test-push", testPush);
 router.patch("/read-all", markAllAsRead);
