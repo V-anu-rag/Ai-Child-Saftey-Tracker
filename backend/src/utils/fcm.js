@@ -1,19 +1,6 @@
 const admin = require("firebase-admin");
 const path = require("path");
 const fetch = require("node-fetch");
-const webpush = require("web-push");
-
-// Configure web-push
-if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
-  webpush.setVapidDetails(
-    process.env.VAPID_SUBJECT || "mailto:admin@safetrack.com",
-    process.env.VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
-  );
-  console.log("🚀 Web Push (VAPID) Initialized");
-} else {
-  console.warn("⚠️ VAPID keys missing in environment. Web Push notifications will be disabled.");
-}
 
 // To use FCM, you must provide a service account key
 // Download from Firebase Console -> Project Settings -> Service Accounts
@@ -171,43 +158,6 @@ exports.sendPushNotification = async (userId, notification, data = {}) => {
       }
     } else if (fcmTokens.length > 0) {
       console.log(`ℹ️ Skip FCM dispatch for ${fcmTokens.length} tokens (Firebase not initialized)`);
-    }
-
-    // 3. Deliver to standard Web Push Subscriptions
-    if (user.webPushSubscriptions && user.webPushSubscriptions.length > 0) {
-      if (!process.env.VAPID_PUBLIC_KEY) {
-        console.warn(`ℹ️ Skip Web Push dispatch for ${user.webPushSubscriptions.length} subscriptions (VAPID keys not configured)`);
-      } else {
-        const payload = JSON.stringify({
-          title: notification.title,
-          body: notification.body,
-          data: data,
-        });
-
-        const invalidEndpoints = [];
-        const pushPromises = user.webPushSubscriptions.map(async (sub) => {
-          try {
-            await webpush.sendNotification(sub, payload);
-          } catch (err) {
-            if (err.statusCode === 404 || err.statusCode === 410) {
-              invalidEndpoints.push(sub.endpoint);
-            } else {
-              console.error("❌ Web Push API dispatch error:", err.message);
-            }
-          }
-        });
-
-        await Promise.all(pushPromises);
-        console.log(`✅ Web Push sent to ${user.webPushSubscriptions.length - invalidEndpoints.length} devices.`);
-
-        // Cleanup invalid Web Push subscriptions
-        if (invalidEndpoints.length > 0) {
-          console.log(`🧹 Cleaning up ${invalidEndpoints.length} invalid Web Push subscriptions for user ${userId}.`);
-          await User.findByIdAndUpdate(userId, {
-            $pull: { webPushSubscriptions: { endpoint: { $in: invalidEndpoints } } }
-          });
-        }
-      }
     }
   } catch (err) {
     console.error("❌ Send Push Notification error:", err.message);

@@ -114,10 +114,6 @@ export const authAPI = {
   getMe: () => api.get("/auth/me"),
   updateMe: (data: Record<string, unknown>) =>
     api.patch("/auth/update-me", data),
-  registerFcmToken: (token: string) =>
-    api.patch("/auth/fcm-token", { fcmToken: token }),
-  subscribeToWebPush: (subscription: PushSubscription) =>
-    api.post("/auth/web-push-subscribe", subscription),
 };
 
 // ─── Children ─────────────────────────────────────────────────────────────────

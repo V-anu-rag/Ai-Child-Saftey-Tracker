@@ -107,20 +107,12 @@ exports.getMe = async (req, res, next) => {
  */
 exports.logout = async (req, res) => {
   try {
-    const { fcmToken, webPushSubscription } = req.body;
-    if (req.user) {
-      const updates = {};
-      if (fcmToken) updates.$pull = { fcmTokens: fcmToken };
-      if (webPushSubscription) {
-        updates.$pull = updates.$pull || {};
-        // Use the endpoint string to uniquely identify the subscription for removal
-        updates.$pull.webPushSubscriptions = { endpoint: webPushSubscription.endpoint };
-      }
-      
-      if (Object.keys(updates).length > 0) {
-        await User.findByIdAndUpdate(req.user._id, updates);
-        console.log(`[DEBUG PUSH TOKEN] Removed token/subscription on logout for user ${req.user._id}`);
-      }
+    const { fcmToken } = req.body;
+    if (fcmToken && req.user) {
+      await User.findByIdAndUpdate(req.user._id, {
+        $pull: { fcmTokens: fcmToken }
+      });
+      console.log(`[DEBUG PUSH TOKEN] Removed token on logout for user ${req.user._id}`);
     }
     res.json({ success: true, message: "Logged out successfully." });
   } catch (err) {
@@ -172,36 +164,6 @@ exports.registerFcmToken = async (req, res, next) => {
     }
 
     res.json({ success: true, message: "FCM Token registered" });
-  } catch (err) {
-    next(err);
-  }
-};
-
-/**
- * POST /api/auth/web-push-subscribe
- */
-exports.registerWebPushSubscription = async (req, res, next) => {
-  try {
-    const subscription = req.body;
-    if (!subscription || !subscription.endpoint) {
-      return next(new AppError("Invalid subscription object", 400));
-    }
-
-    const user = await User.findById(req.user._id);
-    if (!user) return next(new AppError("User not found", 404));
-
-    // Check if subscription already exists (by endpoint)
-    const exists = user.webPushSubscriptions.some(sub => sub.endpoint === subscription.endpoint);
-    if (!exists) {
-      user.webPushSubscriptions.push(subscription);
-      if (user.webPushSubscriptions.length > 5) {
-        user.webPushSubscriptions = user.webPushSubscriptions.slice(-5);
-      }
-      await user.save({ validateBeforeSave: false });
-      console.log(`[DEBUG PUSH TOKEN] Web Push Subscription saved for user ${user._id}`);
-    }
-
-    res.json({ success: true, message: "Web Push Subscription registered" });
   } catch (err) {
     next(err);
   }

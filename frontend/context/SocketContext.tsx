@@ -12,9 +12,8 @@ import {
 import { Socket } from "socket.io-client";
 import { getSocket, disconnectSocket } from "@/lib/socket";
 import { useAuth } from "@/context/AuthContext";
-import { alertsAPI, authAPI } from "@/lib/api";
+import { alertsAPI } from "@/lib/api";
 import { toast } from "sonner";
-import { urlBase64ToUint8Array } from "@/lib/utils";
 import { Alert } from "@/types";
 
 // Global throttle to prevent 429 loops across remounts
@@ -119,27 +118,6 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         body: "You will now receive safety alerts directly on your desktop.",
         icon: "/logo.png"
       });
-
-      // Subscribe to Web Push
-      if ("serviceWorker" in navigator) {
-        try {
-          const reg = await navigator.serviceWorker.ready;
-          const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-          if (vapidPublicKey) {
-            const subscription = await reg.pushManager.subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as any,
-            });
-            await authAPI.subscribeToWebPush(subscription as any);
-            console.log("🚀 [WEB PUSH] Subscribed successfully");
-          } else {
-            console.warn("⚠️ [WEB PUSH] Missing VAPID public key");
-          }
-        } catch (err) {
-          console.error("❌ [WEB PUSH] Subscription failed:", err);
-        }
-      }
-
       return true;
     }
     return false;
