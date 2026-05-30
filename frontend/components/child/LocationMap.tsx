@@ -87,6 +87,7 @@ export function LocationMap({ child, geofences = [] }: LocationMapProps) {
         maplibreMap.current = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMapCNLoaded, child.id]);
 
   // --- Update Marker & Geofences ---

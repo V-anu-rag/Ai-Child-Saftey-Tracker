@@ -128,7 +128,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
           if (vapidPublicKey) {
             const subscription = await reg.pushManager.subscribe({
               userVisibleOnly: true,
-              applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+              applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as any,
             });
             await authAPI.subscribeToWebPush(subscription as any);
             console.log("🚀 [WEB PUSH] Subscribed successfully");
