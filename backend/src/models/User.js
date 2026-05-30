@@ -47,6 +47,11 @@ const userSchema = new mongoose.Schema(
         type: String,
       },
     ],
+    webPushSubscriptions: [
+      {
+        type: Object,
+      },
+    ],
   },
   {
     timestamps: true,
