@@ -79,7 +79,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
       try {
         console.log("🔄 [SOCKET] Syncing alerts from API...");
-        const res = (await alertsAPI.getAll({ limit: 50, status: "active" })) as any;
+        const res = (await alertsAPI.getAll({ limit: 50 })) as any;
         const normalized: Alert[] = (res.alerts || []).map((a: any) => ({
           ...a,
           id: (a._id || a.id)?.toString(),

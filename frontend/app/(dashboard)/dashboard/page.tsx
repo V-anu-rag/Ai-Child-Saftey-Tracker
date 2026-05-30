@@ -29,7 +29,7 @@ export default function DashboardPage() {
 
   const fetchAlerts = useCallback(async () => {
     try {
-      const res = await alertsAPI.getAll({ limit: 5, status: "active" }) as any;
+      const res = await alertsAPI.getAll({ limit: 5 }) as any;
       setAlerts(res.alerts || []);
       setUnreadCount(res.unreadCount || 0);
     } catch { /* silent */ } finally {
