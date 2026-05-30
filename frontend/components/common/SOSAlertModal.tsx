@@ -151,10 +151,6 @@ export function SOSAlertModal() {
 
                 <button
                   onClick={() => {
-                    const alertId = latestAlert?.id || latestAlert?._id;
-                    if (alertId) {
-                      alertsAPI.remove(alertId).catch(console.error);
-                    }
                     setIsVisible(false);
                     clearLatestAlert();
                   }}
