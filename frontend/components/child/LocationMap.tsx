@@ -90,7 +90,7 @@ export function LocationMap({ child, geofences = [] }: LocationMapProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMapCNLoaded, child.id]);
 
-  // --- Update Marker & Geofences ---
+  // --- Update Marker & Geofences ----
   useEffect(() => {
     if (!maplibreMap.current) return;
     const { map, maplibregl } = maplibreMap.current;
